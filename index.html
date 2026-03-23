@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROS — App</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080a0f; --surface: #0d1018; --surface2: #131720;
+  --border: rgba(255,255,255,0.06); --border2: rgba(255,255,255,0.12);
+  --text: #eef0f6; --muted: #6b7280;
+  --accent: #c8f135; --accent2: #a8d420; --accent-dim: rgba(200,241,53,0.12);
+  --green: #4ade80; --green-bg: rgba(74,222,128,0.10);
+  --yellow: #fbbf24; --yellow-bg: rgba(251,191,36,0.10);
+  --red: #f87171; --red-bg: rgba(248,113,113,0.10);
+  --blue: #60a5fa; --blue-bg: rgba(96,165,250,0.10);
+  --radius: 12px; --radius-lg: 18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── AUTH ── */
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:40px;width:100%;max-width:420px}
+.auth-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;text-align:center;margin-bottom:6px}
+.auth-logo span{color:var(--accent)}
+.auth-sub{text-align:center;font-size:13px;color:var(--muted);margin-bottom:28px}
+.auth-tabs{display:flex;gap:4px;background:var(--surface2);border-radius:8px;padding:4px;margin-bottom:24px}
+.auth-tab{flex:1;padding:8px;border-radius:6px;font-size:13px;cursor:pointer;border:none;background:none;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .15s}
+.auth-tab.active{background:var(--surface);color:var(--text);font-weight:500}
+.form-group{margin-bottom:16px}
+.form-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:block}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--text);font-family:'DM Sans',sans-serif;transition:border-color .15s}
+.form-input:focus{outline:none;border-color:var(--accent)}
+.auth-btn{width:100%;background:var(--accent);color:#0a0e04;border:none;border-radius:8px;padding:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;margin-top:8px}
+.auth-btn:hover{background:var(--accent2)}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed}
+.auth-msg{font-size:12px;text-align:center;margin-top:12px;padding:8px 12px;border-radius:6px}
+.auth-msg.error{background:var(--red-bg);color:var(--red)}
+.auth-msg.success{background:var(--green-bg);color:var(--green)}
+
+/* ── APP LAYOUT ── */
+#app-screen{display:none;min-height:100vh;flex-direction:row}
+.sidebar{width:220px;min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100}
+.logo{padding:22px 20px 18px;border-bottom:1px solid var(--border)}
+.logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--text)}
+.logo-name span{color:var(--accent)}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+.nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:2px}
+.nav-section{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;padding:10px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--accent-dim);color:var(--accent);font-weight:500}
+.nav-badge{margin-left:auto;font-size:9px;background:var(--surface2);color:var(--muted);padding:2px 6px;border-radius:99px}
+.nav-badge.soon{background:rgba(200,241,53,.1);color:var(--accent2)}
+.sidebar-footer{padding:14px;border-top:1px solid var(--border)}
+.user-info{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-dim);border:1px solid rgba(200,241,53,.2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--accent);flex-shrink:0}
+.user-email{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.logout-btn{width:100%;background:none;border:1px solid var(--border2);border-radius:7px;padding:7px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+.discord-btn{width:100%;background:rgba(88,101,242,.15);border:1px solid rgba(88,101,242,.3);border-radius:7px;padding:8px;font-size:12px;color:#8891f7;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.discord-btn:hover{background:rgba(88,101,242,.25)}
+
+.main{margin-left:220px;flex:1;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(8,10,15,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-family:'Syne',sans-serif;font-size:18px}
+.topbar-sub{font-size:12px;color:var(--muted);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.period-sel{background:var(--surface2);border:1px solid var(--border2);border-radius:7px;padding:5px 10px;font-size:12px;color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif}
+.save-btn{background:var(--accent);color:#0a0e04;border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.save-btn:hover{background:var(--accent2)}
+.save-btn.saved{background:var(--green-bg);color:var(--green);border:1px solid rgba(74,222,128,.3)}
+.content{padding:24px 28px}
+.page{display:none}
+.page.active{display:block}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi-card.blue::before{background:var(--blue)}
+.kpi-card.green::before{background:var(--green)}
+.kpi-card.yellow::before{background:var(--yellow)}
+.kpi-label{font-size:11px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
+.kpi-value{font-family:'Syne',sans-serif;font-size:24px;color:var(--text)}
+.kpi-tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;margin-top:5px}
+.tag-green{background:var(--green-bg);color:var(--green)}
+.tag-yellow{background:var(--yellow-bg);color:var(--yellow)}
+.tag-red{background:var(--red-bg);color:var(--red)}
+.tag-blue{background:var(--blue-bg);color:var(--blue)}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:16px;overflow:hidden}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px}
+.card-dot{width:7px;height:7px;border-radius:50%}
+.card-hint{font-size:11px;color:var(--muted)}
+
+/* ── PL TABLE ── */
+.pl-row{display:grid;grid-template-columns:1fr 130px 80px 90px;padding:9px 18px;border-bottom:1px solid var(--border);align-items:center;transition:background .1s}
+.pl-row:hover{background:var(--surface2)}
+.pl-row:last-child{border-bottom:none}
+.pl-row.section{padding:10px 18px 6px;background:rgba(255,255,255,.02)}
+.pl-row.section .pl-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.pl-row.total{background:var(--surface2)}
+.pl-row.total .pl-label{font-weight:600}
+.pl-row.grand{background:rgba(200,241,53,.05);border-top:1px solid rgba(200,241,53,.2)}
+.pl-row.grand .pl-label{font-family:'Syne',sans-serif;font-size:14px;color:var(--accent)}
+.pl-label{font-size:13px}
+.pl-label.sub{padding-left:14px;color:var(--muted);font-size:12px}
+.pl-input{background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:4px 8px;font-size:13px;color:var(--text);text-align:right;font-family:'DM Sans',sans-serif;width:100%}
+.pl-input:focus{outline:none;border-color:var(--accent)}
+.pl-pct{text-align:center;font-size:12px;color:var(--muted)}
+.pl-status{text-align:center;font-size:13px}
+.pl-calc{text-align:right;font-size:13px;font-weight:500}
+.pl-calc.pos{color:var(--green)}
+.pl-calc.neg{color:var(--red)}
+.tbl-header{display:grid;grid-template-columns:1fr 130px 80px 90px;padding:8px 18px;border-bottom:1px solid var(--border2)}
+.th{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.th.r{text-align:right}
+.th.c{text-align:center}
+
+/* ── COSTEO ── */
+.costeo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.costeo-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;cursor:pointer;transition:all .2s}
+.costeo-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.cc-icon{font-size:26px;margin-bottom:10px}
+.cc-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.cc-sub{font-size:11px;color:var(--muted)}
+.cc-factor{font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;float:right;margin-top:-30px}
+
+/* ── COMING SOON ── */
+.coming-soon{text-align:center;padding:50px 20px}
+.coming-icon{font-size:44px;margin-bottom:14px}
+.coming-title{font-family:'Syne',sans-serif;font-size:20px;margin-bottom:8px}
+.coming-sub{font-size:13px;color:var(--muted);max-width:340px;margin:0 auto;line-height:1.6}
+
+@media(max-width:768px){
+  .sidebar{width:56px}
+  .logo-name,.logo-sub,.nav-item span,.nav-section,.nav-badge,.sidebar-footer .user-email,.discord-btn span{display:none}
+  .main{margin-left:56px}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .costeo-grid{grid-template-columns:1fr}
+  .content{padding:16px}
+  .topbar{padding:12px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo"><span>R</span>.<span>O</span>.<span>S</span></div>
+    <div class="auth-sub">Restaurant Operating System</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Iniciar sesión</button>
+      <button class="auth-tab" onclick="switchTab('signup')">Crear cuenta</button>
+    </div>
+    <div id="login-form">
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <input class="form-input" type="email" id="login-email" placeholder="tu@restaurante.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input class="form-input" type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="auth-btn" onclick="doLogin()" id="login-btn">Entrar</button>
+      <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:12px;cursor:pointer" onclick="doReset()">¿Olvidaste tu contraseña?</p>
+    </div>
+    <div id="signup-form" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Nombre del restaurante</label>
+        <input class="form-input" type="text" id="signup-name" placeholder="Mi Restaurante">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <input class="form-input" type="email" id="signup-email" placeholder="tu@restaurante.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input class="form-input" type="password" id="signup-pass" placeholder="Mínimo 6 caracteres">
+      </div>
+      <button class="auth-btn" onclick="doSignup()" id="signup-btn">Crear cuenta</button>
+    </div>
+    <div id="auth-msg" class="auth-msg" style="display:none"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-name"><span>R</span>.<span>O</span>.<span>S</span></div>
+      <div class="logo-sub">Restaurant OS · Pro</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Finanzas</div>
+      <button class="nav-item active" onclick="goTo('pl')"><span style="font-size:15px">📊</span><span>P&L Mensual</span></button>
+      <button class="nav-item" onclick="goTo('anual')"><span style="font-size:15px">📅</span><span>P&L Anual</span></button>
+      <button class="nav-item" onclick="goTo('balance')"><span style="font-size:15px">⚖️</span><span>Balance General</span><span class="nav-badge soon">Pronto</span></button>
+      <button class="nav-item" onclick="goTo('flujo')"><span style="font-size:15px">💧</span><span>Flujo de Efectivo</span><span class="nav-badge soon">Pronto</span></button>
+      <div class="nav-section">Operaciones</div>
+      <button class="nav-item" onclick="goTo('costeo')"><span style="font-size:15px">🧾</span><span>Costeo de Menú</span></button>
+      <button class="nav-item" onclick="goTo('inventario')"><span style="font-size:15px">📦</span><span>Inventarios</span><span class="nav-badge soon">Pronto</span></button>
+      <button class="nav-item" onclick="goTo('proveedores')"><span style="font-size:15px">🚛</span><span>Proveedores</span><span class="nav-badge soon">Pronto</span></button>
+      <div class="nav-section">Personas</div>
+      <button class="nav-item" onclick="goTo('nomina')"><span style="font-size:15px">👥</span><span>Nómina y RH</span><span class="nav-badge soon">Pronto</span></button>
+      <div class="nav-section">Legal</div>
+      <button class="nav-item" onclick="goTo('fiscal')"><span style="font-size:15px">🏛️</span><span>Fiscalidad</span></button>
+      <button class="nav-item" onclick="goTo('permisos')"><span style="font-size:15px">📁</span><span>Permisos</span><span class="nav-badge soon">Pronto</span></button>
+      <div class="nav-section">Auditoría</div>
+      <button class="nav-item" onclick="goTo('auditoria')"><span style="font-size:15px">✅</span><span>Auditorías</span><span class="nav-badge soon">Pronto</span></button>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="https://discord.gg/XXXXXXX" target="_blank" class="discord-btn">
+        <span style="font-size:16px">💬</span><span>Discord ROS</span>
+      </a>
+      <div class="user-info">
+        <div class="user-avatar" id="user-avatar">R</div>
+        <div class="user-email" id="user-email">cargando...</div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="page-title">Estado de Resultados</div>
+        <div class="topbar-sub" id="page-sub">P&L mensual · <span id="restaurant-name-top">Mi Restaurante</span></div>
+      </div>
+      <div class="topbar-right">
+        <select class="period-sel" id="period-select" onchange="loadPLData()">
+          <option>Enero 2025</option><option>Febrero 2025</option><option>Marzo 2025</option>
+          <option selected>Abril 2025</option><option>Mayo 2025</option><option>Junio 2025</option>
+          <option>Julio 2025</option><option>Agosto 2025</option><option>Septiembre 2025</option>
+          <option>Octubre 2025</option><option>Noviembre 2025</option><option>Diciembre 2025</option>
+        </select>
+        <button class="save-btn" id="save-btn" onclick="savePLData()">Guardar</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- P&L PAGE -->
+      <div class="page active" id="page-pl">
+        <div class="kpi-grid">
+          <div class="kpi-card blue"><div class="kpi-label">Ventas Totales</div><div class="kpi-value" id="kpi-ventas">$0</div><div class="kpi-tag tag-blue">este mes</div></div>
+          <div class="kpi-card green"><div class="kpi-label">Utilidad Bruta</div><div class="kpi-value" id="kpi-ub">$0</div><div class="kpi-tag tag-green" id="kpi-ub-tag">0%</div></div>
+          <div class="kpi-card yellow"><div class="kpi-label">EBITDA</div><div class="kpi-value" id="kpi-ebitda">$0</div><div class="kpi-tag tag-yellow" id="kpi-ebitda-tag">0%</div></div>
+          <div class="kpi-card green"><div class="kpi-label">Utilidad Neta</div><div class="kpi-value" id="kpi-neta">$0</div><div class="kpi-tag tag-green" id="kpi-neta-tag">0%</div></div>
+        </div>
+
+        <!-- INGRESOS -->
+        <div class="card">
+          <div class="card-header"><div class="card-title"><span class="card-dot" style="background:var(--blue)"></span>Ingresos</div><div class="card-hint">Ingresa tus ventas del mes</div></div>
+          <div class="tbl-header"><div class="th">Concepto</div><div class="th r">Importe ($)</div><div class="th c">% Ventas</div><div class="th c">Estado</div></div>
+          <div class="pl-row"><div class="pl-label sub">Alimentos</div><input class="pl-input" type="number" id="ing-alimentos" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-alim">—</div><div class="pl-status"></div></div>
+          <div class="pl-row"><div class="pl-label sub">Bebidas no alcohólicas</div><input class="pl-input" type="number" id="ing-bna" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-bna">—</div><div class="pl-status"></div></div>
+          <div class="pl-row"><div class="pl-label sub">Bebidas alcohólicas</div><input class="pl-input" type="number" id="ing-ba" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-ba">—</div><div class="pl-status"></div></div>
+          <div class="pl-row"><div class="pl-label sub">Delivery / plataformas</div><input class="pl-input" type="number" id="ing-delivery" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-del">—</div><div class="pl-status"></div></div>
+          <div class="pl-row"><div class="pl-label sub">Eventos / otros</div><input class="pl-input" type="number" id="ing-otros" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-iotros">—</div><div class="pl-status"></div></div>
+          <div class="pl-row total"><div class="pl-label">Total Ingresos</div><div class="pl-calc" id="total-ing">$0</div><div class="pl-pct">100%</div><div></div></div>
+        </div>
+
+        <!-- COGS -->
+        <div class="card">
+          <div class="card-header"><div class="card-title"><span class="card-dot" style="background:var(--yellow)"></span>Costo de Ventas (COGS)</div><div class="card-hint">Rango sano: 28–38%</div></div>
+          <div class="tbl-header"><div class="th">Concepto</div><div class="th r">Importe ($)</div><div class="th c">% Ventas</div><div class="th c">Estado</div></div>
+          <div class="pl-row"><div class="pl-label sub">Costo alimentos</div><input class="pl-input" type="number" id="cogs-alim" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-calim">—</div><div class="pl-status" id="st-calim"></div></div>
+          <div class="pl-row"><div class="pl-label sub">Costo bebidas</div><input class="pl-input" type="number" id="cogs-beb" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-cbeb">—</div><div class="pl-status" id="st-cbeb"></div></div>
+          <div class="pl-row"><div class="pl-label sub">Mermas y desperdicios</div><input class="pl-input" type="number" id="cogs-mer" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-cmer">—</div><div class="pl-status" id="st-cmer"></div></div>
+          <div class="pl-row total"><div class="pl-label">Total COGS</div><div class="pl-calc" id="total-cogs">$0</div><div class="pl-pct" id="pct-tcogs">—</div><div class="pl-status" id="st-tcogs"></div></div>
+        </div>
+
+        <!-- UTILIDAD BRUTA -->
+        <div class="card">
+          <div class="card-body">
+            <div class="pl-row grand"><div class="pl-label">★ Utilidad Bruta</div><div class="pl-calc pos" id="util-bruta">$0</div><div class="pl-pct" id="pct-ub-row">—</div><div class="pl-status" id="st-ub"></div></div>
+          </div>
+        </div>
+
+        <!-- GASTOS OP -->
+        <div class="card">
+          <div class="card-header"><div class="card-title"><span class="card-dot" style="background:var(--yellow)"></span>Gastos Operativos</div><div class="card-hint">Objetivo: &lt; 55%</div></div>
+          <div class="tbl-header"><div class="th">Concepto</div><div class="th r">Importe ($)</div><div class="th c">% Ventas</div><div class="th c">Estado</div></div>
+          <div class="pl-row"><div class="pl-label sub">Nómina total</div><input class="pl-input" type="number" id="gop-nom" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-nom">—</div><div class="pl-status" id="st-nom"></div></div>
+          <div class="pl-row"><div class="pl-label sub">Renta</div><input class="pl-input" type="number" id="gop-renta" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-renta">—</div><div class="pl-status" id="st-renta"></div></div>
+          <div class="pl-row"><div class="pl-label sub">Servicios (luz, gas, agua)</div><input class="pl-input" type="number" id="gop-serv" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-serv">—</div><div></div></div>
+          <div class="pl-row"><div class="pl-label sub">Marketing y publicidad</div><input class="pl-input" type="number" id="gop-mkt" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-mkt">—</div><div></div></div>
+          <div class="pl-row"><div class="pl-label sub">Mantenimiento</div><input class="pl-input" type="number" id="gop-mant" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-mant">—</div><div></div></div>
+          <div class="pl-row"><div class="pl-label sub">Otros gastos</div><input class="pl-input" type="number" id="gop-otros" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-gotros">—</div><div></div></div>
+          <div class="pl-row total"><div class="pl-label">Total Gastos Operativos</div><div class="pl-calc" id="total-gop">$0</div><div class="pl-pct" id="pct-tgop">—</div><div class="pl-status" id="st-tgop"></div></div>
+        </div>
+
+        <!-- EBITDA -->
+        <div class="card">
+          <div class="pl-row grand"><div class="pl-label">★ EBITDA</div><div class="pl-calc pos" id="ebitda-val">$0</div><div class="pl-pct" id="pct-ebitda-row">—</div><div class="pl-status" id="st-ebitda"></div></div>
+        </div>
+
+        <!-- GASTOS FIN -->
+        <div class="card">
+          <div class="card-header"><div class="card-title"><span class="card-dot" style="background:var(--muted)"></span>Gastos Financieros y Fiscales</div></div>
+          <div class="tbl-header"><div class="th">Concepto</div><div class="th r">Importe ($)</div><div class="th c">% Ventas</div><div class="th c"></div></div>
+          <div class="pl-row"><div class="pl-label sub">ISR provisional</div><input class="pl-input" type="number" id="gfin-isr" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-isr">—</div><div></div></div>
+          <div class="pl-row"><div class="pl-label sub">Intereses / créditos</div><input class="pl-input" type="number" id="gfin-int" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-int">—</div><div></div></div>
+          <div class="pl-row"><div class="pl-label sub">Depreciaciones</div><input class="pl-input" type="number" id="gfin-dep" value="0" oninput="calcPL()"><div class="pl-pct" id="pct-dep">—</div><div></div></div>
+          <div class="pl-row total"><div class="pl-label">Total Financiero</div><div class="pl-calc" id="total-gfin">$0</div><div class="pl-pct" id="pct-tgfin">—</div><div></div></div>
+        </div>
+
+        <!-- NETA -->
+        <div class="card">
+          <div class="pl-row grand" style="padding:18px"><div class="pl-label" style="font-size:16px">🏆 Utilidad Neta</div><div class="pl-calc" id="util-neta" style="font-size:22px">$0</div><div class="pl-pct" id="pct-neta-row" style="font-size:14px">—</div><div class="pl-status" id="st-neta" style="font-size:18px"></div></div>
+        </div>
+      </div>
+
+      <!-- ANUAL -->
+      <div class="page" id="page-anual">
+        <div class="coming-soon"><div class="coming-icon">📅</div><div class="coming-title">P&L Anual</div><div class="coming-sub">Seguimiento mes a mes. Disponible en la próxima actualización.</div></div>
+      </div>
+
+      <!-- BALANCE -->
+      <div class="page" id="page-balance">
+        <div class="coming-soon"><div class="coming-icon">⚖️</div><div class="coming-title">Balance General</div><div class="coming-sub">Activos, pasivos y capital contable. Próximamente.</div></div>
+      </div>
+
+      <!-- FLUJO -->
+      <div class="page" id="page-flujo">
+        <div class="coming-soon"><div class="coming-icon">💧</div><div class="coming-title">Flujo de Efectivo</div><div class="coming-sub">Entradas y salidas reales de caja. Próximamente.</div></div>
+      </div>
+
+      <!-- COSTEO -->
+      <div class="page" id="page-costeo">
+        <div class="costeo-grid">
+          <div class="costeo-card" style="border-color:#1D9E75">
+            <span class="cc-factor" style="background:var(--green-bg);color:var(--green)">Factor 3.3x</span>
+            <div class="cc-icon">🍽️</div>
+            <div class="cc-title">Alimentos</div>
+            <div class="cc-sub">Food cost objetivo: 30% · Precio = Costo ÷ 0.30</div>
+          </div>
+          <div class="costeo-card" style="border-color:#60a5fa">
+            <span class="cc-factor" style="background:var(--blue-bg);color:var(--blue)">Factor ~5x</span>
+            <div class="cc-icon">🍸</div>
+            <div class="cc-title">Bebidas con Licor</div>
+            <div class="cc-sub">Food cost 20% · +10% indirectos incluidos</div>
+          </div>
+          <div class="costeo-card" style="border-color:#c084fc">
+            <span class="cc-factor" style="background:rgba(192,132,252,.12);color:#c084fc">2x – 2.5x</span>
+            <div class="cc-icon">🍷</div>
+            <div class="cc-title">Vino</div>
+            <div class="cc-sub">Botella ×2 · Copa ×2.5</div>
+          </div>
+          <div class="costeo-card" style="border-color:#fb923c">
+            <span class="cc-factor" style="background:rgba(251,146,60,.12);color:#fb923c">Factor 5x</span>
+            <div class="cc-icon">☕</div>
+            <div class="cc-title">Café</div>
+            <div class="cc-sub">Food cost 20% · Incluye vaso/desechable</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);font-size:13px;color:var(--muted)">
+          Los módulos detallados de costeo con calculadora de ingredientes estarán disponibles en la próxima actualización.
+        </div>
+      </div>
+
+      <!-- FISCAL -->
+      <div class="page" id="page-fiscal">
+        <div class="card">
+          <div class="card-header"><div class="card-title"><span class="card-dot" style="background:var(--yellow)"></span>Calendario de Obligaciones Fiscales</div></div>
+          <div style="padding:0">
+            <div class="pl-row"><div class="pl-label">Declaración IVA</div><div style="font-size:12px;color:var(--muted)">Mensual</div><div style="font-size:12px;color:var(--muted)">Día 17</div><div class="pl-status"><span style="background:var(--yellow-bg);color:var(--yellow);padding:2px 8px;border-radius:99px;font-size:11px">Pendiente</span></div></div>
+            <div class="pl-row"><div class="pl-label">Pago provisional ISR</div><div style="font-size:12px;color:var(--muted)">Mensual</div><div style="font-size:12px;color:var(--muted)">Día 17</div><div class="pl-status"><span style="background:var(--yellow-bg);color:var(--yellow);padding:2px 8px;border-radius:99px;font-size:11px">Pendiente</span></div></div>
+            <div class="pl-row"><div class="pl-label">DIOT Terceros</div><div style="font-size:12px;color:var(--muted)">Mensual</div><div style="font-size:12px;color:var(--muted)">Día 17</div><div class="pl-status"><span style="background:var(--green-bg);color:var(--green);padding:2px 8px;border-radius:99px;font-size:11px">Al corriente</span></div></div>
+            <div class="pl-row"><div class="pl-label">IMSS Cuotas patronales</div><div style="font-size:12px;color:var(--muted)">Bimestral</div><div style="font-size:12px;color:var(--muted)">Día 17</div><div class="pl-status"><span style="background:var(--red-bg);color:var(--red);padding:2px 8px;border-radius:99px;font-size:11px">Vence pronto</span></div></div>
+            <div class="pl-row"><div class="pl-label">Declaración anual PM</div><div style="font-size:12px;color:var(--muted)">Anual</div><div style="font-size:12px;color:var(--muted)">Marzo 31</div><div class="pl-status"><span style="background:var(--green-bg);color:var(--green);padding:2px 8px;border-radius:99px;font-size:11px">Presentada</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMING SOON pages -->
+      <div class="page" id="page-inventario"><div class="coming-soon"><div class="coming-icon">📦</div><div class="coming-title">Inventarios</div><div class="coming-sub">Control de stock con método PEPS. Próximamente.</div></div></div>
+      <div class="page" id="page-proveedores"><div class="coming-soon"><div class="coming-icon">🚛</div><div class="coming-title">Proveedores</div><div class="coming-sub">Catálogo y ranking precio-calidad. Próximamente.</div></div></div>
+      <div class="page" id="page-nomina"><div class="coming-soon"><div class="coming-icon">👥</div><div class="coming-title">Nómina y RH</div><div class="coming-sub">Plantilla de personal y cálculos de nómina. Próximamente.</div></div></div>
+      <div class="page" id="page-permisos"><div class="coming-soon"><div class="coming-icon">📁</div><div class="coming-title">Permisos y Licencias</div><div class="coming-sub">Vault digital de documentos legales. Próximamente.</div></div></div>
+      <div class="page" id="page-auditoria"><div class="coming-soon"><div class="coming-icon">✅</div><div class="coming-title">Auditorías y Checklists</div><div class="coming-sub">Checklists semanal, mensual, trimestral y anual. Próximamente.</div></div></div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+const SUPA_URL = 'https://gzelzskqelccigfawxph.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6ZWx6c2txZWxjY2lnZmF3eHBoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDUxMDgsImV4cCI6MjA4OTg4MTEwOH0.OwFt5DMDob5Y-h23S3Pz-GW_FvkO-uOpvA2303ERf7E';
+const { createClient } = supabase;
+const sb = createClient(SUPA_URL, SUPA_KEY);
+
+let currentUser = null;
+
+// ── AUTH ──────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='signup')));
+  document.getElementById('login-form').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('signup-form').style.display = tab==='signup' ? 'block' : 'none';
+  document.getElementById('auth-msg').style.display = 'none';
+}
+
+function showMsg(msg, type='error') {
+  const el = document.getElementById('auth-msg');
+  el.textContent = msg; el.className = `auth-msg ${type}`; el.style.display = 'block';
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if (!email || !pass) return showMsg('Ingresa correo y contraseña');
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true; btn.textContent = 'Entrando...';
+  const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error) { showMsg(error.message); btn.disabled = false; btn.textContent = 'Entrar'; }
+}
+
+async function doSignup() {
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const pass = document.getElementById('signup-pass').value;
+  if (!name || !email || !pass) return showMsg('Llena todos los campos');
+  if (pass.length < 6) return showMsg('La contraseña debe tener al menos 6 caracteres');
+  const btn = document.getElementById('signup-btn');
+  btn.disabled = true; btn.textContent = 'Creando cuenta...';
+  const { data, error } = await sb.auth.signUp({ email, password: pass });
+  if (error) { showMsg(error.message); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
+  if (data.user) {
+    await sb.from('profiles').upsert({ id: data.user.id, restaurant_name: name });
+  }
+  showMsg('¡Cuenta creada! Revisa tu correo para confirmar.', 'success');
+  btn.disabled = false; btn.textContent = 'Crear cuenta';
+}
+
+async function doReset() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) return showMsg('Ingresa tu correo primero');
+  await sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://app.getros.mx' });
+  showMsg('Te enviamos un correo para restablecer tu contraseña', 'success');
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+}
+
+// ── SESSION ───────────────────────────────────────────────────────────────
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (session?.user) {
+    currentUser = session.user;
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app-screen').style.display = 'flex';
+    const email = session.user.email;
+    document.getElementById('user-email').textContent = email;
+    document.getElementById('user-avatar').textContent = email[0].toUpperCase();
+    const { data: profile } = await sb.from('profiles').select('restaurant_name').eq('id', session.user.id).single();
+    if (profile?.restaurant_name) {
+      document.getElementById('restaurant-name-top').textContent = profile.restaurant_name;
+    }
+    loadPLData();
+  }
+});
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────
+const pageTitles = {
+  pl:['Estado de Resultados','P&L mensual'],
+  anual:['P&L Anual','Seguimiento mes a mes'],
+  balance:['Balance General','Activos y pasivos'],
+  flujo:['Flujo de Efectivo','Entradas y salidas'],
+  costeo:['Costeo de Menú','Precios sugeridos'],
+  inventario:['Inventarios','Control de stock'],
+  proveedores:['Proveedores','Catálogo y ranking'],
+  nomina:['Nómina y RH','Plantilla de personal'],
+  fiscal:['Fiscalidad','Obligaciones SAT · IMSS'],
+  permisos:['Permisos y Licencias','Documentos legales'],
+  auditoria:['Auditorías','Checklists y control'],
+};
+
+function goTo(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  [...document.querySelectorAll('.nav-item')].find(b => b.getAttribute('onclick')===`goTo('${id}')`).classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[id][0];
+  document.getElementById('page-sub').innerHTML = pageTitles[id][1] + ' · <span id="restaurant-name-top">' + (document.getElementById('restaurant-name-top')?.textContent||'Mi Restaurante') + '</span>';
+  document.getElementById('save-btn').style.display = id==='pl' ? 'block' : 'none';
+}
+
+// ── P&L CALC ──────────────────────────────────────────────────────────────
+function v(id) { return parseFloat(document.getElementById(id)?.value)||0; }
+function fmt(n) { return '$'+Math.round(n).toLocaleString('es-MX'); }
+function pct(n,t) { return t ? (n/t*100).toFixed(1)+'%' : '—'; }
+function sem(val, ok, warn, higher) {
+  if (higher) return val>=ok?'✅':val>=warn?'⚠️':'🚨';
+  return val<=ok?'✅':val<=warn?'⚠️':'🚨';
+}
+function set(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
+
+function calcPL() {
+  const ing = v('ing-alimentos')+v('ing-bna')+v('ing-ba')+v('ing-delivery')+v('ing-otros');
+  const cogs = v('cogs-alim')+v('cogs-beb')+v('cogs-mer');
+  const gop = v('gop-nom')+v('gop-renta')+v('gop-serv')+v('gop-mkt')+v('gop-mant')+v('gop-otros');
+  const gfin = v('gfin-isr')+v('gfin-int')+v('gfin-dep');
+  const ub = ing-cogs, ebitda = ub-gop, neta = ebitda-gfin;
+  const p = x => pct(x,ing);
+  set('total-ing',fmt(ing));
+  ['alim','bna','ba','del','iotros'].forEach((k,i)=>{
+    const ids=['ing-alimentos','ing-bna','ing-ba','ing-delivery','ing-otros'];
+    set('pct-'+k, p(v(ids[i])));
+  });
+  set('total-cogs',fmt(cogs)); set('pct-tcogs',p(cogs));
+  if(ing){
+    set('pct-calim',p(v('cogs-alim'))); set('st-calim',sem(v('cogs-alim')/ing,.35,.40,false));
+    set('pct-cbeb',p(v('cogs-beb'))); set('st-cbeb',sem(v('cogs-beb')/ing,.40,.45,false));
+    set('pct-cmer',p(v('cogs-mer'))); set('st-cmer',sem(v('cogs-mer')/ing,.03,.05,false));
+    set('st-tcogs',sem(cogs/ing,.38,.42,false));
+  }
+  set('util-bruta',fmt(ub)); set('pct-ub-row',p(ub));
+  if(ing) set('st-ub',sem(ub/ing,.60,.50,true));
+  set('total-gop',fmt(gop)); set('pct-tgop',p(gop));
+  if(ing){
+    set('pct-nom',p(v('gop-nom'))); set('st-nom',sem(v('gop-nom')/ing,.30,.35,false));
+    set('pct-renta',p(v('gop-renta'))); set('st-renta',sem(v('gop-renta')/ing,.10,.12,false));
+    set('pct-serv',p(v('gop-serv'))); set('pct-mkt',p(v('gop-mkt')));
+    set('pct-mant',p(v('gop-mant'))); set('pct-gotros',p(v('gop-otros')));
+    set('st-tgop',sem(gop/ing,.55,.62,false));
+  }
+  set('ebitda-val',fmt(ebitda)); set('pct-ebitda-row',p(ebitda));
+  if(ing) set('st-ebitda',sem(ebitda/ing,.10,.05,true));
+  set('total-gfin',fmt(gfin)); set('pct-tgfin',p(gfin));
+  set('pct-isr',p(v('gfin-isr'))); set('pct-int',p(v('gfin-int'))); set('pct-dep',p(v('gfin-dep')));
+  const netaEl=document.getElementById('util-neta');
+  netaEl.textContent=fmt(neta); netaEl.className='pl-calc '+(neta>=0?'pos':'neg');
+  set('pct-neta-row',p(neta));
+  if(ing) set('st-neta',sem(neta/ing,.10,.05,true));
+  // KPIs
+  set('kpi-ventas',fmt(ing)); set('kpi-ub',fmt(ub)); set('kpi-ebitda',fmt(ebitda)); set('kpi-neta',fmt(neta));
+  if(ing){
+    document.getElementById('kpi-ub-tag').textContent=p(ub);
+    document.getElementById('kpi-ub-tag').className='kpi-tag '+(ub/ing>=.60?'tag-green':ub/ing>=.50?'tag-yellow':'tag-red');
+    document.getElementById('kpi-ebitda-tag').textContent=p(ebitda);
+    document.getElementById('kpi-ebitda-tag').className='kpi-tag '+(ebitda/ing>=.10?'tag-green':ebitda/ing>=.05?'tag-yellow':'tag-red');
+    document.getElementById('kpi-neta-tag').textContent=p(neta);
+    document.getElementById('kpi-neta-tag').className='kpi-tag '+(neta/ing>=.10?'tag-green':neta/ing>=.05?'tag-yellow':'tag-red');
+  }
+}
+
+// ── SAVE / LOAD ───────────────────────────────────────────────────────────
+const PL_FIELDS = ['ing-alimentos','ing-bna','ing-ba','ing-delivery','ing-otros',
+  'cogs-alim','cogs-beb','cogs-mer','gop-nom','gop-renta','gop-serv','gop-mkt',
+  'gop-mant','gop-otros','gfin-isr','gfin-int','gfin-dep'];
+
+async function savePLData() {
+  if (!currentUser) return;
+  const period = document.getElementById('period-select').value;
+  const data = {};
+  PL_FIELDS.forEach(f => data[f] = v(f));
+  const btn = document.getElementById('save-btn');
+  btn.textContent = 'Guardando...'; btn.disabled = true;
+  const { error } = await sb.from('pnl_data').upsert({
+    user_id: currentUser.id, period, data,
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'user_id,period' });
+  if (!error) {
+    btn.textContent = '✓ Guardado'; btn.className = 'save-btn saved';
+    setTimeout(() => { btn.textContent = 'Guardar'; btn.className = 'save-btn'; btn.disabled = false; }, 2000);
+  } else {
+    btn.textContent = 'Error — reintentar'; btn.disabled = false;
+  }
+}
+
+async function loadPLData() {
+  if (!currentUser) return;
+  const period = document.getElementById('period-select').value;
+  const { data } = await sb.from('pnl_data').select('data').eq('user_id', currentUser.id).eq('period', period).single();
+  if (data?.data) {
+    PL_FIELDS.forEach(f => { const el = document.getElementById(f); if(el) el.value = data.data[f] || 0; });
+  } else {
+    PL_FIELDS.forEach(f => { const el = document.getElementById(f); if(el) el.value = 0; });
+  }
+  calcPL();
+}
+
+// Auto-save cada 30 segundos
+setInterval(() => { if(currentUser && document.getElementById('page-pl').classList.contains('active')) savePLData(); }, 30000);
+</script>
+</body>
+</html>
