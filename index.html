@@ -594,9 +594,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 const SB_URL='https://gzelzskqelccigfawxph.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6ZWx6c2txZWxjY2lnZmF3eHBoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDUxMDgsImV4cCI6MjA4OTg4MTEwOH0.OwFt5DMDob5Y-h23S3Pz-GW_FvkO-uOpvA2303ERf7E';
 const {createClient}=supabase;
-const sb=createClient(SB_URL,SB_KEY);
-window.sb=sb; // exponer globalmente
-let CU=null; // current user
+const sb=createClient(SB_URL,SB_KEY,{
+  auth:{
+    persistSession:true,
+    storageKey:'ros-auth-'+Math.random().toString(36).slice(2),
+    storage:window.localStorage,
+    autoRefreshToken:true,
+    detectSessionInUrl:false,
+    lock: async (name, acquireTimeout, fn) => fn()
+  }
+});
+window.sb=sb;
+let CU=null;
 window.CU=null;
 
 // ── AUTH ──────────────────────────────────────────────────────────────────
