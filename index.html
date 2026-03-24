@@ -868,7 +868,7 @@ async function loadAllWeeks(){
 
 function getWeekTotals(wn){
   const d=allWeeks[wn]||{};
-  const vb=(['lun','mar','mie','jue','vie','sab','dom'].map(k=>'d-'+k).reduce((s,k)=>s+(parseFloat(d[k])||0),0));
+  const vb=['d-lun','d-mar','d-mie','d-jue','d-vie','d-sab','d-dom'].reduce((s,k)=>s+(parseFloat(d[k])||0),0);
   const ded=(parseFloat(d['dc-dto'])||0)+(parseFloat(d['dc-cor'])||0)+(parseFloat(d['dc-can'])||0);
   const vn=vb-ded;
   const cogs=(parseFloat(d['c-ali'])||0)+(parseFloat(d['c-beb'])||0)+(parseFloat(d['c-mer'])||0)+(parseFloat(d['c-gen'])||0);
@@ -921,18 +921,24 @@ function buildCascade(tableId,cols,colLabels,dataFn){
 }
 
 async function buildMensual(){
+  const tbl=document.getElementById("mensual-tbl");
+  tbl.innerHTML="<tr><td colspan=\"5\" style=\"text-align:center;padding:24px;color:var(--muted)\">Cargando datos...</td></tr>";
   await loadAllWeeks();
   const m=parseInt(document.getElementById('mes-sel').value);
   const wks=WEEKS_MONTH[m]||[];
   buildCascade('mensual-tbl',wks,wks.map((_,i)=>'Sem '+(i+1)),w=>getWeekTotals(w));
 }
 async function buildTrimestral(){
+  const tbl2=document.getElementById("trim-tbl");
+  tbl2.innerHTML="<tr><td colspan=\"5\" style=\"text-align:center;padding:24px;color:var(--muted)\">Cargando datos...</td></tr>";
   await loadAllWeeks();
   const q=parseInt(document.getElementById('qtr-sel').value);
   const mIdxs=[q*3,q*3+1,q*3+2];
   buildCascade('trim-tbl',mIdxs,mIdxs.map(i=>MONTHS[i]),m=>sumPeriod(WEEKS_MONTH[m]||[]));
 }
 async function buildAnual(){
+  const tbl3=document.getElementById("anual-tbl");
+  tbl3.innerHTML="<tr><td colspan=\"14\" style=\"text-align:center;padding:24px;color:var(--muted)\">Cargando datos...</td></tr>";
   await loadAllWeeks();
   const mIdxs=Array.from({length:12},(_,i)=>i);
   buildCascade('anual-tbl',mIdxs,mIdxs.map(i=>MONTHS[i].slice(0,3)),m=>sumPeriod(WEEKS_MONTH[m]||[]));
