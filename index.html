@@ -451,17 +451,10 @@ async function doReset() {
 }
 
 async function doLogout() {
-  try {
-    await sb.auth.signOut({ scope: 'local' });
-  } catch(e) {}
-  currentUser = null;
+  try { await sb.auth.signOut({ scope: "local" }); } catch(e) {}
   localStorage.clear();
   sessionStorage.clear();
-  document.getElementById('app-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('login-email').value = '';
-  document.getElementById('login-pass').value = '';
-  document.getElementById('auth-msg').style.display = 'none';
+  window.location.href = window.location.href;
 }
 
 // ── SESSION ───────────────────────────────────────────────────────────────
