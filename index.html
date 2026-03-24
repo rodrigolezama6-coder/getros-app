@@ -451,9 +451,17 @@ async function doReset() {
 }
 
 async function doLogout() {
-  await sb.auth.signOut();
+  try {
+    await sb.auth.signOut({ scope: 'local' });
+  } catch(e) {}
+  currentUser = null;
+  localStorage.clear();
+  sessionStorage.clear();
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('auth-msg').style.display = 'none';
 }
 
 // ── SESSION ───────────────────────────────────────────────────────────────
