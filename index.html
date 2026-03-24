@@ -594,7 +594,9 @@ const SB_URL='https://gzelzskqelccigfawxph.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6ZWx6c2txZWxjY2lnZmF3eHBoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDUxMDgsImV4cCI6MjA4OTg4MTEwOH0.OwFt5DMDob5Y-h23S3Pz-GW_FvkO-uOpvA2303ERf7E';
 const {createClient}=supabase;
 const sb=createClient(SB_URL,SB_KEY);
+window.sb=sb; // exponer globalmente
 let CU=null; // current user
+window.CU=null;
 
 // ── AUTH ──────────────────────────────────────────────────────────────────
 function authTab(t){
@@ -635,6 +637,7 @@ async function doLogout(){
 sb.auth.onAuthStateChange(async(event,session)=>{
   if(session?.user){
     CU=session.user;
+    window.CU=CU;
     document.getElementById('auth-screen').style.display='none';
     document.getElementById('app-screen').style.display='block';
     const em=session.user.email;
@@ -828,30 +831,55 @@ function addGiRow(){
 function removeGiRow(id){const i=giExtraIds.indexOf(id);if(i>-1)giExtraIds.splice(i,1);const e=document.getElementById('gi-ex-row-'+id);if(e)e.remove();calc();}
 
 // ── SAVE / LOAD ───────────────────────────────────────────────────────────
-const WFIELDS=['lun','mar','mie','jue','vie','sab','dom','pax-a','pax-b','dc-dto','dc-cor','dc-can',
-  'c-ali','c-beb','c-mer','c-gen','mo-sue','mo-ext','mo-ims','mo-agu','mo-vac',
+// Todos los IDs exactos de los inputs del formulario
+const WFIELDS=[
+  'd-lun','d-mar','d-mie','d-jue','d-vie','d-sab','d-dom',
+  'pax-a','pax-b','dc-dto','dc-cor','dc-can',
+  'c-ali','c-beb','c-mer','c-gen',
+  'mo-sue','mo-ext','mo-ims','mo-agu','mo-vac',
   'gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-ban','gi-con',
-  'fin-isr','fin-int','fin-dep','ex-bon','ex-ext'];
+  'fin-isr','fin-int','fin-dep','ex-bon','ex-ext'
+];
 
 async function guardarSemana(){
   if(!CU)return;
   const wn=parseInt(document.getElementById('week-sel').value);
   const data={};
-  WFIELDS.forEach(f=>{data[f.replace('d-','')]=v(f.startsWith('d-')?f:'d-'+f)||v(f);});
-  WFIELDS.forEach(f=>{data[f]=v(f);});
+  // Guardamos con el ID exacto del input como clave
+  WFIELDS.forEach(f=>{
+    const el=document.getElementById(f);
+    data[f]=el?parseFloat(el.value)||0:0;
+  });
   const btn=document.getElementById('save-btn');
   btn.textContent='Guardando...';btn.disabled=true;
-  const{error}=await sb.from('pnl_weeks').upsert({user_id:CU.id,year:2025,week_num:wn,data,updated_at:new Date().toISOString()},{onConflict:'user_id,year,week_num'});
-  if(!error){btn.textContent='✓ Guardado';btn.className='btn btn-saved';setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);}
-  else{btn.textContent='Error';btn.disabled=false;}
+  try{
+    const{error}=await sb.from('pnl_weeks').upsert(
+      {user_id:CU.id,year:2025,week_num:wn,data,updated_at:new Date().toISOString()},
+      {onConflict:'user_id,year,week_num'}
+    );
+    if(!error){
+      allWeeks[wn]=data;
+      btn.textContent='✓ Guardado';btn.className='btn btn-saved';
+      setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);
+    }else{
+      console.error('Supabase error:',error);
+      btn.textContent='Error — reintentar';btn.disabled=false;
+    }
+  }catch(e){
+    console.error('Save error:',e);
+    btn.textContent='Error — reintentar';btn.disabled=false;
+  }
 }
 
 async function loadSemana(){
   if(!CU)return;
   const wn=parseInt(document.getElementById('week-sel').value);
-  const{data}=await sb.from('pnl_weeks').select('data').eq('user_id',CU.id).eq('year',2025).eq('week_num',wn).single();
-  if(data?.data){WFIELDS.forEach(f=>{const e=document.getElementById(f);if(e)e.value=data.data[f]||0;});}
-  else{WFIELDS.forEach(f=>{const e=document.getElementById(f);if(e)e.value=0;});}
+  const{data,error}=await sb.from('pnl_weeks').select('data').eq('user_id',CU.id).eq('year',2025).eq('week_num',wn).maybeSingle();
+  if(data?.data){
+    WFIELDS.forEach(f=>{const e=document.getElementById(f);if(e)e.value=data.data[f]||0;});
+  }else{
+    WFIELDS.forEach(f=>{const e=document.getElementById(f);if(e)e.value=0;});
+  }
   calc();
 }
 
