@@ -20,10 +20,17 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    const text = data.content?.[0]?.text || 'No se pudo obtener el análisis.';
+    console.log('Status:', response.status);
+    console.log('Data:', JSON.stringify(data).slice(0, 500));
+
+    if (!response.ok) {
+      return res.status(200).json({ text: 'Error Claude: ' + (data.error?.message || JSON.stringify(data)) });
+    }
+
+    const text = data.content?.[0]?.text || 'Sin respuesta de Claude.';
     return res.status(200).json({ text });
   } catch (err) {
-    console.error('Analizar error:', err);
-    return res.status(500).json({ error: err.message });
+    console.error('Error:', err);
+    return res.status(200).json({ text: 'Error: ' + err.message });
   }
 }
