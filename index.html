@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ROS — Restaurant Operating System</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -352,6 +353,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <button class="ptab" onclick="ptab('ope')">⚙️ Operación</button>
         <button class="ptab" onclick="ptab('res')">🏆 Resultado</button>
         <button class="ptab" onclick="ptab('cmp')">📈 Comparativo</button>
+        <button class="ptab" onclick="ptab('analisis')">🤖 Análisis AI</button>
       </div>
 
       <!-- INGRESOS -->
@@ -498,6 +500,68 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <div class="ccomp" id="cmp-dif"><div class="ccomp-hdr" style="color:var(--blue)">Variación</div><div style="font-size:12px;color:var(--muted);text-align:center;padding:20px">—</div></div>
         </div>
       </div>
+
+      <!-- ANÁLISIS AI -->
+      <div class="ptabpage" id="pt-analisis">
+        <!-- SELECTOR DE PERÍODO -->
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+          <div style="font-size:12px;color:var(--muted)">Analizar período:</div>
+          <select class="sel" id="analisis-periodo" onchange="renderAnalisis()">
+            <option value="semana">Esta semana</option>
+            <option value="mes">Este mes</option>
+            <option value="trimestre">Este trimestre</option>
+          </select>
+          <button class="btn btn-ghost" onclick="renderAnalisis()" style="font-size:12px">🔄 Actualizar</button>
+        </div>
+
+        <!-- GRÁFICAS -->
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px" id="charts-grid">
+          <!-- Chart 1: Ventas por día -->
+          <div class="card" style="padding:16px">
+            <div style="font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:var(--blue)"></span>Ventas por día de la semana</div>
+            <canvas id="chart-dias" height="180"></canvas>
+          </div>
+          <!-- Chart 2: Comparativo semanas -->
+          <div class="card" style="padding:16px">
+            <div style="font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:var(--accent)"></span>Esta semana vs semana anterior</div>
+            <canvas id="chart-comp" height="180"></canvas>
+          </div>
+          <!-- Chart 3: Distribución de gastos -->
+          <div class="card" style="padding:16px">
+            <div style="font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:var(--yellow)"></span>Distribución de gastos</div>
+            <canvas id="chart-gastos" height="180"></canvas>
+          </div>
+          <!-- Chart 4: Evolución utilidad neta -->
+          <div class="card" style="padding:16px">
+            <div style="font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:var(--green)"></span>Evolución utilidad neta — últimas 8 semanas</div>
+            <canvas id="chart-neta" height="180"></canvas>
+          </div>
+        </div>
+
+        <!-- FOOD COST CHART (full width) -->
+        <div class="card" style="padding:16px;margin-bottom:16px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:var(--red)"></span>Food cost % — últimas 8 semanas · Ideal: 28–35%</div>
+          <canvas id="chart-fc" height="120"></canvas>
+        </div>
+
+        <!-- AI ANÁLISIS -->
+        <div style="background:rgba(200,241,53,0.05);border:1px solid rgba(200,241,53,0.2);border-radius:var(--radius-lg);padding:18px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:18px">🤖</span>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--accent)">Análisis inteligente con Claude</div>
+                <div style="font-size:11px;color:var(--muted)">Basado en tus datos reales de esta semana</div>
+              </div>
+            </div>
+            <button class="btn btn-accent" onclick="analizarConAI()" id="btn-analizar">✨ Analizar mis números</button>
+          </div>
+          <div id="ai-resultado" style="font-size:13px;color:var(--muted);line-height:1.8;min-height:60px">
+            Presiona "Analizar mis números" para que Claude revise tus resultados y te dé recomendaciones personalizadas.
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ═══ MENSUAL ═══ -->
@@ -1007,6 +1071,7 @@ function ptab(id){
   [...document.querySelectorAll('.ptab')].find(t=>t.getAttribute('onclick')===`ptab('${id}')`).classList.add('active');
   if(id==='res')buildResumen();
   if(id==='cmp')buildComp();
+  if(id==='analisis'){loadAllWeeks().then(()=>renderAnalisis());}
 }
 function toggleManual(){
   const b=document.getElementById('m-body'),a=document.getElementById('m-arrow');
@@ -1694,6 +1759,265 @@ async function loadProveedores(){
   const{data}=await sb.from('pnl_data').select('data').eq('user_id',CU.id).eq('period','proveedores-2025').maybeSingle();
   if(data?.data) provData=data.data;
   renderProveedores();
+}
+
+// ── ANÁLISIS AI + CHARTS ─────────────────────────────────────────────────
+let chartInstances = {};
+
+function destroyChart(id){
+  if(chartInstances[id]){ chartInstances[id].destroy(); delete chartInstances[id]; }
+}
+
+function getChartDefaults(){
+  return {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#6b7280',font:{family:'DM Sans',size:11}}}},
+    scales:{
+      x:{ticks:{color:'#6b7280',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
+      y:{ticks:{color:'#6b7280',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}}
+    }
+  };
+}
+
+function renderAnalisis(){
+  if(!CU) return;
+  const DAYS=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  const DAY_IDS=['d-lun','d-mar','d-mie','d-jue','d-vie','d-sab','d-dom'];
+
+  // Datos de la semana actual desde los inputs
+  const ventasDia = DAY_IDS.map(id=>v(id));
+  const totalVentas = ventasDia.reduce((a,b)=>a+b,0);
+  const cogs = v('c-ali')+v('c-beb')+v('c-mer')+v('c-gen');
+  const mo = v('mo-sue')+v('mo-ext')+v('mo-ims')+v('mo-agu')+v('mo-vac');
+  const giFields=['gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-ban','gi-con'];
+  const gi = giFields.reduce((s,k)=>s+v(k),0);
+  const fin = v('fin-isr')+v('fin-int')+v('fin-dep');
+  const gop = mo+gi+fin;
+  const neta = totalVentas-cogs-gop;
+  const fc = totalVentas>0?(cogs/totalVentas*100).toFixed(1):0;
+
+  // Semana anterior desde allWeeks
+  const wn = parseInt(document.getElementById('week-sel').value);
+  const prevWeek = allWeeks[wn-1]||{};
+  const prevVentas = ['d-lun','d-mar','d-mie','d-jue','d-vie','d-sab','d-dom'].reduce((s,k)=>s+(parseFloat(prevWeek[k])||0),0);
+
+  // Chart 1: Ventas por día
+  destroyChart('dias');
+  const ctx1 = document.getElementById('chart-dias');
+  if(ctx1){
+    chartInstances['dias'] = new Chart(ctx1, {
+      type:'bar',
+      data:{
+        labels:DAYS,
+        datasets:[{
+          label:'Ventas ($)',
+          data:ventasDia,
+          backgroundColor:'rgba(96,165,250,0.6)',
+          borderColor:'rgba(96,165,250,1)',
+          borderWidth:1,
+          borderRadius:4
+        }]
+      },
+      options:{...getChartDefaults(),
+        plugins:{...getChartDefaults().plugins,legend:{display:false}},
+        scales:{...getChartDefaults().scales,
+          y:{...getChartDefaults().scales.y,ticks:{...getChartDefaults().scales.y.ticks,callback:v=>'$'+Math.round(v/1000)+'k'}}
+        }
+      }
+    });
+  }
+
+  // Chart 2: Esta semana vs anterior
+  destroyChart('comp');
+  const ctx2 = document.getElementById('chart-comp');
+  if(ctx2){
+    const prevDias = ['d-lun','d-mar','d-mie','d-jue','d-vie','d-sab','d-dom'].map(k=>parseFloat(prevWeek[k])||0);
+    chartInstances['comp'] = new Chart(ctx2, {
+      type:'bar',
+      data:{
+        labels:DAYS,
+        datasets:[
+          {label:'Esta semana',data:ventasDia,backgroundColor:'rgba(200,241,53,0.6)',borderColor:'rgba(200,241,53,1)',borderWidth:1,borderRadius:4},
+          {label:'Sem. anterior',data:prevDias,backgroundColor:'rgba(107,114,128,0.4)',borderColor:'rgba(107,114,128,0.6)',borderWidth:1,borderRadius:4}
+        ]
+      },
+      options:{...getChartDefaults(),
+        scales:{...getChartDefaults().scales,
+          y:{...getChartDefaults().scales.y,ticks:{...getChartDefaults().scales.y.ticks,callback:v=>'$'+Math.round(v/1000)+'k'}}
+        }
+      }
+    });
+  }
+
+  // Chart 3: Distribución de gastos (donut)
+  destroyChart('gastos');
+  const ctx3 = document.getElementById('chart-gastos');
+  if(ctx3 && gop+cogs>0){
+    chartInstances['gastos'] = new Chart(ctx3, {
+      type:'doughnut',
+      data:{
+        labels:['COGS','Mano de obra','Gastos ind.','Financiero'],
+        datasets:[{
+          data:[cogs,mo,gi,fin],
+          backgroundColor:['rgba(251,191,36,0.7)','rgba(96,165,250,0.7)','rgba(167,139,250,0.7)','rgba(248,113,113,0.7)'],
+          borderColor:'rgba(13,16,24,1)',borderWidth:2
+        }]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom',labels:{color:'#6b7280',font:{family:'DM Sans',size:10},boxWidth:10,padding:8}}}
+      }
+    });
+  }
+
+  // Chart 4: Evolución utilidad neta últimas 8 semanas
+  destroyChart('neta');
+  const ctx4 = document.getElementById('chart-neta');
+  if(ctx4){
+    const semanas=[], utilidades=[];
+    for(let i=Math.max(1,wn-7);i<=wn;i++){
+      const d=allWeeks[i]||{};
+      const vb=['d-lun','d-mar','d-mie','d-jue','d-vie','d-sab','d-dom'].reduce((s,k)=>s+(parseFloat(d[k])||0),0);
+      const ded=(parseFloat(d['dc-dto'])||0)+(parseFloat(d['dc-cor'])||0)+(parseFloat(d['dc-can'])||0);
+      const vn=vb-ded;
+      const c=(parseFloat(d['c-ali'])||0)+(parseFloat(d['c-beb'])||0)+(parseFloat(d['c-mer'])||0)+(parseFloat(d['c-gen'])||0);
+      const m=(parseFloat(d['mo-sue'])||0)+(parseFloat(d['mo-ext'])||0)+(parseFloat(d['mo-ims'])||0)+(parseFloat(d['mo-agu'])||0)+(parseFloat(d['mo-vac'])||0);
+      const g=['gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-ban','gi-con'].reduce((s,k)=>s+(parseFloat(d[k])||0),0);
+      const f=(parseFloat(d['fin-isr'])||0)+(parseFloat(d['fin-int'])||0)+(parseFloat(d['fin-dep'])||0);
+      semanas.push('S'+i);
+      utilidades.push(Math.round(vn-c-m-g-f));
+    }
+    chartInstances['neta'] = new Chart(ctx4, {
+      type:'line',
+      data:{
+        labels:semanas,
+        datasets:[{
+          label:'Utilidad neta ($)',
+          data:utilidades,
+          borderColor:'rgba(74,222,128,1)',
+          backgroundColor:'rgba(74,222,128,0.1)',
+          fill:true,borderWidth:2,pointRadius:4,
+          pointBackgroundColor:'rgba(74,222,128,1)',tension:0.3
+        }]
+      },
+      options:{...getChartDefaults(),
+        plugins:{...getChartDefaults().plugins,legend:{display:false}},
+        scales:{...getChartDefaults().scales,
+          y:{...getChartDefaults().scales.y,ticks:{...getChartDefaults().scales.y.ticks,callback:v=>'$'+Math.round(v/1000)+'k'}}
+        }
+      }
+    });
+  }
+
+  // Chart 5: Food cost % últimas 8 semanas
+  destroyChart('fc');
+  const ctx5 = document.getElementById('chart-fc');
+  if(ctx5){
+    const semFc=[], fcPcts=[];
+    for(let i=Math.max(1,wn-7);i<=wn;i++){
+      const d=allWeeks[i]||{};
+      const vb=['d-lun','d-mar','d-mie','d-jue','d-vie','d-sab','d-dom'].reduce((s,k)=>s+(parseFloat(d[k])||0),0);
+      const ded=(parseFloat(d['dc-dto'])||0)+(parseFloat(d['dc-cor'])||0)+(parseFloat(d['dc-can'])||0);
+      const vn=vb-ded||1;
+      const c=(parseFloat(d['c-ali'])||0)+(parseFloat(d['c-beb'])||0)+(parseFloat(d['c-mer'])||0)+(parseFloat(d['c-gen'])||0);
+      semFc.push('S'+i);
+      fcPcts.push(parseFloat((c/vn*100).toFixed(1)));
+    }
+    chartInstances['fc'] = new Chart(ctx5, {
+      type:'line',
+      data:{
+        labels:semFc,
+        datasets:[
+          {label:'Food cost %',data:fcPcts,borderColor:'rgba(248,113,113,1)',backgroundColor:'rgba(248,113,113,0.1)',fill:true,borderWidth:2,pointRadius:4,pointBackgroundColor:'rgba(248,113,113,1)',tension:0.3},
+          {label:'Límite ideal (35%)',data:semFc.map(()=>35),borderColor:'rgba(251,191,36,0.5)',borderDash:[5,5],borderWidth:1,pointRadius:0}
+        ]
+      },
+      options:{...getChartDefaults(),
+        scales:{...getChartDefaults().scales,
+          y:{...getChartDefaults().scales.y,min:0,max:60,ticks:{...getChartDefaults().scales.y.ticks,callback:v=>v+'%'}}
+        }
+      }
+    });
+  }
+}
+
+async function analizarConAI(){
+  if(!CU) return;
+  const btn = document.getElementById('btn-analizar');
+  const resultado = document.getElementById('ai-resultado');
+  btn.textContent='Analizando...'; btn.disabled=true;
+  resultado.innerHTML='<span style="color:var(--muted)">🤖 Claude está analizando tus números...</span>';
+
+  // Recopilar datos para enviar a Claude
+  const wn = parseInt(document.getElementById('week-sel').value);
+  const DAY_IDS=['d-lun','d-mar','d-mie','d-jue','d-vie','d-sab','d-dom'];
+  const DAYS=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  const ventasDia = DAY_IDS.map((id,i)=>({dia:DAYS[i],venta:v(id)}));
+  const totalVentas = ventasDia.reduce((s,d)=>s+d.venta,0);
+  const ded = v('dc-dto')+v('dc-cor')+v('dc-can');
+  const vn = totalVentas-ded;
+  const cogs = v('c-ali')+v('c-beb')+v('c-mer')+v('c-gen');
+  const mo = v('mo-sue')+v('mo-ext')+v('mo-ims')+v('mo-agu')+v('mo-vac');
+  const gi = ['gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-ban','gi-con'].reduce((s,k)=>s+v(k),0);
+  const fin = v('fin-isr')+v('fin-int')+v('fin-dep');
+  const gop = mo+gi+fin;
+  const ub = vn-cogs;
+  const ebitda = ub-gop;
+  const neta = ebitda-(v('ex-bon')+v('ex-ext'));
+  const fc = vn>0?(cogs/vn*100).toFixed(1):0;
+  const paxA = v('pax-a');
+  const ticket = paxA>0?(totalVentas/paxA).toFixed(0):0;
+
+  // Semana anterior
+  const prevWeek = allWeeks[wn-1]||{};
+  const prevVentas = ['d-lun','d-mar','d-mie','d-jue','d-vie','d-sab','d-dom'].reduce((s,k)=>s+(parseFloat(prevWeek[k])||0),0);
+  const ventasDif = prevVentas>0?((totalVentas-prevVentas)/prevVentas*100).toFixed(1):null;
+
+  const prompt = `Eres un consultor financiero especialista en restaurantes mexicanos. Analiza los siguientes resultados de la semana ${wn} y da un análisis conciso y práctico en español.
+
+DATOS DE LA SEMANA:
+- Ventas brutas: $${Math.round(totalVentas).toLocaleString('es-MX')}
+- Ventas netas: $${Math.round(vn).toLocaleString('es-MX')}
+- Deducciones: $${Math.round(ded).toLocaleString('es-MX')}
+- COGS (costo de ventas): $${Math.round(cogs).toLocaleString('es-MX')} (${fc}% de ventas netas)
+- Utilidad bruta: $${Math.round(ub).toLocaleString('es-MX')} (${vn>0?(ub/vn*100).toFixed(1):0}%)
+- Mano de obra: $${Math.round(mo).toLocaleString('es-MX')} (${vn>0?(mo/vn*100).toFixed(1):0}%)
+- Gastos indirectos: $${Math.round(gi).toLocaleString('es-MX')} (${vn>0?(gi/vn*100).toFixed(1):0}%)
+- EBITDA: $${Math.round(ebitda).toLocaleString('es-MX')} (${vn>0?(ebitda/vn*100).toFixed(1):0}%)
+- Utilidad neta: $${Math.round(neta).toLocaleString('es-MX')} (${vn>0?(neta/vn*100).toFixed(1):0}%)
+- PAX (clientes): ${Math.round(paxA)}
+- Ticket promedio: $${ticket}
+${ventasDif?`- Variación vs semana anterior: ${ventasDif}%`:''}
+
+VENTAS POR DÍA:
+${ventasDia.map(d=>`- ${d.dia}: $${Math.round(d.venta).toLocaleString('es-MX')}`).join('
+')}
+
+Rangos ideales para restaurantes:
+- Food cost: 28-35%
+- Mano de obra: 18-22%
+- Utilidad neta: 15-20%
+
+Responde en máximo 5 puntos concisos. Usa emojis. Sé directo y práctico. Identifica lo que está bien, lo que hay que mejorar y 1-2 acciones concretas. No uses markdown con asteriscos, solo texto limpio con saltos de línea.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data = await response.json();
+    const text = data.content?.[0]?.text || 'No se pudo obtener el análisis.';
+    resultado.innerHTML = text.split('
+').filter(l=>l.trim()).map(l=>`<div style="margin-bottom:8px">${l}</div>`).join('');
+  } catch(e) {
+    resultado.innerHTML = '<span style="color:var(--red)">Error al conectar con Claude. Intenta de nuevo.</span>';
+  }
+
+  btn.textContent='✨ Analizar mis números'; btn.disabled=false;
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────
