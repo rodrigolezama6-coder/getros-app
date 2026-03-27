@@ -519,29 +519,29 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <!-- Chart 1: Ventas por día -->
           <div class="card" style="padding:16px">
             <div style="font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:var(--blue)"></span>Ventas por día de la semana</div>
-            <canvas id="chart-dias" height="180"></canvas>
+            <canvas id="chart-dias" style="max-height:200px"></canvas>
           </div>
           <!-- Chart 2: Comparativo semanas -->
           <div class="card" style="padding:16px">
             <div style="font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:var(--accent)"></span>Esta semana vs semana anterior</div>
-            <canvas id="chart-comp" height="180"></canvas>
+            <canvas id="chart-comp" style="max-height:200px"></canvas>
           </div>
           <!-- Chart 3: Distribución de gastos -->
           <div class="card" style="padding:16px">
             <div style="font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:var(--yellow)"></span>Distribución de gastos</div>
-            <canvas id="chart-gastos" height="180"></canvas>
+            <canvas id="chart-gastos" style="max-height:200px"></canvas>
           </div>
           <!-- Chart 4: Evolución utilidad neta -->
           <div class="card" style="padding:16px">
             <div style="font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:var(--green)"></span>Evolución utilidad neta — últimas 8 semanas</div>
-            <canvas id="chart-neta" height="180"></canvas>
+            <canvas id="chart-neta" style="max-height:200px"></canvas>
           </div>
         </div>
 
         <!-- FOOD COST CHART (full width) -->
         <div class="card" style="padding:16px;margin-bottom:16px">
           <div style="font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:var(--red)"></span>Food cost % — últimas 8 semanas · Ideal: 28–35%</div>
-          <canvas id="chart-fc" height="120"></canvas>
+          <canvas id="chart-fc" style="max-height:140px"></canvas>
         </div>
 
         <!-- AI ANÁLISIS -->
@@ -1770,7 +1770,7 @@ function destroyChart(id){
 
 function getChartDefaults(){
   return {
-    responsive:true, maintainAspectRatio:false,
+    responsive:true, maintainAspectRatio:true,
     plugins:{legend:{labels:{color:'#6b7280',font:{family:'DM Sans',size:11}}}},
     scales:{
       x:{ticks:{color:'#6b7280',font:{family:'DM Sans',size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
