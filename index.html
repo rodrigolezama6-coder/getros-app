@@ -563,6 +563,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
     <!-- ═══ FISCAL ═══ -->
     <div class="page" id="page-fiscal">
+      <!-- DISCLAIMER FISCAL -->
+      <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start">
+        <span style="font-size:20px;flex-shrink:0">⚠️</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--yellow);margin-bottom:4px">Antes de continuar — consigue un Contador</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.7">Esta sección es una <strong style="color:var(--text)">guía informativa de referencia</strong>, no asesoría fiscal profesional. Cada negocio tiene una situación particular. ROS te ayuda a entender y organizar tus obligaciones, pero <strong style="color:var(--text)">no sustituye a un Contador Público certificado</strong>. Contratar un contador desde el inicio es la mejor inversión para tu restaurante.</div>
+        </div>
+      </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
         <div class="kpi yl" style="padding:16px"><div class="kl">IVA · ISR · Retenciones</div><div class="kv" style="color:var(--yellow);font-size:14px">Día 17 de cada mes</div><div class="ks">+ días hábiles según RFC</div></div>
         <div class="kpi yl" style="padding:16px"><div class="kl">Cuotas IMSS · ISERTP</div><div class="kv" style="color:var(--yellow);font-size:14px">Día 17 de cada mes</div><div class="ks">Mensual</div></div>
@@ -594,7 +602,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>Días adicionales según RFC</div><div class="card-hint">6° dígito numérico de tu RFC</div></div>
           <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:14px">
-            ${['1 y 2 → +1 día hábil','3 y 4 → +2 días hábiles','5 y 6 → +3 días hábiles','7 y 8 → +4 días hábiles','9 y 0 → +5 días hábiles'].map(t=>`<div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center;font-size:11px;color:var(--muted)">${t}</div>`).join('')}
+            <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center;font-size:11px;color:var(--muted)">1 y 2 → +1 día hábil</div>
+            <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center;font-size:11px;color:var(--muted)">3 y 4 → +2 días hábiles</div>
+            <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center;font-size:11px;color:var(--muted)">5 y 6 → +3 días hábiles</div>
+            <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center;font-size:11px;color:var(--muted)">7 y 8 → +4 días hábiles</div>
+            <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center;font-size:11px;color:var(--muted)">9 y 0 → +5 días hábiles</div>
           </div>
         </div>
       </div>
@@ -615,7 +627,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           </div>
           <div style="padding:14px 16px;border-top:1px solid var(--border)">
             <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">Para constituirse ante Notario necesitas:</div>
-            ${['Denominación o razón social','Objeto social (actividades y fines)','Domicilio fiscal (comprobante)','Capital social y número de acciones por socio','RFC e identificación de cada socio','Nombramiento de representante legal'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--border)">• ${t}</div>`).join('')}
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">• Denominación o razón social</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">• Objeto social (actividades y fines para los que se constituye)</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">• Domicilio fiscal (comprobante de domicilio)</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">• Capital social, valor de las acciones y número por socio</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">• RFC, identificación oficial y comprobante de domicilio de cada socio</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0">• Nombramiento del representante legal</div>
             <div style="font-size:11px;color:var(--hint);margin-top:8px">Tipos más comunes: SA de CV · SRL · SAS (Sociedad por Acciones Simplificada)</div>
           </div>
         </div>
@@ -644,7 +661,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         </div>
         <div class="card" style="margin-top:12px">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>Herramientas digitales SAT que necesitas</div></div>
-          ${[['RFC','Registro Federal de Contribuyentes','Presencial en oficinas SAT · citas.sat.gob.mx'],['e.firma','Firma electrónica avanzada · mismos efectos que firma autógrafa','Presencial en SAT · Vigencia 4 años'],['CSD','Certificado de Sello Digital para firmar facturas electrónicas','En línea con app Certifica · Vigencia 4 años'],['Buzón Tributario','Canal de comunicación oficial con el SAT · Revisar 2 veces por semana','sat.gob.mx/minisitio/BuzonTributario · Registrar correo y celular']].map(([t,d,p])=>`<div class="fcal-row"><div><div style="font-size:13px;font-weight:500">${t}</div><div style="font-size:11px;color:var(--muted)">${d}</div></div><div style="font-size:11px;color:var(--muted);max-width:300px">${p}</div></div>`).join('')}
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">RFC</div><div style="font-size:11px;color:var(--muted)">Registro Federal de Contribuyentes</div></div><div style="font-size:11px;color:var(--muted)">Presencial en oficinas SAT · citas.sat.gob.mx</div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">e.firma</div><div style="font-size:11px;color:var(--muted)">Firma electrónica avanzada · mismos efectos que firma autógrafa</div></div><div style="font-size:11px;color:var(--muted)">Presencial en SAT · Vigencia 4 años</div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">CSD — Certificado de Sello Digital</div><div style="font-size:11px;color:var(--muted)">Para firmar facturas electrónicas (CFDI)</div></div><div style="font-size:11px;color:var(--muted)">En línea con app Certifica · Vigencia 4 años</div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">Buzón Tributario</div><div style="font-size:11px;color:var(--muted)">Canal oficial de comunicación con el SAT · Revisar 2 veces por semana</div></div><div style="font-size:11px;color:var(--muted)">sat.gob.mx · Registrar correo y celular obligatorio</div></div>
         </div>
       </div>
 
@@ -654,7 +674,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--yellow)"></span>IVA — Impuesto al Valor Agregado</div></div>
           <div style="padding:14px 16px">
             <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:12px">Impuesto indirecto — lo trasladas al consumidor final. Tasa general: <strong style="color:var(--text)">16%</strong> sobre tus ingresos.</div>
-            ${['Declaración de pago definitivo mensual de IVA · Día 17','DIOT — Declaración Informativa de Operaciones con Terceros · Último día del mes'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)">• ${t}</div>`).join('')}
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">• Declaración de pago definitivo mensual de IVA · Día 17 de cada mes</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0">• DIOT — Declaración Informativa de Operaciones con Terceros · Último día del mes</div>
           </div>
         </div>
         <div class="card" style="margin-top:12px">
@@ -666,7 +687,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
               <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">Personas Físicas</div><div style="font-size:18px;font-weight:600;color:var(--yellow)">1.92%–35%</div></div>
               <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">RESICO PF</div><div style="font-size:18px;font-weight:600;color:var(--green)">1%–2.5%</div></div>
             </div>
-            ${['Pago provisional mensual · Día 17','Declaración anual PM: 31 de marzo · PF: 30 de abril'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)">• ${t}</div>`).join('')}
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">• Pago provisional mensual · Día 17 de cada mes</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0">• Declaración anual: Personas Morales 31 de marzo · Personas Físicas 30 de abril</div>
           </div>
         </div>
       </div>
@@ -677,14 +699,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>IMSS e INFONAVIT</div></div>
           <div style="padding:14px 16px">
             <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px">Si tienes trabajadores estás obligado a registrarte como patrón.</div>
-            ${['Registro patronal en Régimen Obligatorio','Inscribir a cada trabajador al IMSS','Avisos de altas, bajas y modificaciones de salario','Pago mensual de cuotas obrero-patronales · Día 17','Determinación anual de Prima de Riesgos de Trabajo','Activar Buzón IMSS para recibir notificaciones'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)">☑ ${t}</div>`).join('')}
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Registro patronal en Régimen Obligatorio</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Inscribir a cada trabajador al IMSS</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Presentar avisos de altas, bajas y modificaciones de salario</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Pago mensual de cuotas obrero-patronales · Día 17</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Determinación anual de Prima en el Seguro de Riesgos de Trabajo</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0">☑ Activar Buzón IMSS para recibir notificaciones oficiales</div>
           </div>
         </div>
         <div class="card" style="margin-top:12px">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--purple)"></span>ISERTP — Impuesto Sobre Nómina Puebla</div></div>
           <div style="padding:14px 16px">
             <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px">Tasa: <strong style="color:var(--text)">3%</strong> sobre remuneraciones pagadas a trabajadores en Puebla.</div>
-            ${['Inscripción al padrón estatal de contribuyentes','Determinación mensual de la base gravable','Presentar declaración y pago · Día 17 de cada mes'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)">• ${t}</div>`).join('')}
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">• Inscripción al padrón estatal de contribuyentes</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">• Determinación mensual de la base gravable (remuneraciones pagadas)</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0">• Presentar declaración y pago · Día 17 de cada mes</div>
           </div>
         </div>
       </div>
@@ -694,13 +723,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--green)"></span>Monitoreo Mensual con tu Contador</div></div>
           <div style="padding:14px 16px">
-            ${['Opinión de cumplimiento SAT, IMSS e INFONAVIT en sentido positivo','Acuses de declaraciones e informativas presentadas y comprobante de pago','Estatus del buzón tributario — atender notificaciones de autoridad','Balanza de comprobación y estados financieros del mes','Cédulas de determinación de cuotas patronales','Verificar que estás localizable en tu domicilio fiscal'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--green);flex-shrink:0">✓</span><span>${t}</span></div>`).join('')}
+            <div style="font-size:12px;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--border);display:flex;gap:8px"><span style="color:var(--green);flex-shrink:0">✓</span><span>Opinión de cumplimiento SAT, IMSS e INFONAVIT — debe estar en sentido positivo y sin adeudos</span></div>
+            <div style="font-size:12px;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--border);display:flex;gap:8px"><span style="color:var(--green);flex-shrink:0">✓</span><span>Acuses de declaraciones e informativas presentadas + comprobante de pago</span></div>
+            <div style="font-size:12px;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--border);display:flex;gap:8px"><span style="color:var(--green);flex-shrink:0">✓</span><span>Estatus del buzón tributario — atender todas las notificaciones de autoridad</span></div>
+            <div style="font-size:12px;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--border);display:flex;gap:8px"><span style="color:var(--green);flex-shrink:0">✓</span><span>Balanza de comprobación y estados financieros del mes</span></div>
+            <div style="font-size:12px;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--border);display:flex;gap:8px"><span style="color:var(--green);flex-shrink:0">✓</span><span>Cédulas de determinación de cuotas patronales y comprobante de pago</span></div>
+            <div style="font-size:12px;color:var(--muted);padding:7px 0;display:flex;gap:8px"><span style="color:var(--green);flex-shrink:0">✓</span><span>Verificar que tu domicilio fiscal esté localizable ante el SAT</span></div>
           </div>
         </div>
         <div class="card" style="margin-top:12px">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--accent)"></span>Expediente Anual</div></div>
           <div style="padding:14px 16px">
-            ${['Constancia de Situación Fiscal','Acuses de declaraciones provisionales o definitivas','Acuses de DIOT presentadas','Acuse de Prima en Riesgos de Trabajo','Acuses de contabilidad electrónica enviada','Acuse de declaración anual','Vigencia de e.firma y CSD (renovar cada 4 años)','Balanzas, auxiliares y pólizas contables','Estados financieros al 31 de diciembre'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)">☑ ${t}</div>`).join('')}
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Constancia de Situación Fiscal</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Acuses de declaraciones provisionales o definitivas de impuestos federales</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Acuses de DIOT presentadas</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Acuse de Prima en el Seguro de Riesgos de Trabajo</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Acuses de envío de contabilidad electrónica</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Acuse de presentación de la declaración anual</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Verificar vigencia de e.firma y CSD — renovar cada 4 años</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border)">☑ Balanzas de comprobación, auxiliares y pólizas contables</div>
+            <div style="font-size:12px;color:var(--muted);padding:6px 0">☑ Estados financieros al 31 de diciembre</div>
           </div>
         </div>
       </div>
