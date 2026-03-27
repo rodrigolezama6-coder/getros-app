@@ -774,7 +774,129 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
     <!-- COMING SOON pages -->
     <div class="page" id="page-inventario"><div class="coming"><div class="coming-icon">📦</div><div class="coming-title">Inventarios</div><div class="coming-sub">Control de stock con método PEPS. Próximamente.</div></div></div>
-    <div class="page" id="page-proveedores"><div class="coming"><div class="coming-icon">🚛</div><div class="coming-title">Proveedores</div><div class="coming-sub">Catálogo y ranking automático. Próximamente.</div></div></div>
+    <!-- ═══ PROVEEDORES ═══ -->
+    <div class="page" id="page-proveedores">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:18px">Directorio de Proveedores</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Califica y organiza tus proveedores por categoría</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-accent" onclick="openProvModal()" id="btn-add-prov">+ Agregar proveedor</button>
+          <button class="btn btn-accent" onclick="saveProveedores()" id="prov-save-btn" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border2)">💾 Guardar</button>
+        </div>
+      </div>
+
+      <!-- CATEGORÍA TABS -->
+      <div style="display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:3px;margin-bottom:18px;flex-wrap:wrap">
+        <button class="ptab active" onclick="switchProvCat('alimentos')" id="pcat-alimentos">🥩 Alimentos</button>
+        <button class="ptab" onclick="switchProvCat('bebidas')" id="pcat-bebidas">🍺 Bebidas</button>
+        <button class="ptab" onclick="switchProvCat('insumos')" id="pcat-insumos">🧴 Otros Insumos</button>
+        <button class="ptab" onclick="switchProvCat('servicios')" id="pcat-servicios">🔧 Servicios</button>
+        <button class="ptab" onclick="switchProvCat('otros')" id="pcat-otros">📦 Otros</button>
+      </div>
+
+      <!-- SUBCATEGORÍAS Y PROVEEDORES -->
+      <div id="prov-content"></div>
+
+      <!-- MODAL AGREGAR PROVEEDOR -->
+      <div id="prov-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center">
+        <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:24px;width:100%;max-width:480px;margin:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+            <div style="font-family:'Syne',sans-serif;font-size:16px">Agregar Proveedor</div>
+            <button onclick="closeProvModal()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px">×</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div>
+              <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Nombre del proveedor *</label>
+              <input class="ri" type="text" id="prov-nombre" placeholder="Ej. Distribuidora García" style="width:100%">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div>
+                <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Categoría *</label>
+                <select class="ri" id="prov-cat" onchange="updateSubcats()" style="width:100%">
+                  <option value="alimentos">🥩 Alimentos</option>
+                  <option value="bebidas">🍺 Bebidas</option>
+                  <option value="insumos">🧴 Otros Insumos</option>
+                  <option value="servicios">🔧 Servicios</option>
+                  <option value="otros">📦 Otros</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Subcategoría *</label>
+                <select class="ri" id="prov-subcat" style="width:100%"></select>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div>
+                <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Contacto</label>
+                <input class="ri" type="text" id="prov-contacto" placeholder="Nombre del contacto" style="width:100%">
+              </div>
+              <div>
+                <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Teléfono / WhatsApp</label>
+                <input class="ri" type="text" id="prov-tel" placeholder="222 000 0000" style="width:100%">
+              </div>
+            </div>
+            <div>
+              <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Notas</label>
+              <input class="ri" type="text" id="prov-notas" placeholder="Días de entrega, condiciones, etc." style="width:100%">
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:14px">
+              <div style="font-size:12px;font-weight:600;margin-bottom:12px">Calificación inicial</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div>
+                    <div style="font-size:12px">Calidad</div>
+                    <div style="font-size:10px;color:var(--muted)">Peso: 50%</div>
+                  </div>
+                  <div style="display:flex;gap:4px" id="stars-calidad">
+                    <span onclick="setStars('calidad',1)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                    <span onclick="setStars('calidad',2)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                    <span onclick="setStars('calidad',3)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                    <span onclick="setStars('calidad',4)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                    <span onclick="setStars('calidad',5)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div>
+                    <div style="font-size:12px">Precio</div>
+                    <div style="font-size:10px;color:var(--muted)">Peso: 25%</div>
+                  </div>
+                  <div style="display:flex;gap:4px" id="stars-precio">
+                    <span onclick="setStars('precio',1)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                    <span onclick="setStars('precio',2)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                    <span onclick="setStars('precio',3)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                    <span onclick="setStars('precio',4)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                    <span onclick="setStars('precio',5)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div>
+                    <div style="font-size:12px">Servicio</div>
+                    <div style="font-size:10px;color:var(--muted)">Peso: 25%</div>
+                  </div>
+                  <div style="display:flex;gap:4px" id="stars-servicio">
+                    <span onclick="setStars('servicio',1)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                    <span onclick="setStars('servicio',2)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                    <span onclick="setStars('servicio',3)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                    <span onclick="setStars('servicio',4)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                    <span onclick="setStars('servicio',5)" style="font-size:22px;cursor:pointer;color:var(--muted)">★</span>
+                  </div>
+                </div>
+                <div style="border-top:1px solid var(--border);padding-top:10px;display:flex;align-items:center;justify-content:space-between">
+                  <div style="font-size:12px;font-weight:600">Calificación ponderada</div>
+                  <div style="font-size:20px;font-weight:600;color:var(--accent)" id="prov-score-preview">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+            <button onclick="closeProvModal()" class="btn btn-ghost">Cancelar</button>
+            <button onclick="addProveedor()" class="btn btn-accent">Agregar</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="page" id="page-nomina"><div class="coming"><div class="coming-icon">👥</div><div class="coming-title">Nómina y RH</div><div class="coming-sub">Plantilla y cálculo de nómina. Próximamente.</div></div></div>
     <div class="page" id="page-permisos"><div class="coming"><div class="coming-icon">📁</div><div class="coming-title">Permisos y Licencias</div><div class="coming-sub">Vault digital de documentos. Próximamente.</div></div></div>
     <div class="page" id="page-auditoria"><div class="coming"><div class="coming-icon">✅</div><div class="coming-title">Auditorías y Checklists</div><div class="coming-sub">Control semanal, mensual y anual. Próximamente.</div></div></div>
@@ -852,6 +974,7 @@ sb.auth.onAuthStateChange(async(event,session)=>{
     if(prof?.restaurant_name){document.getElementById('rest-name').textContent=prof.restaurant_name;}
     loadSemana();
     loadKanban();
+    loadProveedores();
   }
 });
 
@@ -1090,7 +1213,8 @@ async function loadSemana(){
 }
 
 function onWeekChange(){loadSemana();
-    loadKanban();}
+    loadKanban();
+    loadProveedores();}
 
 // ── CASCADE TABLES ────────────────────────────────────────────────────────
 let allWeeks={};
@@ -1343,6 +1467,233 @@ async function loadKanban(){
   const{data}=await sb.from('pnl_data').select('data').eq('user_id',CU.id).eq('period','kanban-2025').maybeSingle();
   if(data?.data) kanbanData=data.data;
   initKanban();
+}
+
+// ── PROVEEDORES ──────────────────────────────────────────────────────────
+let provData = {
+  alimentos: { proteinas:[], verduras:[], lacteos:[], granos:[], frutas:[], otros:[] },
+  bebidas: { destilados:[], vinos:[], cervezas:[], refrescos:[], cafe:[], otros:[] },
+  insumos: { limpieza:[], desechables:[], uniformes:[], empaque:[], otros:[] },
+  servicios: { mantenimiento:[], contabilidad:[], marketing:[], seguridad:[], otros:[] },
+  otros: { otros:[] }
+};
+
+const PROV_SUBCATS = {
+  alimentos: {proteinas:'Proteínas',verduras:'Verduras y Hortalizas',lacteos:'Lácteos',granos:'Granos y Abarrotes',frutas:'Frutas',otros:'Otros'},
+  bebidas: {destilados:'Destilados y Licores',vinos:'Vinos',cervezas:'Cervezas',refrescos:'Refrescos y Agua',cafe:'Café e Infusiones',otros:'Otros'},
+  insumos: {limpieza:'Limpieza e Higiene',desechables:'Desechables y Empaque',uniformes:'Uniformes',empaque:'Empaque y Presentación',otros:'Otros'},
+  servicios: {mantenimiento:'Mantenimiento',contabilidad:'Contabilidad',marketing:'Marketing',seguridad:'Seguridad',otros:'Otros'},
+  otros: {otros:'General'}
+};
+
+const PROV_CAT_LABELS = {
+  alimentos:'🥩 Alimentos', bebidas:'🍺 Bebidas',
+  insumos:'🧴 Otros Insumos', servicios:'🔧 Servicios', otros:'📦 Otros'
+};
+
+let currentProvCat = 'alimentos';
+let provStars = { calidad:0, precio:0, servicio:0 };
+let editingProvId = null;
+
+function calcProvScore(cal,pre,ser){ return Math.round((cal*0.5 + pre*0.25 + ser*0.25)*10)/10; }
+
+function renderStars(score, size='14px'){
+  const full = Math.floor(score), half = score-full>=0.5;
+  let s='';
+  for(let i=1;i<=5;i++){
+    if(i<=full) s+=`<span style="color:#fbbf24;font-size:${size}">★</span>`;
+    else if(i===full+1&&half) s+=`<span style="color:#fbbf24;font-size:${size};opacity:.6">★</span>`;
+    else s+=`<span style="color:var(--border2);font-size:${size}">★</span>`;
+  }
+  return s;
+}
+
+function switchProvCat(cat){
+  currentProvCat = cat;
+  document.querySelectorAll('[id^="pcat-"]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pcat-'+cat).classList.add('active');
+  renderProveedores();
+}
+
+function renderProveedores(){
+  const cat = currentProvCat;
+  const subcats = PROV_SUBCATS[cat];
+  const data = provData[cat] || {};
+  let html = '';
+
+  Object.entries(subcats).forEach(([key, label]) => {
+    const items = data[key] || [];
+    // Sort by score desc
+    const sorted = [...items].sort((a,b) => calcProvScore(b.calidad,b.precio,b.servicio) - calcProvScore(a.calidad,a.precio,a.servicio));
+    html += `<div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">${label} <span style="background:var(--surface2);border-radius:99px;padding:1px 7px;font-size:10px;font-weight:400">${items.length}</span></div>
+      </div>`;
+
+    if(sorted.length === 0){
+      html += `<div style="background:var(--surface);border:1px dashed var(--border2);border-radius:var(--radius);padding:16px;text-align:center;font-size:12px;color:var(--hint)">Sin proveedores en esta categoría</div>`;
+    } else {
+      html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px">`;
+      sorted.forEach((p,i) => {
+        const score = calcProvScore(p.calidad,p.precio,p.servicio);
+        const rank = i===0&&sorted.length>1?'🥇':i===1&&sorted.length>2?'🥈':i===2?'🥉':'';
+        html += `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;position:relative;${i===0&&sorted.length>1?'border-color:rgba(200,241,53,.3)':''}">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
+            <div style="font-size:13px;font-weight:600">${rank} ${p.nombre}</div>
+            <div style="display:flex;gap:4px">
+              <button onclick="editProv('${cat}','${key}',${i})" style="background:none;border:1px solid var(--border2);border-radius:5px;color:var(--muted);cursor:pointer;padding:2px 6px;font-size:10px">✏️</button>
+              <button onclick="deleteProv('${cat}','${key}',${i})" style="background:none;border:1px solid var(--red-bg);border-radius:5px;color:var(--red);cursor:pointer;padding:2px 6px;font-size:10px">×</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <div style="font-size:20px;font-weight:700;color:var(--accent)">${score.toFixed(1)}</div>
+            <div>${renderStars(score,'15px')}</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px">
+            <div style="background:var(--surface2);border-radius:6px;padding:6px;text-align:center">
+              <div style="font-size:9px;color:var(--muted);margin-bottom:2px">Calidad 50%</div>
+              <div>${renderStars(p.calidad,'10px')}</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:6px;padding:6px;text-align:center">
+              <div style="font-size:9px;color:var(--muted);margin-bottom:2px">Precio 25%</div>
+              <div>${renderStars(p.precio,'10px')}</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:6px;padding:6px;text-align:center">
+              <div style="font-size:9px;color:var(--muted);margin-bottom:2px">Servicio 25%</div>
+              <div>${renderStars(p.servicio,'10px')}</div>
+            </div>
+          </div>
+          ${p.contacto?`<div style="font-size:11px;color:var(--muted)">👤 ${p.contacto}${p.tel?' · '+p.tel:''}</div>`:''}
+          ${p.notas?`<div style="font-size:11px;color:var(--hint);margin-top:3px">📝 ${p.notas}</div>`:''}
+        </div>`;
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+
+  document.getElementById('prov-content').innerHTML = html;
+}
+
+function openProvModal(cat, subcat){
+  provStars = {calidad:0,precio:0,servicio:0};
+  editingProvId = null;
+  document.getElementById('prov-nombre').value='';
+  document.getElementById('prov-contacto').value='';
+  document.getElementById('prov-tel').value='';
+  document.getElementById('prov-notas').value='';
+  document.getElementById('prov-cat').value = cat || currentProvCat;
+  updateSubcats();
+  if(subcat) document.getElementById('prov-subcat').value = subcat;
+  updateStarDisplay('calidad',0);
+  updateStarDisplay('precio',0);
+  updateStarDisplay('servicio',0);
+  document.getElementById('prov-score-preview').textContent='—';
+  document.getElementById('prov-modal').style.display='flex';
+}
+
+function closeProvModal(){
+  document.getElementById('prov-modal').style.display='none';
+  editingProvId=null;
+}
+
+function updateSubcats(){
+  const cat = document.getElementById('prov-cat').value;
+  const sel = document.getElementById('prov-subcat');
+  sel.innerHTML = Object.entries(PROV_SUBCATS[cat]).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+}
+
+function setStars(rubro, val){
+  provStars[rubro]=val;
+  updateStarDisplay(rubro,val);
+  const score = calcProvScore(provStars.calidad,provStars.precio,provStars.servicio);
+  const el = document.getElementById('prov-score-preview');
+  if(provStars.calidad>0||provStars.precio>0||provStars.servicio>0){
+    el.textContent = score.toFixed(1)+' ★';
+    el.style.color='var(--accent)';
+  }
+}
+
+function updateStarDisplay(rubro,val){
+  const container=document.getElementById('stars-'+rubro);
+  if(!container)return;
+  container.querySelectorAll('span').forEach((s,i)=>{
+    s.style.color = i<val?'#fbbf24':'var(--muted)';
+  });
+}
+
+function addProveedor(){
+  const nombre = document.getElementById('prov-nombre').value.trim();
+  if(!nombre) return;
+  const cat = document.getElementById('prov-cat').value;
+  const subcat = document.getElementById('prov-subcat').value;
+  const prov = {
+    id: Date.now(),
+    nombre,
+    contacto: document.getElementById('prov-contacto').value.trim(),
+    tel: document.getElementById('prov-tel').value.trim(),
+    notas: document.getElementById('prov-notas').value.trim(),
+    calidad: provStars.calidad,
+    precio: provStars.precio,
+    servicio: provStars.servicio,
+    fecha: new Date().toLocaleDateString('es-MX')
+  };
+  if(!provData[cat]) provData[cat]={};
+  if(!provData[cat][subcat]) provData[cat][subcat]=[];
+
+  if(editingProvId!==null){
+    const idx = provData[cat][subcat].findIndex(p=>p.id===editingProvId);
+    if(idx>-1) provData[cat][subcat][idx]=prov;
+  } else {
+    provData[cat][subcat].push(prov);
+  }
+  closeProvModal();
+  currentProvCat=cat;
+  switchProvCat(cat);
+}
+
+function editProv(cat,subcat,idx){
+  const p = provData[cat][subcat][idx];
+  editingProvId=p.id;
+  document.getElementById('prov-nombre').value=p.nombre;
+  document.getElementById('prov-contacto').value=p.contacto||'';
+  document.getElementById('prov-tel').value=p.tel||'';
+  document.getElementById('prov-notas').value=p.notas||'';
+  document.getElementById('prov-cat').value=cat;
+  updateSubcats();
+  document.getElementById('prov-subcat').value=subcat;
+  provStars={calidad:p.calidad,precio:p.precio,servicio:p.servicio};
+  updateStarDisplay('calidad',p.calidad);
+  updateStarDisplay('precio',p.precio);
+  updateStarDisplay('servicio',p.servicio);
+  const score=calcProvScore(p.calidad,p.precio,p.servicio);
+  document.getElementById('prov-score-preview').textContent=score.toFixed(1)+' ★';
+  document.getElementById('prov-modal').style.display='flex';
+}
+
+function deleteProv(cat,subcat,idx){
+  provData[cat][subcat].splice(idx,1);
+  renderProveedores();
+}
+
+async function saveProveedores(){
+  if(!CU)return;
+  const btn=document.getElementById('prov-save-btn');
+  btn.textContent='Guardando...';btn.disabled=true;
+  try{
+    const{error}=await sb.from('pnl_data').upsert({
+      user_id:CU.id,period:'proveedores-2025',data:provData,updated_at:new Date().toISOString()
+    },{onConflict:'user_id,period'});
+    if(!error){btn.textContent='✓ Guardado';btn.style.background='var(--green-bg)';btn.style.color='var(--green)';setTimeout(()=>{btn.textContent='💾 Guardar';btn.style.background='';btn.style.color='';btn.disabled=false;},2000);}
+    else{btn.textContent='Error';btn.disabled=false;}
+  }catch(e){btn.textContent='Error';btn.disabled=false;}
+}
+
+async function loadProveedores(){
+  if(!CU)return;
+  const{data}=await sb.from('pnl_data').select('data').eq('user_id',CU.id).eq('period','proveedores-2025').maybeSingle();
+  if(data?.data) provData=data.data;
+  renderProveedores();
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────
