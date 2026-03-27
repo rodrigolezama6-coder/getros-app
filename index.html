@@ -289,6 +289,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <button class="s-item" onclick="goTo('permisos')"><span style="font-size:14px">📁</span><span>Permisos</span><span class="s-badge soon">Pronto</span></button>
     <div class="s-sec">Control</div>
     <button class="s-item" onclick="goTo('auditoria')"><span style="font-size:14px">✅</span><span>Auditorías</span><span class="s-badge soon">Pronto</span></button>
+    <div class="s-sec">Gestión</div>
+    <button class="s-item" onclick="goTo('pendientes')"><span style="font-size:14px">📌</span><span>Pendientes</span></button>
   </nav>
   <div class="s-footer">
     <a href="https://discord.gg/Gf2tufwp4" target="_blank" class="s-discord"><span style="font-size:15px">💬</span><span>Discord ROS</span></a>
@@ -561,19 +563,170 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
     <!-- ═══ FISCAL ═══ -->
     <div class="page" id="page-fiscal">
-      <div class="fiscal3">
-        <div class="kpi yl" style="padding:16px"><div class="kl">IVA neto a pagar</div><div class="kv" style="color:var(--yellow)">$45,200</div><div class="ks">Día 17 del mes siguiente</div></div>
-        <div class="kpi yl" style="padding:16px"><div class="kl">ISR provisional</div><div class="kv" style="color:var(--yellow)">$12,000</div><div class="ks">Día 17 del mes siguiente</div></div>
-        <div class="kpi rd" style="padding:16px"><div class="kl">IMSS + INFONAVIT</div><div class="kv" style="color:var(--red)">$22,000</div><div class="ks">Bimestral</div></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+        <div class="kpi yl" style="padding:16px"><div class="kl">IVA · ISR · Retenciones</div><div class="kv" style="color:var(--yellow);font-size:14px">Día 17 de cada mes</div><div class="ks">+ días hábiles según RFC</div></div>
+        <div class="kpi yl" style="padding:16px"><div class="kl">Cuotas IMSS · ISERTP</div><div class="kv" style="color:var(--yellow);font-size:14px">Día 17 de cada mes</div><div class="ks">Mensual</div></div>
+        <div class="kpi rd" style="padding:16px"><div class="kl">Declaración anual PM</div><div class="kv" style="color:var(--red);font-size:14px">31 de Marzo</div><div class="ks">Personas morales</div></div>
       </div>
-      <div class="card">
-        <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Calendario de Obligaciones</div></div>
-        <div class="fcal-row"><div><div style="font-size:13px">Declaración de IVA</div><div style="font-size:11px;color:var(--muted)">Mensual · Portal SAT</div></div><div style="font-size:12px;color:var(--muted)">Día 17</div><div><span class="badge bwarn">Pendiente</span></div></div>
-        <div class="fcal-row"><div><div style="font-size:13px">Pago provisional ISR</div><div style="font-size:11px;color:var(--muted)">Mensual · Portal SAT</div></div><div style="font-size:12px;color:var(--muted)">Día 17</div><div><span class="badge bwarn">Pendiente</span></div></div>
-        <div class="fcal-row"><div><div style="font-size:13px">DIOT — Terceros</div><div style="font-size:11px;color:var(--muted)">Mensual · Portal SAT</div></div><div style="font-size:12px;color:var(--muted)">Día 17</div><div><span class="badge bok">Al corriente</span></div></div>
-        <div class="fcal-row"><div><div style="font-size:13px">IMSS — Cuotas patronales</div><div style="font-size:11px;color:var(--muted)">Bimestral · SUA</div></div><div style="font-size:12px;color:var(--muted)">Día 17</div><div><span class="badge bbad">Vence pronto</span></div></div>
-        <div class="fcal-row"><div><div style="font-size:13px">Declaración anual PM</div><div style="font-size:11px;color:var(--muted)">Anual · Declarasat</div></div><div style="font-size:12px;color:var(--muted)">Marzo 31</div><div><span class="badge bok">Presentada</span></div></div>
-        <div class="fcal-row"><div><div style="font-size:13px">Reparto de utilidades (PTU)</div><div style="font-size:11px;color:var(--muted)">Anual · 60 días tras declaración</div></div><div style="font-size:12px;color:var(--muted)">Mayo 30</div><div><span class="badge bwarn">Pendiente</span></div></div>
+
+      <!-- GUÍA FISCAL TABS -->
+      <div style="display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:3px;margin-bottom:16px;width:fit-content;flex-wrap:wrap">
+        <button class="ptab active" onclick="fTab('cal')" id="ftab-cal">📅 Calendario</button>
+        <button class="ptab" onclick="fTab('fig')" id="ftab-fig">🏢 Figura Jurídica</button>
+        <button class="ptab" onclick="fTab('reg')" id="ftab-reg">📋 Régimen Fiscal</button>
+        <button class="ptab" onclick="fTab('imp')" id="ftab-imp">💰 Impuestos</button>
+        <button class="ptab" onclick="fTab('pat')" id="ftab-pat">👷 Obligaciones Patronales</button>
+        <button class="ptab" onclick="fTab('mon')" id="ftab-mon">✅ Monitoreo</button>
+      </div>
+
+      <!-- CALENDARIO -->
+      <div id="fp-cal">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Calendario de Obligaciones Fiscales</div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">IVA · ISR · Retenciones</div><div style="font-size:11px;color:var(--muted)">Pagos provisionales y definitivos · Portal SAT</div></div><div style="font-size:12px;color:var(--muted)">Día 17</div><div><span class="badge bwarn">Mensual</span></div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">Cuotas patronales IMSS</div><div style="font-size:11px;color:var(--muted)">Sistema SUA</div></div><div style="font-size:12px;color:var(--muted)">Día 17</div><div><span class="badge bwarn">Mensual</span></div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">ISERTP — Impuesto sobre nómina</div><div style="font-size:11px;color:var(--muted)">3% Puebla · Registro estatal</div></div><div style="font-size:12px;color:var(--muted)">Día 17</div><div><span class="badge bwarn">Mensual</span></div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">DIOT — Operaciones con terceros</div><div style="font-size:11px;color:var(--muted)">Declaración informativa · Portal SAT</div></div><div style="font-size:12px;color:var(--muted)">Último día del mes</div><div><span class="badge bwarn">Mensual</span></div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">Declaración anual ISR — Personas Morales</div><div style="font-size:11px;color:var(--muted)">Declarasat · Portal SAT</div></div><div style="font-size:12px;color:var(--muted)">31 de Marzo</div><div><span class="badge bok">Anual</span></div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">Declaración anual ISR — Personas Físicas</div><div style="font-size:11px;color:var(--muted)">Portal SAT</div></div><div style="font-size:12px;color:var(--muted)">30 de Abril</div><div><span class="badge bok">Anual</span></div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">PTU — Reparto de utilidades</div><div style="font-size:11px;color:var(--muted)">60 días después de declaración anual</div></div><div style="font-size:12px;color:var(--muted)">Mayo 30</div><div><span class="badge bwarn">Anual</span></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>Días adicionales según RFC</div><div class="card-hint">6° dígito numérico de tu RFC</div></div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:14px">
+            ${['1 y 2 → +1 día hábil','3 y 4 → +2 días hábiles','5 y 6 → +3 días hábiles','7 y 8 → +4 días hábiles','9 y 0 → +5 días hábiles'].map(t=>`<div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center;font-size:11px;color:var(--muted)">${t}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- FIGURA JURÍDICA -->
+      <div id="fp-fig" style="display:none">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--accent)"></span>¿Persona Física o Moral?</div></div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:16px">
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:16px;border:1px solid var(--border2)">
+              <div style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--text)">👤 Persona Física</div>
+              <div style="font-size:12px;color:var(--muted);line-height:1.7">Ideal si no tienes socios ni inversionistas. Contabilidad simplificada y sin gastos por constitución.</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:16px;border:1px solid var(--accent);border-left:3px solid var(--accent)">
+              <div style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--accent)">🏢 Persona Moral</div>
+              <div style="font-size:12px;color:var(--muted);line-height:1.7">Recomendada si tienes socios, requieres estructura corporativa o necesitas separar tu patrimonio personal.</div>
+            </div>
+          </div>
+          <div style="padding:14px 16px;border-top:1px solid var(--border)">
+            <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">Para constituirse ante Notario necesitas:</div>
+            ${['Denominación o razón social','Objeto social (actividades y fines)','Domicilio fiscal (comprobante)','Capital social y número de acciones por socio','RFC e identificación de cada socio','Nombramiento de representante legal'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--border)">• ${t}</div>`).join('')}
+            <div style="font-size:11px;color:var(--hint);margin-top:8px">Tipos más comunes: SA de CV · SRL · SAS (Sociedad por Acciones Simplificada)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RÉGIMEN FISCAL -->
+      <div id="fp-reg" style="display:none">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--purple)"></span>Regímenes Fiscales</div></div>
+          <div style="padding:16px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:14px">
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Personas Físicas</div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:4px">Actividades Empresariales</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">Sin límite de ingresos · Ideal si tienes muchos gastos deducibles · ISR del 1.92% al 35% · IVA 16%</div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:4px;margin-top:10px">RESICO — Régimen Simplificado</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.6">Ingresos hasta $3.5M anuales · Ideal si tu margen es alto · ISR del 1% al 2.5% · Menos obligaciones</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:14px">
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Personas Morales</div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:4px">Régimen General</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px">Sin límite de ingresos · ISR 30% · El más común para restaurantes con socios</div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:4px;margin-top:10px">RESICO Personas Morales</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.6">Solo personas físicas como socios · Hasta $35M anuales · ISR 30% · Flujo de efectivo · Menos obligaciones</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>Herramientas digitales SAT que necesitas</div></div>
+          ${[['RFC','Registro Federal de Contribuyentes','Presencial en oficinas SAT · citas.sat.gob.mx'],['e.firma','Firma electrónica avanzada · mismos efectos que firma autógrafa','Presencial en SAT · Vigencia 4 años'],['CSD','Certificado de Sello Digital para firmar facturas electrónicas','En línea con app Certifica · Vigencia 4 años'],['Buzón Tributario','Canal de comunicación oficial con el SAT · Revisar 2 veces por semana','sat.gob.mx/minisitio/BuzonTributario · Registrar correo y celular']].map(([t,d,p])=>`<div class="fcal-row"><div><div style="font-size:13px;font-weight:500">${t}</div><div style="font-size:11px;color:var(--muted)">${d}</div></div><div style="font-size:11px;color:var(--muted);max-width:300px">${p}</div></div>`).join('')}
+        </div>
+      </div>
+
+      <!-- IMPUESTOS -->
+      <div id="fp-imp" style="display:none">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--yellow)"></span>IVA — Impuesto al Valor Agregado</div></div>
+          <div style="padding:14px 16px">
+            <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:12px">Impuesto indirecto — lo trasladas al consumidor final. Tasa general: <strong style="color:var(--text)">16%</strong> sobre tus ingresos.</div>
+            ${['Declaración de pago definitivo mensual de IVA · Día 17','DIOT — Declaración Informativa de Operaciones con Terceros · Último día del mes'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)">• ${t}</div>`).join('')}
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--red)"></span>ISR — Impuesto Sobre la Renta</div></div>
+          <div style="padding:14px 16px">
+            <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:12px">Impuesto directo sobre tus ingresos.</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+              <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">Personas Morales</div><div style="font-size:18px;font-weight:600;color:var(--accent)">30%</div></div>
+              <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">Personas Físicas</div><div style="font-size:18px;font-weight:600;color:var(--yellow)">1.92%–35%</div></div>
+              <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:4px">RESICO PF</div><div style="font-size:18px;font-weight:600;color:var(--green)">1%–2.5%</div></div>
+            </div>
+            ${['Pago provisional mensual · Día 17','Declaración anual PM: 31 de marzo · PF: 30 de abril'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)">• ${t}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- PATRONAL -->
+      <div id="fp-pat" style="display:none">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>IMSS e INFONAVIT</div></div>
+          <div style="padding:14px 16px">
+            <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px">Si tienes trabajadores estás obligado a registrarte como patrón.</div>
+            ${['Registro patronal en Régimen Obligatorio','Inscribir a cada trabajador al IMSS','Avisos de altas, bajas y modificaciones de salario','Pago mensual de cuotas obrero-patronales · Día 17','Determinación anual de Prima de Riesgos de Trabajo','Activar Buzón IMSS para recibir notificaciones'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)">☑ ${t}</div>`).join('')}
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--purple)"></span>ISERTP — Impuesto Sobre Nómina Puebla</div></div>
+          <div style="padding:14px 16px">
+            <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px">Tasa: <strong style="color:var(--text)">3%</strong> sobre remuneraciones pagadas a trabajadores en Puebla.</div>
+            ${['Inscripción al padrón estatal de contribuyentes','Determinación mensual de la base gravable','Presentar declaración y pago · Día 17 de cada mes'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)">• ${t}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- MONITOREO -->
+      <div id="fp-mon" style="display:none">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--green)"></span>Monitoreo Mensual con tu Contador</div></div>
+          <div style="padding:14px 16px">
+            ${['Opinión de cumplimiento SAT, IMSS e INFONAVIT en sentido positivo','Acuses de declaraciones e informativas presentadas y comprobante de pago','Estatus del buzón tributario — atender notificaciones de autoridad','Balanza de comprobación y estados financieros del mes','Cédulas de determinación de cuotas patronales','Verificar que estás localizable en tu domicilio fiscal'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--green);flex-shrink:0">✓</span><span>${t}</span></div>`).join('')}
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--accent)"></span>Expediente Anual</div></div>
+          <div style="padding:14px 16px">
+            ${['Constancia de Situación Fiscal','Acuses de declaraciones provisionales o definitivas','Acuses de DIOT presentadas','Acuse de Prima en Riesgos de Trabajo','Acuses de contabilidad electrónica enviada','Acuse de declaración anual','Vigencia de e.firma y CSD (renovar cada 4 años)','Balanzas, auxiliares y pólizas contables','Estados financieros al 31 de diciembre'].map(t=>`<div style="font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)">☑ ${t}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PENDIENTES ═══ -->
+    <div class="page" id="page-pendientes">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:18px">Tablero de Pendientes</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Organiza tus tareas por área — guarda en la nube automáticamente</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select class="sel" id="kanban-area-sel" onchange="switchKanbanArea()">
+            <option value="general">📌 General</option>
+            <option value="finanzas">📊 Finanzas</option>
+            <option value="fiscal">🏛️ Fiscal / SAT</option>
+            <option value="nomina">👥 Nómina y RH</option>
+            <option value="permisos">📁 Permisos y Licencias</option>
+            <option value="operaciones">⚙️ Operaciones</option>
+          </select>
+          <button class="btn btn-accent" onclick="saveKanban()" id="kanban-save-btn">💾 Guardar</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px" id="kanban-board">
+        <!-- Se genera dinámicamente -->
       </div>
     </div>
 
@@ -656,6 +809,7 @@ sb.auth.onAuthStateChange(async(event,session)=>{
     const{data:prof}=await sb.from('profiles').select('restaurant_name').eq('id',session.user.id).single();
     if(prof?.restaurant_name){document.getElementById('rest-name').textContent=prof.restaurant_name;}
     loadSemana();
+    loadKanban();
   }
 });
 
@@ -893,7 +1047,8 @@ async function loadSemana(){
   calc();
 }
 
-function onWeekChange(){loadSemana();}
+function onWeekChange(){loadSemana();
+    loadKanban();}
 
 // ── CASCADE TABLES ────────────────────────────────────────────────────────
 let allWeeks={};
@@ -1045,6 +1200,107 @@ function calcCosteo(){
   const fc=price>0?(cF/price*100).toFixed(1)+'%':'—';
   document.getElementById('costeo-price').textContent=price>0?'$'+price.toLocaleString('es-MX'):'$0';
   document.getElementById('costeo-fc').textContent=`Costo: $${cF.toFixed(2)} · Food cost: ${fc}`;
+}
+
+// ── FISCAL TABS ──────────────────────────────────────────────────────────
+function fTab(id){
+  ['cal','fig','reg','imp','pat','mon'].forEach(t=>{
+    const el=document.getElementById('fp-'+t);
+    const btn=document.getElementById('ftab-'+t);
+    if(el) el.style.display=t===id?'block':'none';
+    if(btn) btn.classList.toggle('active',t===id);
+  });
+}
+
+// ── KANBAN ────────────────────────────────────────────────────────────────
+let kanbanData={};
+const KANBAN_AREAS=['general','finanzas','fiscal','nomina','permisos','operaciones'];
+const KANBAN_COLS=['pendiente','proceso','hecho'];
+const COL_LABELS={'pendiente':'📋 Pendiente','proceso':'🔄 En proceso','hecho':'✅ Hecho'};
+const COL_COLORS={'pendiente':'var(--border2)','proceso':'rgba(251,191,36,.3)','hecho':'rgba(74,222,128,.3)'};
+
+function initKanban(){
+  KANBAN_AREAS.forEach(area=>{
+    if(!kanbanData[area]) kanbanData[area]={pendiente:[],proceso:[],hecho:[]};
+  });
+  renderKanban(document.getElementById('kanban-area-sel').value);
+}
+
+function switchKanbanArea(){
+  renderKanban(document.getElementById('kanban-area-sel').value);
+}
+
+function renderKanban(area){
+  const board=document.getElementById('kanban-board');
+  if(!board)return;
+  if(!kanbanData[area]) kanbanData[area]={pendiente:[],proceso:[],hecho:[]};
+  board.innerHTML=KANBAN_COLS.map(col=>`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+      <div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:13px;font-weight:600">${COL_LABELS[col]}</div>
+        <span style="background:var(--surface2);border-radius:99px;padding:2px 8px;font-size:11px;color:var(--muted)">${(kanbanData[area][col]||[]).length}</span>
+      </div>
+      <div style="padding:10px;min-height:200px;display:flex;flex-direction:column;gap:8px" id="col-${col}">
+        ${(kanbanData[area][col]||[]).map((task,i)=>`
+          <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text);border-left:3px solid ${COL_COLORS[col]};display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+            <span style="flex:1;line-height:1.5">${task}</span>
+            <div style="display:flex;gap:4px;flex-shrink:0">
+              ${col!=='proceso'&&col!=='hecho'?`<button onclick="moveTask('${area}','${col}','proceso',${i})" style="background:none;border:1px solid var(--border2);border-radius:4px;color:var(--muted);cursor:pointer;padding:2px 5px;font-size:10px">→</button>`:''}
+              ${col==='proceso'?`<button onclick="moveTask('${area}','${col}','hecho',${i})" style="background:none;border:1px solid var(--green-bg);border-radius:4px;color:var(--green);cursor:pointer;padding:2px 5px;font-size:10px">✓</button>`:''}
+              ${col==='proceso'?`<button onclick="moveTask('${area}','${col}','pendiente',${i})" style="background:none;border:1px solid var(--border2);border-radius:4px;color:var(--muted);cursor:pointer;padding:2px 5px;font-size:10px">←</button>`:''}
+              ${col==='hecho'?`<button onclick="moveTask('${area}','${col}','pendiente',${i})" style="background:none;border:1px solid var(--border2);border-radius:4px;color:var(--muted);cursor:pointer;padding:2px 5px;font-size:10px">↩</button>`:''}
+              <button onclick="deleteTask('${area}','${col}',${i})" style="background:none;border:1px solid var(--red-bg);border-radius:4px;color:var(--red);cursor:pointer;padding:2px 5px;font-size:10px">×</button>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div style="padding:8px 10px;border-top:1px solid var(--border)">
+        <div style="display:flex;gap:6px">
+          <input type="text" id="new-task-${col}" class="ri" placeholder="+ Nueva tarea..." style="flex:1;font-size:12px" onkeydown="if(event.key==='Enter')addTask('${area}','${col}')">
+          <button onclick="addTask('${area}','${col}')" class="btn btn-ghost" style="padding:5px 10px;font-size:11px">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addTask(area,col){
+  const input=document.getElementById('new-task-'+col);
+  const text=input.value.trim();
+  if(!text)return;
+  if(!kanbanData[area]) kanbanData[area]={pendiente:[],proceso:[],hecho:[]};
+  kanbanData[area][col].push(text);
+  input.value='';
+  renderKanban(area);
+}
+
+function moveTask(area,fromCol,toCol,idx){
+  const task=kanbanData[area][fromCol].splice(idx,1)[0];
+  kanbanData[area][toCol].push(task);
+  renderKanban(area);
+}
+
+function deleteTask(area,col,idx){
+  kanbanData[area][col].splice(idx,1);
+  renderKanban(area);
+}
+
+async function saveKanban(){
+  if(!CU)return;
+  const btn=document.getElementById('kanban-save-btn');
+  btn.textContent='Guardando...';btn.disabled=true;
+  try{
+    const{error}=await sb.from('pnl_data').upsert({
+      user_id:CU.id,period:'kanban-2025',data:kanbanData,updated_at:new Date().toISOString()
+    },{onConflict:'user_id,period'});
+    if(!error){btn.textContent='✓ Guardado';btn.className='btn btn-saved';setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);}
+    else{btn.textContent='Error';btn.disabled=false;}
+  }catch(e){btn.textContent='Error';btn.disabled=false;}
+}
+
+async function loadKanban(){
+  if(!CU)return;
+  const{data}=await sb.from('pnl_data').select('data').eq('user_id',CU.id).eq('period','kanban-2025').maybeSingle();
+  if(data?.data) kanbanData=data.data;
+  initKanban();
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────
