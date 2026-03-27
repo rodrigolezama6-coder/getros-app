@@ -1999,17 +1999,13 @@ Rangos ideales para restaurantes:
 Responde en máximo 5 puntos concisos. Usa emojis. Sé directo y práctico. Identifica lo que está bien, lo que hay que mejorar y 1-2 acciones concretas. No uses markdown con asteriscos, solo texto limpio con saltos de línea.`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/api/analizar', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        messages:[{role:'user',content:prompt}]
-      })
+      body:JSON.stringify({prompt})
     });
     const data = await response.json();
-    const text = data.content?.[0]?.text || 'No se pudo obtener el análisis.';
+    const text = data.text || 'No se pudo obtener el análisis.';
     resultado.innerHTML = text.split('\n').filter(l=>l.trim()).map(l=>'<div style="margin-bottom:8px">'+l+'</div>').join('');
   } catch(e) {
     resultado.innerHTML = '<span style="color:var(--red)">Error al conectar con Claude. Intenta de nuevo.</span>';
