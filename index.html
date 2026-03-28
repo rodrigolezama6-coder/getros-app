@@ -303,7 +303,7 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     <button class="s-item" onclick="goTo('nomina')"><span style="font-size:14px">👥</span><span>Nómina y RH</span></button>
     <div class="s-sec">Legal</div>
     <button class="s-item" onclick="goTo('fiscal')"><span style="font-size:14px">🏛️</span><span>Fiscalidad</span></button>
-    <button class="s-item" onclick="goTo('permisos')"><span style="font-size:14px">📁</span><span>Permisos</span><span class="s-badge soon">Pronto</span></button>
+    <button class="s-item" onclick="goTo('permisos')"><span style="font-size:14px">📁</span><span>Permisos</span></button>
     <div class="s-sec">Control</div>
     <button class="s-item" onclick="goTo('auditoria')"><span style="font-size:14px">✅</span><span>Auditorías</span><span class="s-badge soon">Pronto</span></button>
     <div class="s-sec">Compras y Pagos</div>
@@ -1594,7 +1594,7 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
             <li>Se entrega una copia a cada trabajador — conserva acuse de recibo firmado</li>
             <li>Se publica en lugar visible dentro del restaurante</li>
           </ul>
-          <div class="rh-alert" style="margin-top:14px">📍 <span>Junta Local de Conciliación y Arbitraje de Puebla — Calle 5 Oriente No. 213, Col. Centro Histórico, Puebla. Tel: (222) 246-1800</span></div>
+          <div class="rh-alert" style="margin-top:14px">📍 <span>Busca la Junta Local de Conciliación y Arbitraje de tu estado o municipio — generalmente está en el centro de tu ciudad o en el sitio del gobierno estatal.</span></div>
         </div>
       </div>
 
@@ -1714,7 +1714,499 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         }
       </script>
     </div>
-    <div class="page" id="page-permisos"><div class="coming"><div class="coming-icon">📁</div><div class="coming-title">Permisos y Licencias</div><div class="coming-sub">Vault digital de documentos. Próximamente.</div></div></div>
+    <div class="page" id="page-permisos">
+      <style>
+        .pl-banner{background:linear-gradient(135deg,#2d1f00,#3d2a00);border-bottom:2px solid var(--yellow);padding:12px 24px;display:flex;align-items:flex-start;gap:12px;font-size:12px;color:#f5d87a;border-radius:10px;margin:16px 16px 0;line-height:1.6}
+        .pl-banner strong{color:var(--yellow)}
+        .pl-header{padding:20px 24px 14px}
+        .pl-header h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+        .pl-header p{font-size:12px;color:var(--muted);line-height:1.6;max-width:620px}
+        .pl-tabs{padding:0 24px;border-bottom:1px solid var(--border);display:flex;gap:2px;overflow-x:auto;background:var(--surface)}
+        .pl-tab{padding:12px 16px;background:none;border:none;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s}
+        .pl-tab:hover{color:var(--text)}
+        .pl-tab.active{color:var(--yellow);border-bottom-color:var(--yellow)}
+        .pl-panel{display:none;padding:20px 24px;max-width:900px}
+        .pl-panel.active{display:block}
+        .pl-hero{background:linear-gradient(135deg,#1a1200,#201800);border:1px solid #3a3000;border-radius:10px;padding:20px;margin-bottom:20px}
+        .pl-hero h2{font-size:15px;color:var(--yellow);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .pl-hero p{font-size:13px;color:#c8c0a0;line-height:1.7}
+        .pl-gestor{background:linear-gradient(135deg,#0d1a2d,#0d2040);border:1px solid #1a4a6a;border-radius:10px;padding:20px;margin-bottom:20px}
+        .pl-gestor h3{font-size:14px;color:#6ba3e8;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+        .pl-gestor p{font-size:12px;color:#8ab8e0;line-height:1.7}
+        .pl-gestor ul{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:6px}
+        .pl-gestor ul li{font-size:12px;color:#8ab8e0;display:flex;align-items:flex-start;gap:8px}
+        .pl-gestor ul li::before{content:'→';color:#6ba3e8;flex-shrink:0}
+        .pl-sec-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+        .pl-sec-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:18px}
+        .pl-nivel{margin-bottom:24px}
+        .pl-nivel-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+        .pl-nivel-badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px}
+        .nb-federal{background:#2d0040;color:#c87be8}
+        .nb-estatal{background:#002d20;color:#6be8a0}
+        .nb-municipal{background:#2d1500;color:#e8a047}
+        .pl-nivel-hdr h3{font-size:15px;font-weight:700;color:var(--text)}
+        .pl-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+        .pl-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+        .pl-card-hdr{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+        .pl-card-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+        .pl-card-hdr h4{font-size:13px;font-weight:700;color:var(--text);line-height:1.3}
+        .pl-card-hdr .obligatorio{font-size:10px;color:#ff6b6b;font-weight:600;display:block;margin-top:2px}
+        .pl-card-hdr .opcional{font-size:10px;color:#f5d87a;font-weight:600;display:block;margin-top:2px}
+        .pl-card p{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:10px}
+        .pl-card-meta{display:flex;flex-wrap:wrap;gap:6px}
+        .pl-tag{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
+        .pt-annual{background:#2d1f00;color:#e8c547}
+        .pt-once{background:#1a0d2d;color:#c47be8}
+        .pt-renew{background:#0d2d12;color:#6be878}
+        .pt-cost{background:#2d0d0d;color:#e86b6b}
+        .pl-divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+        .pl-alert{background:#0d1a2d;border:1px solid #1a3a5a;border-radius:8px;padding:12px 16px;font-size:12px;color:#7aafe8;margin-bottom:16px;display:flex;gap:8px;align-items:flex-start;line-height:1.6}
+        .pl-warn{background:#1a0d00;border:1px solid #3d2000;border-radius:8px;padding:12px 16px;font-size:12px;color:#c8a060;margin-bottom:16px;display:flex;gap:8px;align-items:flex-start;line-height:1.6}
+
+        /* CHECKLIST */
+        .pl-checklist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+        .pl-check-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+        .pl-check-section h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+        .pl-check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer}
+        .pl-check-item:last-child{border-bottom:none;padding-bottom:0}
+        .pl-check-item input[type=checkbox]{width:16px;height:16px;flex-shrink:0;margin-top:1px;accent-color:var(--yellow);cursor:pointer}
+        .pl-check-item label{font-size:12px;color:var(--muted);line-height:1.5;cursor:pointer}
+        .pl-check-item.done label{text-decoration:line-through;color:var(--muted);opacity:.5}
+        .pl-progress{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
+        .pl-progress h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px}
+        .pl-prog-bar{background:var(--surface2);border-radius:99px;height:8px;margin-bottom:8px;overflow:hidden}
+        .pl-prog-fill{height:100%;background:var(--yellow);border-radius:99px;transition:width .4s}
+        .pl-prog-label{font-size:12px;color:var(--muted)}
+        .pl-prog-num{font-size:22px;font-weight:800;color:var(--yellow)}
+      </style>
+
+      <!-- BANNER -->
+      <div class="pl-banner">
+        <span style="font-size:16px;flex-shrink:0">⚠️</span>
+        <div><strong>Aviso importante:</strong> Este módulo es una guía informativa de referencia general. Los requisitos exactos varían por municipio, estado y tipo de establecimiento. Los costos mostrados son aproximados y pueden cambiar anualmente. <strong>Consulta siempre a un gestor de licencias o abogado antes de iniciar trámites.</strong> ROS no asume responsabilidad por la exactitud o vigencia de esta información.</div>
+      </div>
+
+      <!-- HEADER -->
+      <div class="pl-header">
+        <h1>📁 Permisos y Licencias</h1>
+        <p>Guía de los permisos que necesita tu restaurante a nivel federal, estatal y municipal. Operar sin ellos expone tu negocio a multas, clausuras y sanciones que pueden detener tu operación completa.</p>
+      </div>
+
+      <!-- TABS -->
+      <div class="pl-tabs">
+        <button class="pl-tab active" onclick="plTab('intro',this)">🏠 ¿Por qué importa?</button>
+        <button class="pl-tab" onclick="plTab('federal',this)">🇲🇽 Federal</button>
+        <button class="pl-tab" onclick="plTab('estatal',this)">🏛️ Estatal</button>
+        <button class="pl-tab" onclick="plTab('municipal',this)">🏙️ Municipal</button>
+        <button class="pl-tab" onclick="plTab('checklist',this)">✅ Checklist Anual</button>
+      </div>
+
+      <!-- ── TAB INTRO ── -->
+      <div class="pl-panel active" id="pl-intro">
+        <div class="pl-hero">
+          <h2>📌 ¿Por qué los permisos son críticos para tu restaurante?</h2>
+          <p>Operar sin los permisos en regla no es solo un riesgo legal — es una amenaza directa a tu inversión. Las autoridades municipales, estatales y federales tienen facultad de clausurar tu negocio el mismo día que detecten una irregularidad, sin previo aviso. Recuperar una clausura puede tardar semanas y costarte decenas de miles de pesos en multas, honorarios y ventas perdidas.</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+            <span style="font-size:26px;font-weight:800;color:var(--yellow);display:block;margin-bottom:4px">3</span>
+            <span style="font-size:11px;color:var(--muted);line-height:1.4">niveles de gobierno que pueden clausurarte: federal, estatal y municipal</span>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+            <span style="font-size:26px;font-weight:800;color:var(--yellow);display:block;margin-bottom:4px">Ene–Mar</span>
+            <span style="font-size:11px;color:var(--muted);line-height:1.4">meses típicos para refrendar licencias en la mayoría de municipios — verifica la fecha exacta en tu ayuntamiento</span>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+            <span style="font-size:26px;font-weight:800;color:#e86b6b;display:block;margin-bottom:4px">200m</span>
+            <span style="font-size:11px;color:var(--muted);line-height:1.4">distancia mínima requerida entre tu restaurante con alcohol y escuelas, hospitales o asilos</span>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+            <span style="font-size:26px;font-weight:800;color:#e86b6b;display:block;margin-bottom:4px">$$$</span>
+            <span style="font-size:11px;color:var(--muted);line-height:1.4">La licencia de alcohol es el trámite más costoso — el precio varía mucho por estado y municipio</span>
+          </div>
+        </div>
+
+        <div class="pl-gestor">
+          <h3>🤝 Contratar un Gestor de Licencias — muy recomendado</h3>
+          <p>Los trámites de permisos en México implican múltiples dependencias, requisitos que cambian cada año, y criterios que varían incluso entre ventanillas del mismo municipio. Un gestor especializado en licencias para restaurantes puede ahorrarte semanas de trámites y evitar errores costosos.</p>
+          <ul>
+            <li>Conoce los requisitos exactos y actualizados de tu municipio</li>
+            <li>Gestiona simultáneamente trámites en diferentes dependencias</li>
+            <li>Puede resolver rechazos o prevenciones que a ti te tomarían semanas</li>
+            <li>Generalmente cobra entre $3,000 y $15,000 MXN dependiendo del trámite</li>
+            <li>Para la licencia de alcohol, un gestor es prácticamente indispensable</li>
+            <li>Pide referencias de gestores con experiencia específica en restaurantes en tu municipio</li>
+          </ul>
+        </div>
+
+        <div class="pl-warn">
+          ⚠️ <span>Los permisos que necesitas dependen de tu municipio, tamaño del local, giro exacto (solo comida, o con alcohol) y si eres persona física o moral. Esta guía cubre los más comunes — verifica siempre con tu municipio o un gestor los requisitos específicos de tu caso.</span>
+        </div>
+      </div>
+
+      <!-- ── TAB FEDERAL ── -->
+      <div class="pl-panel" id="pl-federal">
+        <div class="pl-alert">🇲🇽 <span>Los trámites federales aplican a todos los restaurantes en México, independientemente del estado o municipio donde operes.</span></div>
+
+        <div class="pl-cards">
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🏥</span>
+              <div><h4>Aviso de Funcionamiento ante COFEPRIS</h4><span class="obligatorio">● Obligatorio</span></div>
+            </div>
+            <p>Notificación a la Comisión Federal para la Protección contra Riesgos Sanitarios de que tu negocio existe y opera. No es una licencia — es un aviso que te registra en su padrón y te sujeta a inspecciones. Se tramita en la plataforma DIGIPRIS con tu e.firma.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-once">Trámite único</span>
+              <span class="pl-tag pt-cost">Gratuito</span>
+              <span class="pl-tag" style="background:#1a1a2d;color:#8888ff">digipris.cofepris.gob.mx</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🧫</span>
+              <div><h4>Cumplimiento NOM-251-SSA1-2009</h4><span class="obligatorio">● Obligatorio</span></div>
+            </div>
+            <p>Norma Oficial Mexicana de buenas prácticas de higiene para el proceso de alimentos, bebidas o suplementos alimenticios. No es un trámite — es un estándar que debes cumplir operativamente. COFEPRIS e inspectores de Salubridad verifican su cumplimiento en visitas.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-renew">Operativo permanente</span>
+              <span class="pl-tag" style="background:#2d0d0d;color:#e86b6b">Riesgo de clausura si no cumples</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">💼</span>
+              <div><h4>Registro ante el SAT (RFC)</h4><span class="obligatorio">● Obligatorio</span></div>
+            </div>
+            <p>Alta en el Servicio de Administración Tributaria bajo el régimen fiscal correspondiente. Es requisito previo para casi todos los demás trámites. Personas morales deben registrarse primero en la Secretaría de Economía.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-once">Trámite único</span>
+              <span class="pl-tag pt-cost">Gratuito</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">👷</span>
+              <div><h4>Registro Patronal ante el IMSS</h4><span class="obligatorio">● Obligatorio con empleados</span></div>
+            </div>
+            <p>Alta como patrón ante el Instituto Mexicano del Seguro Social. Obligatorio desde el momento en que contratas a tu primer empleado. Sin él no puedes dar de alta a tus trabajadores ni cumplir con las obligaciones de seguridad social.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-once">Trámite único</span>
+              <span class="pl-tag pt-cost">Gratuito</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🍶</span>
+              <div><h4>Permiso SENASICA (si importas ingredientes)</h4><span class="opcional">◌ Solo si aplica</span></div>
+            </div>
+            <p>El Servicio Nacional de Sanidad, Inocuidad y Calidad Agroalimentaria regula la importación de insumos alimenticios. Aplica principalmente si importas ingredientes del extranjero o trabajas con productores que requieren certificación especial.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-once">Solo si importas</span>
+              <span class="pl-tag" style="background:#1a1a2d;color:#8888ff">gob.senasica.mx</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🎵</span>
+              <div><h4>Licencia SACM / SOMEXFON (música)</h4><span class="opcional">◌ Si usas música</span></div>
+            </div>
+            <p>Si en tu restaurante suenas música (radio, streaming, lista de reproducción), debes pagar derechos de autor a las sociedades de gestión colectiva. Aplica incluso para música de fondo. Multas por incumplimiento pueden ser significativas.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-annual">Anual</span>
+              <span class="pl-tag pt-cost">~$3,000–$8,000 MXN/año</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB ESTATAL ── -->
+      <div class="pl-panel" id="pl-estatal">
+        <div class="pl-alert">🏛️ <span>Los trámites estatales se gestionan ante el Gobierno de tu estado. Los requisitos, costos y nombres de las dependencias varían por entidad federativa — consulta la página oficial de tu gobierno estatal.</span></div>
+
+        <div class="pl-cards">
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🍺</span>
+              <div><h4>Licencia Estatal de Alcoholes</h4><span class="obligatorio">● Obligatorio si vendes alcohol</span></div>
+            </div>
+            <p>Autorización del Gobierno del Estado para la venta y suministro de bebidas alcohólicas. Es el trámite más complejo y costoso. Requisito previo para obtener la Licencia Municipal de Funcionamiento con alcohol. Cada estado tiene su propia ley de bebidas alcohólicas — consulta la de tu entidad.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-annual">Refrendo anual</span>
+              <span class="pl-tag pt-cost">Variable — consultar</span>
+              <span class="pl-tag" style="background:#2d0d0d;color:#e86b6b">Distancia mínima 200m de escuelas</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🏥</span>
+              <div><h4>Permiso Sanitario Estatal (Secretaría de Salud)</h4><span class="obligatorio">● Obligatorio</span></div>
+            </div>
+            <p>La Secretaría de Salud del Estado puede realizar visitas de verificación para revisar higiene de cocina, temperaturas de refrigeración, caducidades, manejo de basura y control de plagas. Debes mantener bitácoras de limpieza y fumigación actualizadas.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-renew">Inspecciones periódicas</span>
+              <span class="pl-tag" style="background:#2d0d0d;color:#e86b6b">Sin previo aviso</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🚒</span>
+              <div><h4>Visto Bueno de Bomberos (Estatal)</h4><span class="obligatorio">● Obligatorio en muchos municipios</span></div>
+            </div>
+            <p>Certificación de que tu local cumple con las medidas de prevención y combate de incendios: extintores vigentes, señalización, salidas de emergencia, detectores de humo. Requerido para obtener la Licencia de Funcionamiento municipal.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-annual">Anual o bianual</span>
+              <span class="pl-tag pt-cost">~$1,500–$4,000 MXN</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">📻</span>
+              <div><h4>Permiso de Anuncio Exterior</h4><span class="obligatorio">● Obligatorio si tienes letrero</span></div>
+            </div>
+            <p>Autorización para colocar anuncios exteriores (fachada, lonas, espectaculares). Se tramita ante la Secretaría de Desarrollo Urbano del Estado o municipio. Algunos municipios restringen anuncios luminosos o tienen normativa de imagen urbana estricta.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-annual">Vigencia 1–3 años</span>
+              <span class="pl-tag pt-cost">Variable por m²</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">♻️</span>
+              <div><h4>Licencia / Dictamen Ambiental</h4><span class="opcional">◌ Según tamaño y giro</span></div>
+            </div>
+            <p>Aplica principalmente a restaurantes con instalaciones industriales, cocinas de alto volumen, o que generen residuos especiales. La autoridad competente es la Secretaría de Medio Ambiente de tu estado — el nombre varía por entidad federativa.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-once">Según aplique</span>
+              <span class="pl-tag" style="background:#1a1a2d;color:#8888ff">Consultar Secretaría de Medio Ambiente de tu estado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB MUNICIPAL ── -->
+      <div class="pl-panel" id="pl-municipal">
+        <div class="pl-warn">⚠️ <span>Los trámites municipales varían significativamente entre municipios y estados. Verifica siempre los requisitos exactos en la Tesorería Municipal o ventanilla digital de tu ayuntamiento antes de iniciar cualquier trámite.</span></div>
+
+        <div class="pl-cards">
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🗂️</span>
+              <div><h4>Dictamen de Uso de Suelo</h4><span class="obligatorio">● Obligatorio — primer trámite</span></div>
+            </div>
+            <p>Confirma que el inmueble donde operarás está legalmente autorizado para uso comercial/restaurantero. Es el primer trámite que debes hacer — sin él no puedes iniciar ningún otro. Se tramita en la Secretaría de Desarrollo Urbano del municipio. Vigencia aproximada: 2 años.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-once">Vigencia ~2 años</span>
+              <span class="pl-tag pt-cost">~$500–$3,000 MXN</span>
+              <span class="pl-tag" style="background:#2d0d0d;color:#e86b6b">Prerequisito para todo lo demás</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">📋</span>
+              <div><h4>Declaración / Aviso de Apertura</h4><span class="obligatorio">● Obligatorio</span></div>
+            </div>
+            <p>Notificación al ayuntamiento de que inicias operaciones como establecimiento mercantil. Trámite gratuito y generalmente inmediato en la ventanilla única o en línea. Se coloca a la vista en el negocio. Búscalo en la ventanilla única o portal digital de tu municipio.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-once">Trámite único</span>
+              <span class="pl-tag pt-cost">Gratuito</span>
+              <span class="pl-tag pt-renew">Inmediato</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🏢</span>
+              <div><h4>Licencia de Funcionamiento Municipal</h4><span class="obligatorio">● Obligatorio (con alcohol)</span></div>
+            </div>
+            <p>Para restaurantes que venden bebidas alcohólicas. Refrendo anual — la fecha límite varía por municipio, generalmente en los primeros meses del año. Se tramita ante la Tesorería Municipal. Requiere: Uso de Suelo, Visto Bueno Protección Civil, Licencia Estatal de Alcoholes y demás documentos.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-annual">Refrendo anual — verifica fecha en tu municipio</span>
+              <span class="pl-tag pt-cost">Costo variable por estado y municipio</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🛡️</span>
+              <div><h4>Visto Bueno de Protección Civil Municipal</h4><span class="obligatorio">● Obligatorio</span></div>
+            </div>
+            <p>Verifica que el local tiene las medidas de seguridad requeridas: extintores cargados y vigentes, rutas de evacuación despejadas, señalización de emergencia, luces de emergencia. Lo expide la Dirección de Protección Civil de tu municipio. Simulacros pueden ser requeridos.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-annual">Anual o bianual</span>
+              <span class="pl-tag pt-cost">~$1,500–$5,000 MXN</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🗑️</span>
+              <div><h4>Pago de Recolección de Basura</h4><span class="obligatorio">● Obligatorio</span></div>
+            </div>
+            <p>Cuota municipal por el servicio de recolección de residuos sólidos. Comprobante de pago requerido para tramitar o refrendar la Licencia de Funcionamiento. Las tarifas varían por municipio y volumen generado.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-annual">Pago periódico</span>
+              <span class="pl-tag pt-cost">Variable por municipio</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🪟</span>
+              <div><h4>Alineamiento y Número Oficial</h4><span class="obligatorio">● Obligatorio en apertura</span></div>
+            </div>
+            <p>Documento que certifica que la construcción del local respeta los límites de propiedad y la numeración oficial. Expedido por la Secretaría de Desarrollo Urbano de tu municipio. Requerido en varios municipios para tramitar la Licencia de Funcionamiento.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-once">Trámite de apertura</span>
+              <span class="pl-tag pt-cost">~$200–$800 MXN</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">🧑‍🍳</span>
+              <div><h4>Permiso / Constancia de Manejo de Alimentos</h4><span class="obligatorio">● Obligatorio en muchos municipios</span></div>
+            </div>
+            <p>Capacitación y certificación de que el personal que manipula alimentos conoce las prácticas seguras de higiene. Algunos municipios la requieren como parte de la licencia. La Secretaría de Salud puede solicitarla en inspecciones.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-renew">Renovar al cambiar personal</span>
+              <span class="pl-tag pt-cost">~$300–$800 MXN por persona</span>
+            </div>
+          </div>
+
+          <div class="pl-card">
+            <div class="pl-card-hdr">
+              <span class="pl-card-icon">📐</span>
+              <div><h4>Licencia de Construcción / Adecuación</h4><span class="opcional">◌ Si remodelaste el local</span></div>
+            </div>
+            <p>Si realizaste obras de construcción, remodelación o adecuación del local antes de abrir, necesitas la licencia correspondiente de la Secretaría de Desarrollo Urbano municipal. Sin ella, el uso de suelo puede ser impugnado.</p>
+            <div class="pl-card-meta">
+              <span class="pl-tag pt-once">Si hubo obra</span>
+              <span class="pl-tag pt-cost">Variable por m² construido</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">📞 ¿Dónde hacer los trámites municipales?</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px">
+            <div style="font-size:12px;color:var(--muted);line-height:1.6"><strong style="color:var(--text)">Tesorería Municipal</strong><br>Departamento de Licencias y Padrón de Contribuyentes de tu ayuntamiento. Generalmente en el Palacio Municipal.</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6"><strong style="color:var(--text)">Ventanilla Única Digital</strong><br>La mayoría de municipios tienen portal en línea. Busca "[nombre de tu municipio] trámites y servicios" en Google.</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6"><strong style="color:var(--text)">COFEPRIS Federal</strong><br>digipris.cofepris.gob.mx<br>Aviso de Funcionamiento en línea — aplica en todo el país.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB CHECKLIST ── -->
+      <div class="pl-panel" id="pl-checklist">
+        <div class="pl-sec-title">✅ Checklist de Permisos y Renovaciones</div>
+        <div class="pl-sec-sub">Marca lo que ya tienes en orden. Las renovaciones anuales tienen fechas críticas — no las pierdas o arriesgas clausura.</div>
+
+        <div class="pl-progress">
+          <h4>Tu progreso</h4>
+          <div class="pl-prog-bar"><div class="pl-prog-fill" id="pl-prog-fill" style="width:0%"></div></div>
+          <span class="pl-prog-label"><span id="pl-prog-num" class="pl-prog-num">0</span> de <span id="pl-prog-total">0</span> items completados</span>
+        </div>
+
+        <div class="pl-checklist-grid">
+
+          <div class="pl-check-section">
+            <h4>🇲🇽 Federales</h4>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>RFC activo y constancia de situación fiscal vigente (SAT)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Aviso de Funcionamiento COFEPRIS presentado (DIGIPRIS)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Cumplimiento NOM-251-SSA1-2009 — bitácoras de limpieza al día</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Registro patronal IMSS activo</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Licencia SACM/SOMEXFON vigente (si usas música)</label></div>
+          </div>
+
+          <div class="pl-check-section">
+            <h4>🏛️ Estatales</h4>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Licencia Estatal de Alcoholes vigente (si aplica)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Permiso de anuncio exterior vigente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Licencia / Dictamen Ambiental (si aplica)</label></div>
+          </div>
+
+          <div class="pl-check-section">
+            <h4>🏙️ Municipales</h4>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Dictamen de Uso de Suelo vigente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Declaración / Aviso de Apertura colocado a la vista</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Licencia de Funcionamiento Municipal vigente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Visto Bueno de Protección Civil vigente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Pago de recolección de basura al corriente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Constancias de manejo de alimentos del personal vigentes</label></div>
+          </div>
+
+          <div class="pl-check-section">
+            <h4>🔥 Protección Civil — Operativo</h4>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Extintores vigentes (revisar fecha de carga cada año)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Rutas de evacuación despejadas y señalizadas</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Luces de emergencia funcionando</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Botiquín de primeros auxilios completo y accesible</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Personal capacitado en evacuación (simulacro anual)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Detectores de humo y/o gas funcionando</label></div>
+          </div>
+
+          <div class="pl-check-section">
+            <h4>🧹 Higiene y Sanidad — Operativo</h4>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Bitácora de limpieza diaria actualizada</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Control de plagas con empresa certificada (contrato vigente)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Temperaturas de refrigeración registradas diariamente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Productos de limpieza correctamente etiquetados y almacenados</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Personal con exámenes médicos al corriente</label></div>
+          </div>
+
+          <div class="pl-check-section">
+            <h4>📅 Renovaciones Anuales Críticas</h4>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Refrendo Licencia de Funcionamiento — verifica fecha límite en tu municipio</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Refrendo Licencia de Alcoholes — verifica fecha límite en tu estado</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Renovación Visto Bueno Protección Civil</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Renovación de extintores (recarga anual)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Renovación licencia de música (SACM/SOMEXFON)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Revisión de Uso de Suelo (vigencia ~2 años)</label></div>
+          </div>
+
+        </div>
+
+        <div class="pl-warn" style="margin-top:20px">
+          ⚠️ <span>Este checklist es una guía de referencia. Los requisitos exactos y fechas límite dependen de tu municipio y tipo de establecimiento. Consulta a un gestor de licencias o tu ayuntamiento para confirmar lo que aplica a tu caso específico.</span>
+        </div>
+      </div>
+
+      <script>
+        function plTab(id, btn) {
+          document.querySelectorAll('.pl-panel').forEach(p => p.classList.remove('active'));
+          document.querySelectorAll('.pl-tab').forEach(b => b.classList.remove('active'));
+          document.getElementById('pl-' + id).classList.add('active');
+          btn.classList.add('active');
+        }
+        function plToggle(row) {
+          const cb = row.querySelector('input[type=checkbox]');
+          cb.checked = !cb.checked;
+          row.classList.toggle('done', cb.checked);
+          plUpdateProgress();
+        }
+        function plUpdateProgress() {
+          const all = document.querySelectorAll('#pl-checklist .pl-check-item input');
+          const done = [...all].filter(c => c.checked).length;
+          const pct = all.length ? Math.round(done / all.length * 100) : 0;
+          document.getElementById('pl-prog-fill').style.width = pct + '%';
+          document.getElementById('pl-prog-num').textContent = done;
+          document.getElementById('pl-prog-total').textContent = all.length;
+        }
+        // Inicializar conteo
+        setTimeout(plUpdateProgress, 100);
+      </script>
+    </div>
     <div class="page" id="page-auditoria"><div class="coming"><div class="coming-icon">✅</div><div class="coming-title">Auditorías y Checklists</div><div class="coming-sub">Control semanal, mensual y anual. Próximamente.</div></div></div>
 
   </div>
