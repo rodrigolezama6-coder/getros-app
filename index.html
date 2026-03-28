@@ -295,23 +295,23 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     <button class="s-item" onclick="goTo('mensual')"><span style="font-size:14px">📅</span><span>P&L Mensual</span></button>
     <button class="s-item" onclick="goTo('trimestral')"><span style="font-size:14px">📆</span><span>Trimestral</span></button>
     <button class="s-item" onclick="goTo('anual')"><span style="font-size:14px">🗓️</span><span>Anual</span></button>
-    <div class="s-sec">Operaciones</div>
     <button class="s-item" onclick="goTo('costeo')"><span style="font-size:14px">🧾</span><span>Costeo de Menú</span></button>
-    <button class="s-item" onclick="goTo('inventario')"><span style="font-size:14px">📦</span><span>Inventarios</span><span class="s-badge soon">Pronto</span></button>
-    <button class="s-item" onclick="goTo('proveedores')"><span style="font-size:14px">🚛</span><span>Proveedores</span></button>
-    <div class="s-sec">Personas</div>
-    <button class="s-item" onclick="goTo('nomina')"><span style="font-size:14px">👥</span><span>Nómina y RH</span></button>
-    <div class="s-sec">Legal</div>
-    <button class="s-item" onclick="goTo('fiscal')"><span style="font-size:14px">🏛️</span><span>Fiscalidad</span></button>
-    <button class="s-item" onclick="goTo('permisos')"><span style="font-size:14px">📁</span><span>Permisos</span></button>
-    <div class="s-sec">Control</div>
-    <button class="s-item" onclick="goTo('auditoria')"><span style="font-size:14px">✅</span><span>Auditorías</span><span class="s-badge soon">Pronto</span></button>
     <div class="s-sec">Compras y Pagos</div>
     <button class="s-item" onclick="goTo('pedidos')"><span style="font-size:14px">🛒</span><span>Pedidos</span></button>
     <button class="s-item" onclick="goTo('cxp')"><span style="font-size:14px">💳</span><span>Cuentas x Pagar</span></button>
     <button class="s-item" onclick="goTo('flujo')"><span style="font-size:14px">💧</span><span>Flujo de Caja</span></button>
+    <div class="s-sec">Operaciones</div>
+    <button class="s-item" onclick="goTo('inventario')"><span style="font-size:14px">📦</span><span>Inventarios</span><span class="s-badge soon">Pronto</span></button>
+    <button class="s-item" onclick="goTo('proveedores')"><span style="font-size:14px">🚛</span><span>Proveedores</span></button>
+    <button class="s-item" onclick="goTo('auditoria')"><span style="font-size:14px">✅</span><span>Auditorías</span><span class="s-badge soon">Pronto</span></button>
+    <div class="s-sec">Personas y Legal</div>
+    <button class="s-item" onclick="goTo('nomina')"><span style="font-size:14px">👥</span><span>Nómina y RH</span></button>
+    <button class="s-item" onclick="goTo('fiscal')"><span style="font-size:14px">🏛️</span><span>Fiscalidad</span></button>
+    <button class="s-item" onclick="goTo('permisos')"><span style="font-size:14px">📁</span><span>Permisos</span></button>
     <div class="s-sec">Gestión</div>
     <button class="s-item" onclick="goTo('pendientes')"><span style="font-size:14px">📌</span><span>Pendientes</span></button>
+    <button class="s-item" onclick="goTo('manual')"><span style="font-size:14px">📖</span><span>Manual de Uso</span></button>
+    <button class="s-item" onclick="goTo('terminos')"><span style="font-size:14px">📜</span><span>Términos y Privacidad</span></button>
     <a href="https://discord.gg/Gf2tufwp4" target="_blank" class="s-discord" style="margin:6px 8px 2px"><span style="font-size:15px">💬</span><span>Discord ROS</span></a>
   </nav>
   <div class="s-footer">
@@ -837,7 +837,7 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
         <div>
           <div style="font-family:'Syne',sans-serif;font-size:18px">Pedidos Semanales</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:2px">Registra compras por proveedor — alimenta automáticamente el COGS del P&L</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Registra compras por proveedor cada semana</div>
         </div>
         <div id="week-sel-wrap" style="display:flex;gap:8px;align-items:center">
           <select class="sel" id="ped-week-sel" onchange="loadPedidos()">
@@ -911,7 +911,7 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
       <div class="card">
         <div class="card-hdr">
           <div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Compras de la semana</div>
-          <div class="card-hint">Los totales se suman automáticamente al COGS del P&L</div>
+          <div class="card-hint">Totales por categoría y proveedor</div>
         </div>
         <div style="overflow-x:auto">
           <table style="width:100%;border-collapse:collapse;min-width:700px">
@@ -949,7 +949,7 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           </table>
         </div>
         <div style="padding:10px 14px;border-top:1px solid var(--border);background:rgba(200,241,53,.03)">
-          <div style="font-size:11px;color:var(--muted)">💡 Al guardar, los totales de Alimentos y Bebidas se suman automáticamente al COGS del P&L de esta semana.</div>
+          <div style="font-size:11px;color:var(--muted)">💾 Guarda tus pedidos semanales para llevar el registro de compras.</div>
         </div>
       </div>
 
@@ -1681,10 +1681,10 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <div class="rh-fc"><div class="rh-fc-icon fci-green">📋</div><span class="ftag ft-seg">Responsiva</span><h4>Responsiva General de Equipos y Activos</h4><p>Formato adaptable para cualquier bien entregado a un empleado. Modifica el nombre del artículo, descripción y condiciones según el caso.</p><button class="rh-btn-dl" onclick="rhDescargar('Responsiva_Telefono_Movil.doc',this)">⬇ Descargar formato</button></div>
           <div class="rh-fc"><div class="rh-fc-icon fci-green">📖</div><span class="ftag ft-seg">Reglamento</span><h4>Reglamento Interior de Trabajo</h4><p>El documento base que habilita las actas administrativas. Debe registrarse ante la Junta de Conciliación y Arbitraje.</p><button class="rh-btn-dl" onclick="rhDescargar('Reglamento_Interior_de_Trabajo.docx',this)">⬇ Descargar formato</button></div>
         </div>
-        <div class="rh-alert" style="margin-top:14px">ℹ️ <span>Los archivos se descargan desde el servidor de ROS. Si alguno falla, escríbenos a hola@getros.mx y te lo enviamos directamente.</span></div>
+        <div class="rh-alert" style="margin-top:14px">ℹ️ <span>Los archivos se descargan desde el servidor de ROS. Si alguno falla, escríbenos a <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f29a9d9e93b2959786809d81dc9f8a">[email&#160;protected]</a> y te lo enviamos directamente.</span></div>
       </div>
 
-      <script>
+      <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         function rhTab(id, btn) {
           document.querySelectorAll('.rh-panel').forEach(p => p.classList.remove('active'));
           document.querySelectorAll('.rh-tab').forEach(b => b.classList.remove('active'));
@@ -2209,6 +2209,385 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     </div>
     <div class="page" id="page-auditoria"><div class="coming"><div class="coming-icon">✅</div><div class="coming-title">Auditorías y Checklists</div><div class="coming-sub">Control semanal, mensual y anual. Próximamente.</div></div></div>
 
+    <!-- ══ MANUAL DE USO ══ -->
+    <div class="page" id="page-manual">
+      <style>
+        .man-header{padding:20px 24px 14px}
+        .man-header h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+        .man-header p{font-size:12px;color:var(--muted);line-height:1.6;max-width:580px}
+        .man-tabs{padding:0 24px;border-bottom:1px solid var(--border);display:flex;gap:2px;overflow-x:auto;background:var(--surface)}
+        .man-tab{padding:12px 16px;background:none;border:none;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s}
+        .man-tab:hover{color:var(--text)}
+        .man-tab.active{color:var(--yellow);border-bottom-color:var(--yellow)}
+        .man-panel{display:none;padding:20px 24px;max-width:860px}
+        .man-panel.active{display:block}
+        .man-sec{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px}
+        .man-sec h3{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+        .man-sec p,.man-sec li{font-size:12px;color:var(--muted);line-height:1.7}
+        .man-sec ul{list-style:none;display:flex;flex-direction:column;gap:6px;padding:0}
+        .man-sec ul li{display:flex;align-items:flex-start;gap:8px}
+        .man-sec ul li::before{content:'→';color:var(--yellow);flex-shrink:0}
+        .man-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:16px}
+        .man-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:border-color .2s}
+        .man-card:hover{border-color:var(--yellow)}
+        .man-card .mc-icon{font-size:24px;margin-bottom:8px;display:block}
+        .man-card h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+        .man-card p{font-size:11px;color:var(--muted);line-height:1.5}
+        .man-tip{background:#1a1200;border:1px solid #3a2a00;border-radius:8px;padding:12px 16px;font-size:12px;color:#c8a860;margin-bottom:14px;display:flex;gap:8px;line-height:1.6}
+        .man-steps{display:flex;flex-direction:column;gap:0;margin-bottom:16px}
+        .man-step{display:flex;gap:14px;padding-bottom:18px;position:relative}
+        .man-step:not(:last-child)::after{content:'';position:absolute;left:14px;top:32px;bottom:0;width:2px;background:var(--border)}
+        .man-step .ms-num{width:30px;height:30px;border-radius:50%;background:var(--yellow);color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;position:relative;z-index:1}
+        .man-step .ms-body h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;margin-top:4px}
+        .man-step .ms-body p{font-size:12px;color:var(--muted);line-height:1.6}
+      </style>
+
+      <div class="man-header">
+        <h1>📖 Manual de Uso</h1>
+        <p>Todo lo que necesitas saber para aprovechar ROS al máximo. Sigue este manual desde el inicio o consulta la sección que necesites.</p>
+      </div>
+
+      <div class="man-tabs">
+        <button class="man-tab active" onclick="manTab('inicio',this)">🚀 Primeros pasos</button>
+        <button class="man-tab" onclick="manTab('pnl',this)">📊 P&L Semanal</button>
+        <button class="man-tab" onclick="manTab('compras',this)">🛒 Compras y Pagos</button>
+        <button class="man-tab" onclick="manTab('modulos',this)">📦 Otros módulos</button>
+        <button class="man-tab" onclick="manTab('tips',this)">💡 Tips y buenas prácticas</button>
+      </div>
+
+      <!-- Primeros pasos -->
+      <div class="man-panel active" id="man-inicio">
+        <div class="man-tip">💡 <span>ROS es tu sistema operativo financiero. Úsalo <strong>cada semana</strong> — entre más constante seas, más valor obtendrás de los reportes mensuales, trimestrales y anuales.</span></div>
+        <div class="man-sec">
+          <h3>🚀 ¿Por dónde empezar?</h3>
+          <div class="man-steps">
+            <div class="man-step"><div class="ms-num">1</div><div class="ms-body"><h4>Configura tu P&L Semanal</h4><p>Ve a P&L Semanal y llena tus ventas del lunes al domingo. Agrega tus gastos indirectos personalizados. Guarda al terminar.</p></div></div>
+            <div class="man-step"><div class="ms-num">2</div><div class="ms-body"><h4>Registra tus pedidos de la semana</h4><p>En Pedidos Semanales anota lo que compraste a cada proveedor por día. Esto te da visibilidad de tu gasto de compras.</p></div></div>
+            <div class="man-step"><div class="ms-num">3</div><div class="ms-body"><h4>Revisa tus Cuentas por Pagar</h4><p>ROS calcula automáticamente cuándo vence cada pago según los días de crédito de cada proveedor.</p></div></div>
+            <div class="man-step"><div class="ms-num">4</div><div class="ms-body"><h4>Consulta tus reportes mensuales</h4><p>Al cerrar el mes, ve a P&L Mensual para ver el acumulado automático de todas tus semanas.</p></div></div>
+            <div class="man-step"><div class="ms-num">5</div><div class="ms-body"><h4>Usa el análisis AI</h4><p>En la pestaña Análisis AI del P&L Semanal, presiona "Analizar mis números" para recibir 5 recomendaciones personalizadas de Claude.</p></div></div>
+          </div>
+        </div>
+        <div class="man-sec">
+          <h3>⚠️ Regla de oro — una sola pestaña</h3>
+          <p style="margin-bottom:8px">ROS usa una sesión activa por usuario. Si abres la app en <strong>más de una pestaña o ventana al mismo tiempo</strong>, puede haber conflictos al guardar. Siempre usa ROS en una sola pestaña.</p>
+        </div>
+        <div class="man-sec">
+          <h3>💾 ¿Cómo se guardan mis datos?</h3>
+          <ul>
+            <li>ROS guarda tus datos en la nube (Supabase) — no se pierden si cierras el navegador</li>
+            <li>Hay un auto-guardado cada 60 segundos en el P&L Semanal</li>
+            <li>Siempre puedes presionar el botón 💾 Guardar manualmente</li>
+            <li>Tus datos son privados — solo tú puedes verlos con tu cuenta</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- P&L Semanal -->
+      <div class="man-panel" id="man-pnl">
+        <div class="man-sec">
+          <h3>📊 P&L Semanal — ¿qué lleno aquí?</h3>
+          <ul>
+            <li><strong>Ventas por día:</strong> lo que entraste por efectivo, terminal y plataformas (Uber, Rappi, etc.) cada día de la semana</li>
+            <li><strong>PAX y ticket promedio:</strong> número de comensales y ticket promedio — ayudan a entender tu operación más allá del dinero</li>
+            <li><strong>Deducciones:</strong> propinas, cortesías, descuentos que no son ingreso real</li>
+            <li><strong>COGS:</strong> costo de lo que vendiste — alimentos, bebidas, café, licor</li>
+            <li><strong>Mano de obra:</strong> nómina semanal + provisiones de aguinaldo, vacaciones, IMSS</li>
+            <li><strong>Gastos indirectos:</strong> renta, luz, gas, mantenimiento, publicidad — agrégalos como conceptos personalizados</li>
+            <li><strong>Gastos financieros:</strong> comisiones bancarias, intereses, impuestos</li>
+          </ul>
+        </div>
+        <div class="man-sec">
+          <h3>🟢 ¿Qué son las celdas verdes (provisiones)?</h3>
+          <p style="margin-bottom:8px">Las celdas verdes son el sistema de provisiones de ROS. <strong>Aprovisiona todos los gastos semanalmente</strong>, incluso los que pagas mensual o anualmente.</p>
+          <ul>
+            <li>Gasto mensual → divide entre 4 y registra esa cantidad cada semana</li>
+            <li>Gasto anual → divide entre 52 y registra esa cantidad cada semana</li>
+            <li>Así siempre tienes el dinero reservado y no te sorprende ningún pago</li>
+          </ul>
+        </div>
+        <div class="man-sec">
+          <h3>📅 P&L Mensual, Trimestral y Anual</h3>
+          <ul>
+            <li>Se calculan <strong>automáticamente</strong> sumando tus semanas guardadas</li>
+            <li>No necesitas capturar nada extra — solo guarda tu P&L semanal cada semana</li>
+            <li>El comparativo semanal muestra la variación vs la semana anterior</li>
+          </ul>
+        </div>
+        <div class="man-sec">
+          <h3>🤖 Análisis AI con Claude</h3>
+          <ul>
+            <li>Entra a la pestaña "🤖 Análisis AI" dentro del P&L Semanal</li>
+            <li>Presiona "Analizar mis números" — Claude lee tus datos reales</li>
+            <li>Recibirás 5 recomendaciones personalizadas basadas en tu semana</li>
+            <li>Costo aproximado: $0.001 USD por análisis</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Compras y Pagos -->
+      <div class="man-panel" id="man-compras">
+        <div class="man-sec">
+          <h3>🛒 Pedidos Semanales</h3>
+          <ul>
+            <li>Agrega cada proveedor con su categoría (Alimentos, Bebidas, Indirectos, Otros) y días de crédito</li>
+            <li>Captura lo que compraste cada día de la semana por proveedor</li>
+            <li>Los totales se calculan automáticamente por día y por categoría</li>
+            <li>Guarda al terminar — los datos quedan en la nube</li>
+          </ul>
+        </div>
+        <div class="man-sec">
+          <h3>💳 Cuentas por Pagar</h3>
+          <ul>
+            <li>Se genera automáticamente desde tus Pedidos Semanales</li>
+            <li>ROS calcula la fecha de vencimiento según los días de crédito de cada proveedor</li>
+            <li>Semáforo de vencimientos: 🚨 urgente / ⚠️ próximo / 📅 con tiempo</li>
+            <li>Marca como pagado con el checkbox — se guarda en la nube</li>
+          </ul>
+        </div>
+        <div class="man-sec">
+          <h3>💧 Flujo de Caja</h3>
+          <ul>
+            <li>Agrega tus cuentas bancarias con el saldo actual</li>
+            <li>Registra entradas (efectivo, terminal, plataformas, eventos) y salidas (proveedores, nómina, renta, impuestos)</li>
+            <li>El saldo final proyectado se calcula automáticamente con semáforo ✅/🚨</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Otros módulos -->
+      <div class="man-panel" id="man-modulos">
+        <div class="man-grid">
+          <div class="man-card" onclick="goTo('costeo')">
+            <span class="mc-icon">🧾</span>
+            <h4>Costeo de Menú</h4>
+            <p>Calcula el costo real de cada platillo con factores de multiplicación por categoría: alimentos, licor, vino y café.</p>
+          </div>
+          <div class="man-card" onclick="goTo('proveedores')">
+            <span class="mc-icon">🚛</span>
+            <h4>Directorio de Proveedores</h4>
+            <p>Organiza y califica a tus proveedores por Calidad (50%), Precio (25%) y Servicio (25%). Ranking automático.</p>
+          </div>
+          <div class="man-card" onclick="goTo('nomina')">
+            <span class="mc-icon">👥</span>
+            <h4>Nómina y RH</h4>
+            <p>Guía de contratación, contratos, actas administrativas y formatos descargables para gestionar a tu equipo.</p>
+          </div>
+          <div class="man-card" onclick="goTo('fiscal')">
+            <span class="mc-icon">🏛️</span>
+            <h4>Fiscalidad</h4>
+            <p>Calendario de obligaciones fiscales, regímenes, impuestos y recordatorio de conseguir un contador.</p>
+          </div>
+          <div class="man-card" onclick="goTo('permisos')">
+            <span class="mc-icon">📁</span>
+            <h4>Permisos y Licencias</h4>
+            <p>Guía de permisos federales, estatales y municipales con checklist anual para mantenerlos en regla.</p>
+          </div>
+          <div class="man-card" onclick="goTo('pendientes')">
+            <span class="mc-icon">📌</span>
+            <h4>Tablero de Pendientes</h4>
+            <p>Kanban con 6 áreas de gestión: General, Finanzas, Fiscal, Nómina, Permisos y Operaciones.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="man-panel" id="man-tips">
+        <div class="man-sec">
+          <h3>💡 Márgenes de referencia para restaurantes</h3>
+          <ul>
+            <li><strong>Food cost (COGS alimentos):</strong> ideal 28%–32% sobre ventas</li>
+            <li><strong>Beverage cost (bebidas):</strong> ideal 20%–25% sobre ventas</li>
+            <li><strong>Mano de obra:</strong> ideal 25%–30% sobre ventas</li>
+            <li><strong>Gastos indirectos:</strong> ideal 15%–20% sobre ventas</li>
+            <li><strong>Utilidad neta:</strong> saludable arriba del 10%</li>
+          </ul>
+        </div>
+        <div class="man-sec">
+          <h3>📆 Rutina semanal recomendada</h3>
+          <ul>
+            <li><strong>Lunes:</strong> captura las ventas de la semana anterior en el P&L Semanal</li>
+            <li><strong>Lunes:</strong> registra los pedidos de la semana en Pedidos Semanales</li>
+            <li><strong>Martes:</strong> revisa las Cuentas por Pagar y programa los pagos</li>
+            <li><strong>Viernes:</strong> actualiza el Flujo de Caja con saldos reales</li>
+            <li><strong>Fin de mes:</strong> revisa el P&L Mensual y corre el Análisis AI</li>
+          </ul>
+        </div>
+        <div class="man-sec">
+          <h3>🆘 ¿Tienes dudas o problemas?</h3>
+          <ul>
+            <li>Únete a la comunidad en <strong>Discord ROS</strong> — el botón está en el menú lateral</li>
+            <li>Escríbenos a <strong>hola@getros.mx</strong> para soporte directo</li>
+            <li>Visita <strong>www.getros.mx</strong> para novedades y actualizaciones</li>
+          </ul>
+        </div>
+      </div>
+
+      <script>
+        function manTab(id, btn) {
+          document.querySelectorAll('.man-panel').forEach(p => p.classList.remove('active'));
+          document.querySelectorAll('.man-tab').forEach(b => b.classList.remove('active'));
+          document.getElementById('man-' + id).classList.add('active');
+          btn.classList.add('active');
+        }
+      </script>
+    </div>
+
+    <!-- ══ TÉRMINOS Y PRIVACIDAD ══ -->
+    <div class="page" id="page-terminos">
+      <style>
+        .trm-header{padding:20px 24px 14px}
+        .trm-header h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+        .trm-tabs{padding:0 24px;border-bottom:1px solid var(--border);display:flex;gap:2px;background:var(--surface)}
+        .trm-tab{padding:12px 16px;background:none;border:none;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+        .trm-tab:hover{color:var(--text)}
+        .trm-tab.active{color:var(--yellow);border-bottom-color:var(--yellow)}
+        .trm-panel{display:none;padding:20px 24px;max-width:760px}
+        .trm-panel.active{display:block}
+        .trm-sec{margin-bottom:22px}
+        .trm-sec h3{font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+        .trm-sec p,.trm-sec li{font-size:12px;color:var(--muted);line-height:1.8}
+        .trm-sec ul{list-style:disc;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+        .trm-date{font-size:11px;color:var(--muted);margin-bottom:20px}
+      </style>
+
+      <div class="trm-header">
+        <h1>📜 Términos y Privacidad</h1>
+      </div>
+
+      <div class="trm-tabs">
+        <button class="trm-tab active" onclick="trmTab('terminos',this)">📋 Términos de Uso</button>
+        <button class="trm-tab" onclick="trmTab('privacidad',this)">🔒 Política de Privacidad</button>
+      </div>
+
+      <div class="trm-panel active" id="trm-terminos">
+        <p class="trm-date">Última actualización: marzo 2026</p>
+
+        <div class="trm-sec">
+          <h3>1. Aceptación de los Términos</h3>
+          <p>Al acceder y utilizar ROS — Restaurant Operating System ("el Servicio"), operado por getros.mx, aceptas estar sujeto a estos Términos de Uso. Si no estás de acuerdo con alguna parte de estos términos, no podrás acceder al Servicio.</p>
+        </div>
+
+        <div class="trm-sec">
+          <h3>2. Descripción del Servicio</h3>
+          <p>ROS es una plataforma de gestión financiera y operativa diseñada para restaurantes. Proporciona herramientas para el registro y análisis de información financiera, incluyendo estados de resultados, control de compras, flujo de caja y módulos informativos sobre fiscalidad, recursos humanos y permisos.</p>
+        </div>
+
+        <div class="trm-sec">
+          <h3>3. Uso del Servicio</h3>
+          <ul>
+            <li>El Servicio es de uso exclusivo para el suscriptor titular de la cuenta</li>
+            <li>Está prohibido compartir credenciales de acceso con terceros</li>
+            <li>No está permitido usar el Servicio para actividades ilegales o fraudulentas</li>
+            <li>El usuario es responsable de la exactitud de la información que ingresa</li>
+          </ul>
+        </div>
+
+        <div class="trm-sec">
+          <h3>4. Contenido Informativo — No Asesoría Profesional</h3>
+          <p>Los módulos de Fiscalidad, Recursos Humanos y Permisos y Licencias de ROS son exclusivamente informativos y de referencia general. <strong>No constituyen asesoría fiscal, legal, laboral o contable.</strong> ROS no se hace responsable por decisiones tomadas con base en el contenido informativo de la plataforma. Se recomienda siempre consultar a un profesional certificado.</p>
+        </div>
+
+        <div class="trm-sec">
+          <h3>5. Suscripción y Pagos</h3>
+          <ul>
+            <li>El acceso a ROS requiere una suscripción anual pagada a través de Stripe</li>
+            <li>Los precios están denominados en pesos mexicanos (MXN)</li>
+            <li>No se realizan reembolsos una vez completado el pago</li>
+            <li>La suscripción no se renueva automáticamente — recibirás un aviso para renovar</li>
+          </ul>
+        </div>
+
+        <div class="trm-sec">
+          <h3>6. Propiedad Intelectual</h3>
+          <p>Todo el contenido de ROS — incluyendo diseño, código, textos, logotipos y formatos descargables — es propiedad de getros.mx. Los formatos descargables (contratos, actas, responsivas) son modelos de referencia que el usuario puede adaptar para su uso personal; no está permitida su distribución o comercialización.</p>
+        </div>
+
+        <div class="trm-sec">
+          <h3>7. Limitación de Responsabilidad</h3>
+          <p>getros.mx no será responsable por pérdidas económicas, sanciones fiscales, conflictos laborales o cualquier daño derivado del uso o mal uso de la información contenida en ROS. El Servicio se proporciona "tal como está" sin garantías de ningún tipo.</p>
+        </div>
+
+        <div class="trm-sec">
+          <h3>8. Modificaciones</h3>
+          <p>getros.mx se reserva el derecho de modificar estos términos en cualquier momento. Los cambios serán notificados por correo electrónico y/o a través de la plataforma. El uso continuado del Servicio después de los cambios constituye aceptación de los nuevos términos.</p>
+        </div>
+
+        <div class="trm-sec">
+          <h3>9. Contacto</h3>
+          <p>Para cualquier duda sobre estos términos: <strong>hola@getros.mx</strong> · www.getros.mx</p>
+        </div>
+      </div>
+
+      <div class="trm-panel" id="trm-privacidad">
+        <p class="trm-date">Última actualización: marzo 2026</p>
+
+        <div class="trm-sec">
+          <h3>1. Responsable del Tratamiento</h3>
+          <p>getros.mx es el responsable del tratamiento de los datos personales que recopila a través de ROS — Restaurant Operating System, con domicilio de contacto en hola@getros.mx.</p>
+        </div>
+
+        <div class="trm-sec">
+          <h3>2. Datos que Recopilamos</h3>
+          <ul>
+            <li><strong>Datos de cuenta:</strong> correo electrónico utilizado para el registro y autenticación</li>
+            <li><strong>Datos financieros:</strong> información que el usuario ingresa voluntariamente (ventas, gastos, compras). Estos datos son propios del usuario y no son compartidos</li>
+            <li><strong>Datos de pago:</strong> procesados exclusivamente por Stripe — ROS no almacena datos de tarjetas</li>
+            <li><strong>Datos de uso:</strong> accesos y actividad general para mejorar el servicio</li>
+          </ul>
+        </div>
+
+        <div class="trm-sec">
+          <h3>3. Uso de los Datos</h3>
+          <ul>
+            <li>Proveer y mantener el Servicio</li>
+            <li>Enviar notificaciones relacionadas con la cuenta y actualizaciones del producto</li>
+            <li>Mejorar la experiencia del usuario y las funcionalidades de ROS</li>
+            <li>Cumplir con obligaciones legales aplicables</li>
+          </ul>
+        </div>
+
+        <div class="trm-sec">
+          <h3>4. Seguridad de los Datos</h3>
+          <ul>
+            <li>Los datos se almacenan en Supabase con cifrado en tránsito (HTTPS/TLS)</li>
+            <li>Cada usuario accede únicamente a sus propios datos (Row Level Security)</li>
+            <li>Las claves de acceso a servicios externos se almacenan como variables de entorno en Vercel</li>
+            <li>No vendemos, alquilamos ni compartimos tus datos con terceros para fines comerciales</li>
+          </ul>
+        </div>
+
+        <div class="trm-sec">
+          <h3>5. Derechos del Usuario (ARCO)</h3>
+          <p>Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), tienes derecho a Acceder, Rectificar, Cancelar u Oponerte al tratamiento de tus datos. Para ejercer estos derechos escríbenos a <strong>hola@getros.mx</strong>.</p>
+        </div>
+
+        <div class="trm-sec">
+          <h3>6. Cookies</h3>
+          <p>ROS utiliza almacenamiento local (localStorage) para mantener la sesión activa. No utilizamos cookies de rastreo ni publicidad de terceros.</p>
+        </div>
+
+        <div class="trm-sec">
+          <h3>7. Cambios a esta Política</h3>
+          <p>Cualquier cambio será notificado por correo electrónico con al menos 7 días de anticipación.</p>
+        </div>
+
+        <div class="trm-sec">
+          <h3>8. Contacto</h3>
+          <p>Dudas sobre privacidad: <strong>hola@getros.mx</strong> · www.getros.mx</p>
+        </div>
+      </div>
+
+      <script>
+        function trmTab(id, btn) {
+          document.querySelectorAll('.trm-panel').forEach(p => p.classList.remove('active'));
+          document.querySelectorAll('.trm-tab').forEach(b => b.classList.remove('active'));
+          document.getElementById('trm-' + id).classList.add('active');
+          btn.classList.add('active');
+        }
+      </script>
+    </div>
+
   </div>
 </main>
 </div>
@@ -2298,6 +2677,7 @@ const PAGE_TITLES={
   costeo:['Costeo de Menú','Precios sugeridos'],inventario:['Inventarios','Control de stock'],
   proveedores:['Proveedores','Catálogo'],nomina:['Nómina y RH','Personal'],
   fiscal:['Fiscalidad','SAT · IMSS'],permisos:['Permisos','Documentos'],auditoria:['Auditorías','Checklists'],
+  manual:['Manual de Uso','Guía ROS'],terminos:['Términos y Privacidad','Legal'],
 };
 function goTo(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -3591,10 +3971,4 @@ function removeBankAccount(idx){
   renderBancos();
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────
-calc();
-// Auto-save cada 60 segundos
-setInterval(()=>{if(CU&&document.getElementById('page-semanal').classList.contains('active'))guardarSemana();},60000);
-</script>
-</body>
-</html>
+// ── INIT ────────────────────────────────────────────────────�
