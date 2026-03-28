@@ -1420,9 +1420,7 @@ async function doReset(){
   await sb.auth.resetPasswordForEmail(e,{redirectTo:'https://app.getros.mx'});
   showMsg('Correo de recuperación enviado','ok');
 }
-function doLogout(){ localStorage.clear(); sessionStorage.clear(); location.href='https://app.getros.mx'; });}catch(e){}
-  localStorage.clear();sessionStorage.clear();window.location.reload();
-}
+function doLogout(){ localStorage.clear(); sessionStorage.clear(); location.href='https://app.getros.mx'; }
 
 sb.auth.onAuthStateChange(async(event,session)=>{
   if(session?.user){
