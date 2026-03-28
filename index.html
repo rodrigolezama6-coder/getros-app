@@ -300,7 +300,7 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     <button class="s-item" onclick="goTo('inventario')"><span style="font-size:14px">📦</span><span>Inventarios</span><span class="s-badge soon">Pronto</span></button>
     <button class="s-item" onclick="goTo('proveedores')"><span style="font-size:14px">🚛</span><span>Proveedores</span></button>
     <div class="s-sec">Personas</div>
-    <button class="s-item" onclick="goTo('nomina')"><span style="font-size:14px">👥</span><span>Nómina y RH</span><span class="s-badge soon">Pronto</span></button>
+    <button class="s-item" onclick="goTo('nomina')"><span style="font-size:14px">👥</span><span>Nómina y RH</span></button>
     <div class="s-sec">Legal</div>
     <button class="s-item" onclick="goTo('fiscal')"><span style="font-size:14px">🏛️</span><span>Fiscalidad</span></button>
     <button class="s-item" onclick="goTo('permisos')"><span style="font-size:14px">📁</span><span>Permisos</span><span class="s-badge soon">Pronto</span></button>
@@ -1361,7 +1361,359 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         </div>
       </div>
     </div>
-    <div class="page" id="page-nomina"><div class="coming"><div class="coming-icon">👥</div><div class="coming-title">Nómina y RH</div><div class="coming-sub">Plantilla y cálculo de nómina. Próximamente.</div></div></div>
+    <div class="page" id="page-nomina">
+      <!-- ══ MÓDULO RH ══ -->
+      <style>
+        .rh-disclaimer-banner{background:linear-gradient(135deg,#2d1f00,#3d2a00);border-bottom:2px solid var(--yellow);padding:12px 24px;display:flex;align-items:center;gap:12px;font-size:12px;color:#f5d87a;border-radius:10px;margin:16px 16px 0}
+        .rh-disclaimer-banner strong{color:var(--yellow)}
+        .rh-page-header{padding:20px 24px 16px}
+        .rh-page-header h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+        .rh-page-header p{font-size:12px;color:var(--muted);line-height:1.6;max-width:580px}
+        .rh-tabs{padding:0 24px;border-bottom:1px solid var(--border);display:flex;gap:2px;overflow-x:auto;background:var(--surface)}
+        .rh-tab{padding:12px 16px;background:none;border:none;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;display:flex;align-items:center;gap:6px}
+        .rh-tab:hover{color:var(--text2,#ccc)}
+        .rh-tab.active{color:var(--yellow);border-bottom-color:var(--yellow)}
+        .rh-panel{display:none;padding:20px 24px;max-width:900px}
+        .rh-panel.active{display:block}
+        .rh-intro-hero{background:linear-gradient(135deg,#1a1a00,#252510);border:1px solid #3a3a00;border-radius:10px;padding:20px;margin-bottom:20px}
+        .rh-intro-hero h2{font-size:15px;color:var(--yellow);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .rh-intro-hero p{font-size:13px;color:#c8c8a0;line-height:1.7}
+        .rh-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+        .rh-stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+        .rh-stat-card .sn{font-size:26px;font-weight:800;color:var(--yellow);display:block;margin-bottom:4px}
+        .rh-stat-card .sl{font-size:11px;color:var(--muted);line-height:1.4}
+        .rh-info-block{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px}
+        .rh-info-block h3{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+        .rh-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600}
+        .rb-obl{background:#3d0000;color:#ff6b6b}
+        .rb-rec{background:#1a2d00;color:#7bc67e}
+        .rb-imp{background:#2d1f00;color:#f5d87a}
+        .rh-checklist{list-style:none;display:flex;flex-direction:column;gap:8px}
+        .rh-checklist li{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--muted);line-height:1.5}
+        .rh-checklist li::before{content:'✓';color:#4CAF50;font-weight:700;flex-shrink:0;margin-top:1px}
+        .rh-checklist li.warn::before{content:'⚠';color:#f5d87a}
+        .rh-checklist li.danger::before{content:'✗';color:#ff6b6b}
+        .rh-table{width:100%;border-collapse:collapse;font-size:12px}
+        .rh-table th{text-align:left;padding:8px 12px;background:var(--surface2);color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+        .rh-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:top}
+        .rh-table tr:last-child td{border-bottom:none}
+        .rh-table td:first-child{color:var(--text);font-weight:500}
+        .plazo-p{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700}
+        .pp-5{background:#3d0000;color:#ff6b6b}.pp-30{background:#1a2d00;color:#7bc67e}.pp-now{background:#3d1500;color:#ffaa50}
+        .rh-formatos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+        .rh-fc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;transition:border-color .2s,transform .15s}
+        .rh-fc:hover{border-color:var(--yellow);transform:translateY(-2px)}
+        .rh-fc-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px}
+        .fci-blue{background:#0d1a2d}.fci-green{background:#0d2d12}.fci-red{background:#2d0d0d}.fci-amber{background:#2d1f00}.fci-purple{background:#1a0d2d}
+        .rh-fc h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+        .rh-fc p{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+        .rh-fc .ftag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;margin-bottom:10px}
+        .ft-cont{background:#0d1a2d;color:#6ba3e8}.ft-acta{background:#2d0d0d;color:#e86b6b}.ft-baja{background:#2d1f00;color:#e8c547}.ft-seg{background:#0d2d12;color:#6be878}.ft-purp{background:#1a0d2d;color:#c47be8}
+        .rh-btn-dl{width:100%;padding:9px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+        .rh-btn-dl:hover{background:var(--yellow);border-color:var(--yellow);color:#000;font-weight:600}
+        .rh-caps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px}
+        .rh-cap{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px}
+        .rh-cap .cn{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
+        .rh-cap h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px}
+        .rh-cap p{font-size:11px;color:var(--muted);line-height:1.5}
+        .rh-reg-intro{background:linear-gradient(135deg,#0d1a0d,#0d2a0d);border:1px solid #1a3a1a;border-radius:10px;padding:18px;margin-bottom:18px}
+        .rh-reg-intro h3{color:#4CAF50;font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+        .rh-reg-intro p{font-size:12px;color:#a0c8a0;line-height:1.7}
+        .rh-flujo{display:flex;flex-direction:column;gap:0;margin-bottom:20px}
+        .rh-fstep{display:flex;gap:16px;padding-bottom:20px;position:relative}
+        .rh-fstep:not(:last-child)::after{content:'';position:absolute;left:16px;top:36px;bottom:0;width:2px;background:var(--border)}
+        .rh-fstep .fc{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;position:relative;z-index:1}
+        .rh-fstep .fb h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;margin-top:6px}
+        .rh-fstep .fb p{font-size:12px;color:var(--muted);line-height:1.6}
+        .fs1 .fc{background:#0d1a2d;color:#6ba3e8}.fs2 .fc{background:#2d1f00;color:#e8c547}.fs3 .fc{background:#2d1a00;color:#e8a047}.fs4 .fc{background:#2d0d0d;color:#e86b6b}.fs5 .fc{background:#0d2d12;color:#6be878}
+        .rh-actas-tipos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+        .rh-acta{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+        .rh-acta .ai{font-size:24px;margin-bottom:8px;display:block}
+        .rh-acta h4{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
+        .rh-acta p{font-size:11px;color:var(--muted);line-height:1.5}
+        .rh-alert{background:#0d1a2d;border:1px solid #1a3a5a;border-radius:8px;padding:12px 16px;font-size:12px;color:#7aafe8;margin-top:14px;display:flex;gap:8px;align-items:flex-start;line-height:1.6}
+        .rh-divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+        .rh-panel-disc{background:#1a0d00;border:1px solid #3d2a00;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:12px;color:#c8a860;display:flex;gap:10px;align-items:flex-start;line-height:1.6}
+        .rh-sec-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+        .rh-sec-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+        @media(max-width:680px){.rh-actas-tipos{grid-template-columns:1fr}}
+      </style>
+
+      <!-- DISCLAIMER -->
+      <div class="rh-disclaimer-banner">
+        <span style="font-size:16px;flex-shrink:0">⚠️</span>
+        <div><strong>Aviso importante:</strong> Este módulo es únicamente una guía de referencia. Los formatos son modelos generales basados en la LFT. <strong>Consulta siempre a un abogado laboral o contador antes de firmar cualquier documento.</strong> ROS no presta servicios jurídicos ni asume responsabilidad legal.</div>
+      </div>
+
+      <!-- HEADER -->
+      <div class="rh-page-header">
+        <h1>👥 Recursos Humanos</h1>
+        <p>Todo lo que necesitas para contratar, documentar y gestionar correctamente a tu equipo. Una operación ordenada en RH protege a tu restaurante y a tu personal.</p>
+      </div>
+
+      <!-- TABS -->
+      <div class="rh-tabs">
+        <button class="rh-tab active" onclick="rhTab('intro',this)">🏠 Introducción</button>
+        <button class="rh-tab" onclick="rhTab('obligaciones',this)">📋 Obligaciones del Patrón</button>
+        <button class="rh-tab" onclick="rhTab('reglamento',this)">📖 Reglamento Interior</button>
+        <button class="rh-tab" onclick="rhTab('actas',this)">📝 Actas Administrativas</button>
+        <button class="rh-tab" onclick="rhTab('formatos',this)">📂 Formatos y Contratos</button>
+      </div>
+
+      <!-- ── TAB INTRO ── -->
+      <div class="rh-panel active" id="rh-intro">
+        <div class="rh-intro-hero">
+          <h2>📌 ¿Por qué necesitas un área de RH?</h2>
+          <p>En la industria restaurantera, el personal es tu activo más importante y también tu mayor riesgo legal si no se gestiona correctamente. Un restaurante sin documentación laboral en orden está expuesto a demandas, multas del IMSS y conflictos con el SAT que pueden comprometer la operación entera. Tener un sistema de Recursos Humanos no es burocracia — es protección para ti y para tu equipo.</p>
+        </div>
+        <div class="rh-stat-grid">
+          <div class="rh-stat-card"><span class="sn">90%</span><span class="sl">de las demandas laborales en México las gana el trabajador cuando el patrón no tiene documentación</span></div>
+          <div class="rh-stat-card"><span class="sn">5 días</span><span class="sl">tienes para registrar a un empleado al IMSS desde su primer día de trabajo</span></div>
+          <div class="rh-stat-card"><span class="sn">3 actas</span><span class="sl">administrativas son el estándar para fundamentar un despido justificado ante la JFCA</span></div>
+          <div class="rh-stat-card"><span class="sn">$50k+</span><span class="sl">MXN puede costar un juicio laboral perdido, sin contar indemnizaciones</span></div>
+        </div>
+        <div class="rh-info-block">
+          <h3>✅ Problemas que evitas <span class="rh-badge rb-rec">Con RH ordenado</span></h3>
+          <ul class="rh-checklist">
+            <li>Demandas por despido injustificado — sin documentación, siempre pierdes</li>
+            <li>Multas del IMSS por trabajadores no registrados o fuera de plazo</li>
+            <li>Conflictos por pago incorrecto de liquidaciones y finiquitos</li>
+            <li>Robo de información confidencial sin respaldo legal para proceder</li>
+            <li>Equipos entregados sin responsiva — sin documento, no puedes cobrar el daño</li>
+            <li>Personal sin conocimiento de las reglas — lo que no está escrito, no existe legalmente</li>
+            <li>Empleados que se van de malas y acuden a la Junta de Conciliación</li>
+          </ul>
+        </div>
+        <div class="rh-info-block">
+          <h3>⚠️ Errores comunes en restaurantes <span class="rh-badge rb-imp">Evítalos</span></h3>
+          <ul class="rh-checklist">
+            <li class="warn">Contratar de palabra sin contrato firmado</li>
+            <li class="warn">No registrar al IMSS desde el primer día — el accidente del día 2 es tu responsabilidad</li>
+            <li class="warn">No tener Reglamento Interior registrado ante la Junta de Conciliación</li>
+            <li class="warn">Dar equipos o tokens bancarios sin responsiva firmada</li>
+            <li class="warn">Despedir sin actas previas — aunque el motivo sea justo, sin evidencia perderás</li>
+            <li class="danger">Pagar en efectivo sin recibo de nómina — el IMSS y el SAT no aceptan "confianza"</li>
+          </ul>
+        </div>
+        <div class="rh-alert">💡 <span>Navega las pestañas para conocer tus obligaciones como patrón, aprender a usar el Reglamento Interior, entender las Actas Administrativas y descargar los formatos de referencia.</span></div>
+      </div>
+
+      <!-- ── TAB OBLIGACIONES ── -->
+      <div class="rh-panel" id="rh-obligaciones">
+        <div class="rh-panel-disc"><span style="font-size:18px;flex-shrink:0">⚠️</span><span>Los plazos mostrados son de referencia general conforme a la LFT y normativa del IMSS vigente. Verifica siempre con tu contador o abogado laboral los plazos exactos aplicables a tu empresa.</span></div>
+        <div class="rh-sec-title">Obligaciones ante el IMSS</div>
+        <div class="rh-sec-sub">Al contratar a cualquier persona, adquieres estas obligaciones de forma inmediata e irrenunciable.</div>
+        <div class="rh-info-block">
+          <h3>🏥 Seguridad Social — IMSS <span class="rh-badge rb-obl">Obligatorio</span></h3>
+          <ul class="rh-checklist">
+            <li>Registrar a cada empleado en el IMSS <strong>dentro de los primeros 5 días hábiles</strong> desde su ingreso</li>
+            <li>Pagar cuotas obrero-patronales mensualmente (IMSS + INFONAVIT + SAR)</li>
+            <li>Notificar modificaciones salariales en un plazo de 5 días hábiles</li>
+            <li>Dar de baja al empleado ante el IMSS al término de la relación laboral</li>
+            <li>Asumir responsabilidad de accidentes de trabajo desde el primer día, aunque no esté dado de alta</li>
+          </ul>
+        </div>
+        <div class="rh-info-block">
+          <h3>💰 Prestaciones mínimas de ley <span class="rh-badge rb-obl">Obligatorio</span></h3>
+          <table class="rh-table">
+            <thead><tr><th>Prestación</th><th>Detalle</th><th>Cuándo</th></tr></thead>
+            <tbody>
+              <tr><td>Aguinaldo</td><td>Mínimo 15 días de salario por año trabajado</td><td>Antes del 20 de diciembre</td></tr>
+              <tr><td>Vacaciones</td><td>6 días el primer año, +2 por cada año adicional (hasta 12)</td><td>Al cumplir el año</td></tr>
+              <tr><td>Prima vacacional</td><td>25% adicional sobre el salario de vacaciones</td><td>Al tomar vacaciones</td></tr>
+              <tr><td>PTU</td><td>10% de la utilidad fiscal distribuida entre trabajadores</td><td>Mayo–Junio</td></tr>
+              <tr><td>Día de descanso</td><td>Al menos 1 día por cada 6 trabajados</td><td>Semanal</td></tr>
+              <tr><td>Días festivos</td><td>7 días al año según LFT — si trabajan, pago triple</td><td>Según calendario</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="rh-info-block">
+          <h3>⏱️ Plazos críticos <span class="rh-badge rb-imp">No olvides</span></h3>
+          <table class="rh-table">
+            <thead><tr><th>Acción</th><th>Plazo</th><th>Consecuencia de incumplir</th></tr></thead>
+            <tbody>
+              <tr><td>Alta en IMSS del nuevo empleado</td><td><span class="plazo-p pp-5">5 días hábiles</span></td><td>Multa + responsabilidad retroactiva de accidentes</td></tr>
+              <tr><td>Notificar modificación de salario</td><td><span class="plazo-p pp-5">5 días hábiles</span></td><td>Diferencias no cubiertas + recargos</td></tr>
+              <tr><td>Entrega de finiquito</td><td><span class="plazo-p pp-now">Inmediato</span></td><td>El trabajador puede demandar y generar intereses</td></tr>
+              <tr><td>Pago de aguinaldo</td><td><span class="plazo-p pp-30">20 dic</span></td><td>Multa + recargos — sin excepción</td></tr>
+              <tr><td>Baja en IMSS al terminar relación</td><td><span class="plazo-p pp-5">5 días hábiles</span></td><td>Cuotas continúan generándose a tu cargo</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="rh-info-block">
+          <h3>🏛️ ISERTP Puebla — Impuesto sobre Nómina <span class="rh-badge rb-obl">Obligatorio en Puebla</span></h3>
+          <ul class="rh-checklist">
+            <li>Tasa: <strong>3% sobre el total de la nómina pagada</strong> (salarios, comisiones, bonos)</li>
+            <li>Se paga mensualmente a la Secretaría de Finanzas del Estado de Puebla</li>
+            <li>Aplica a todas las empresas con trabajadores en el estado, independientemente del régimen fiscal</li>
+            <li>No confundir con ISR — el ISERTP es adicional y va directo al gobierno estatal</li>
+          </ul>
+        </div>
+        <div class="rh-info-block">
+          <h3>📑 Documentación obligatoria <span class="rh-badge rb-obl">Obligatorio</span></h3>
+          <ul class="rh-checklist">
+            <li>Contrato Individual de Trabajo por escrito desde el primer día</li>
+            <li>Recibos de nómina firmados (físicos o digitales)</li>
+            <li>Reglamento Interior de Trabajo registrado ante la Junta de Conciliación</li>
+            <li>Expediente de cada empleado: ID, CURP, RFC, número de seguridad social</li>
+            <li>Actas administrativas de incidencias (retardos, faltas, comportamiento)</li>
+            <li>Responsivas de equipos o activos asignados</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ── TAB REGLAMENTO ── -->
+      <div class="rh-panel" id="rh-reglamento">
+        <div class="rh-panel-disc"><span style="font-size:18px;flex-shrink:0">⚠️</span><span>El Reglamento Interior de Trabajo debe ser elaborado por una Comisión Mixta (patrón + trabajadores) y registrado ante la Junta Local de Conciliación y Arbitraje. El contenido mostrado es de referencia — consúltalo con un abogado laboral antes de formalizarlo.</span></div>
+        <div class="rh-reg-intro">
+          <h3>📖 ¿Qué es y por qué es fundamental?</h3>
+          <p>El Reglamento Interior de Trabajo (RIT) establece las reglas de convivencia, derechos y obligaciones dentro de tu restaurante. Sin un RIT registrado, cualquier sanción que apliques puede ser impugnada legalmente. Es la base sobre la que se sustentan las Actas Administrativas — sin reglamento, las actas no tienen valor legal. Es obligatorio por la LFT para toda empresa con más de 5 trabajadores.</p>
+        </div>
+        <div class="rh-sec-title" style="margin-bottom:12px">Capítulos del Reglamento Interior</div>
+        <div class="rh-caps-grid">
+          <div class="rh-cap"><div class="cn">Capítulo I</div><h4>🏢 Declaraciones Generales</h4><p>Datos de la empresa, domicilio, objeto social, representante legal y vigencia del reglamento.</p></div>
+          <div class="rh-cap"><div class="cn">Capítulo II</div><h4>👤 Del Ingreso</h4><p>Requisitos para ser contratado, periodo de prueba, documentación requerida y proceso de inducción.</p></div>
+          <div class="rh-cap"><div class="cn">Capítulo III</div><h4>⏰ Lugar y Tiempo de Trabajo</h4><p>Horarios, turnos rotativos, lugar de trabajo, descansos intermedios y jornada máxima.</p></div>
+          <div class="rh-cap"><div class="cn">Capítulo IV</div><h4>🌴 Descanso y Vacaciones</h4><p>Días de descanso semanal, días festivos oficiales, procedimiento para solicitar vacaciones.</p></div>
+          <div class="rh-cap"><div class="cn">Capítulo V</div><h4>📋 De los Permisos</h4><p>Cómo solicitar permisos, permisos con y sin goce de sueldo, justificación de inasistencias.</p></div>
+          <div class="rh-cap"><div class="cn">Capítulo VI</div><h4>💳 Lugar y Días de Pago</h4><p>Periodicidad del pago, método (efectivo, transferencia), lugar y recibos de nómina.</p></div>
+          <div class="rh-cap"><div class="cn">Capítulo VII</div><h4>📊 Control de Asistencia</h4><p>Sistema de registro de asistencia, tolerancia de retardos, procedimiento ante faltas.</p></div>
+          <div class="rh-cap"><div class="cn">Capítulo VIII</div><h4>🦺 Seguridad e Higiene</h4><p>Normas de seguridad en cocina, equipo de protección, protocolo de accidentes y primeros auxilios.</p></div>
+          <div class="rh-cap"><div class="cn">Capítulo IX</div><h4>🧹 Aseo y Equipos</h4><p>Cuidado de instalaciones, equipos de cómputo, herramientas y responsabilidad por daños.</p></div>
+          <div class="rh-cap"><div class="cn">Capítulo X</div><h4>👩 Trabajo de Menores y Mujeres</h4><p>Protecciones para menores de 18 años y trabajadoras embarazadas o en lactancia.</p></div>
+          <div class="rh-cap"><div class="cn">Capítulo XI</div><h4>🚪 Terminación de la Relación</h4><p>Causas de rescisión sin responsabilidad para el patrón, proceso de renuncia y liquidación.</p></div>
+          <div class="rh-cap"><div class="cn">Capítulo XII</div><h4>🤝 Relaciones Interpersonales</h4><p>Código de conducta, respeto entre compañeros, prohibición de acoso, uso de celulares en turno.</p></div>
+        </div>
+        <div class="rh-info-block">
+          <h3>📋 Cómo registrar tu Reglamento Interior <span class="rh-badge rb-obl">LFT Art. 424</span></h3>
+          <ul class="rh-checklist">
+            <li>Formar una <strong>Comisión Mixta</strong>: el patrón designa su representante y los trabajadores eligen el suyo</li>
+            <li>La comisión elabora y revisa el reglamento en conjunto</li>
+            <li>Ambas partes firman el documento final</li>
+            <li>Se deposita ante la <strong>Junta Local de Conciliación y Arbitraje de Puebla</strong></li>
+            <li>Se entrega una copia a cada trabajador — conserva acuse de recibo firmado</li>
+            <li>Se publica en lugar visible dentro del restaurante</li>
+          </ul>
+          <div class="rh-alert" style="margin-top:14px">📍 <span>Junta Local de Conciliación y Arbitraje de Puebla — Calle 5 Oriente No. 213, Col. Centro Histórico, Puebla. Tel: (222) 246-1800</span></div>
+        </div>
+      </div>
+
+      <!-- ── TAB ACTAS ── -->
+      <div class="rh-panel" id="rh-actas">
+        <div class="rh-panel-disc"><span style="font-size:18px;flex-shrink:0">⚠️</span><span>Las actas administrativas son instrumentos legales que, mal aplicados, pueden ser impugnados. Se recomienda asesoría de un abogado laboral al redactar actas que podrían derivar en una rescisión de contrato.</span></div>
+        <div class="rh-sec-title">¿Qué es un Acta Administrativa?</div>
+        <div class="rh-sec-sub">Documento formal que deja constancia escrita de una falta o incumplimiento, con valor legal ante cualquier instancia laboral.</div>
+        <div class="rh-reg-intro" style="background:linear-gradient(135deg,#1a0d00,#2a1500);border-color:#3a2000">
+          <h3 style="color:var(--yellow)">💡 ¿Por qué son tan importantes?</h3>
+          <p style="color:#c8a060">En México, el patrón que quiera despedir por causa justificada necesita demostrar el incumplimiento con evidencia documental. Sin actas previas, incluso el trabajador que llega tarde todos los días puede ganar un juicio laboral por "despido injustificado" y el patrón deberá pagar 3 meses de salario + 20 días por año trabajado. <strong>El expediente de actas es tu única defensa legal.</strong></p>
+        </div>
+        <div class="rh-actas-tipos">
+          <div class="rh-acta"><span class="ai">⏰</span><h4>Retardos</h4><p>Cuando el empleado llega después del tiempo de tolerancia establecido en el Reglamento Interior.</p></div>
+          <div class="rh-acta"><span class="ai">🚫</span><h4>Inasistencias</h4><p>Cuando el empleado no se presenta sin aviso ni justificante, o con justificación insuficiente.</p></div>
+          <div class="rh-acta"><span class="ai">⚡</span><h4>Comportamiento</h4><p>Conductas contrarias al Reglamento: conflictos, robo, daño a equipos, acoso, uso inadecuado de celular.</p></div>
+        </div>
+        <div class="rh-sec-title" style="margin-bottom:12px">Proceso correcto para levantar un Acta</div>
+        <div class="rh-flujo">
+          <div class="rh-fstep fs1"><div class="fc">1</div><div class="fb"><h4>Verificar que la falta viola el Reglamento Interior</h4><p>Antes de levantar el acta, confirma que el comportamiento está expresamente prohibido en tu Reglamento registrado. Sin reglamento no hay base legal.</p></div></div>
+          <div class="rh-fstep fs2"><div class="fc">2</div><div class="fb"><h4>Reunir testigos — mínimo 2 personas</h4><p>Los testigos deben estar presentes en el lugar (compañeros, encargados). No pueden ser familiares del patrón. Firmarán el acta como "Testigos de Asistencia".</p></div></div>
+          <div class="rh-fstep fs3"><div class="fc">3</div><div class="fb"><h4>Redactar el Acta con datos exactos</h4><p>Fecha, hora, lugar, nombre del trabajador, puesto y descripción precisa de los hechos. Ser específico — "llegó tarde" no es suficiente, anota la hora exacta.</p></div></div>
+          <div class="rh-fstep fs4"><div class="fc">4</div><div class="fb"><h4>Presentar al trabajador para firmar</h4><p>Si se niega a firmar, los testigos hacen constar la negativa. <strong>La negativa no invalida el acta.</strong></p></div></div>
+          <div class="rh-fstep fs5"><div class="fc">5</div><div class="fb"><h4>Archivar en el expediente del empleado</h4><p>Conserva el original. Entrega copia al empleado. Este historial es tu respaldo ante cualquier demanda.</p></div></div>
+        </div>
+        <div class="rh-info-block">
+          <h3>📌 ¿Cuántas actas para despedir justificadamente?</h3>
+          <ul class="rh-checklist">
+            <li><strong>3 actas</strong> es el estándar aceptado por las Juntas de Conciliación para faltas acumuladas</li>
+            <li>Para faltas graves únicas (robo, violencia, daño doloso), una sola acta bien documentada puede fundamentar la rescisión</li>
+            <li>Entre cada acta debe haber comunicación de la sanción al empleado — no acumules sin que él lo sepa</li>
+            <li class="warn">Las actas con más de 2 meses de antigüedad pierden peso como precedente — actúa a tiempo</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ── TAB FORMATOS ── -->
+      <div class="rh-panel" id="rh-formatos">
+        <div class="rh-panel-disc"><span style="font-size:18px;flex-shrink:0">⚠️</span><span>Los formatos son <strong>modelos de referencia</strong> basados en la LFT. Deben adaptarse a tu empresa por un abogado laboral. ROS no garantiza su exactitud legal ni asume responsabilidad por su uso.</span></div>
+
+        <div class="rh-sec-title">Contratos de Trabajo</div>
+        <div class="rh-sec-sub">Elige el contrato según el tipo de relación laboral. Todos incluyen las cláusulas mínimas que exige la LFT.</div>
+        <div class="rh-formatos-grid" style="margin-bottom:24px">
+          <div class="rh-fc"><div class="rh-fc-icon fci-blue">📄</div><span class="ftag ft-cont">Tiempo Indeterminado</span><h4>Contrato Indefinido — Horario Fijo</h4><p>Para empleados permanentes con horario establecido. El más común en restaurantes.</p><button class="rh-btn-dl" onclick="rhDescargar('Contrato_Individual_de_Trabajo__por_Tiempo_Indeterminado_Horario_Fijo.docx',this)">⬇ Descargar formato</button></div>
+          <div class="rh-fc"><div class="rh-fc-icon fci-blue">📄</div><span class="ftag ft-cont">Tiempo Indeterminado</span><h4>Contrato Indefinido — Horario Rotativo</h4><p>Para empleados permanentes con turnos variables (cocina, bar).</p><button class="rh-btn-dl" onclick="rhDescargar('Contrato_Individual_de_Trabajo__por_Tiempo_Indeterminado_Horario_Rotativo.docx',this)">⬇ Descargar formato</button></div>
+          <div class="rh-fc"><div class="rh-fc-icon fci-purple">📄</div><span class="ftag ft-purp">Tiempo Determinado</span><h4>Contrato Determinado — Horario Fijo</h4><p>Para empleados por temporada o proyectos con fecha de término definida y horario fijo.</p><button class="rh-btn-dl" onclick="rhDescargar('Contrato_Individual_de_Trabajo__por_Tiempo_Determinado__Horario_Fijo.docx',this)">⬇ Descargar formato</button></div>
+          <div class="rh-fc"><div class="rh-fc-icon fci-purple">📄</div><span class="ftag ft-purp">Tiempo Determinado</span><h4>Contrato Determinado — Horario Rotativo</h4><p>Para personal temporal (Navidad, temporada alta) con turnos variables.</p><button class="rh-btn-dl" onclick="rhDescargar('Contrato_Individual_de_Trabajo__por_Tiempo_Determinado__Horario_Rotativo.docx',this)">⬇ Descargar formato</button></div>
+          <div class="rh-fc"><div class="rh-fc-icon fci-green">🔒</div><span class="ftag ft-seg">Protección</span><h4>Convenio de Confidencialidad</h4><p>Protege recetas, procesos, proveedores y datos financieros. Firma con cada empleado al contratar.</p><button class="rh-btn-dl" onclick="rhDescargar('Convenio_de_Confidencialidad.docx',this)">⬇ Descargar formato</button></div>
+        </div>
+
+        <hr class="rh-divider">
+        <div class="rh-sec-title">Documentos de Baja</div>
+        <div class="rh-sec-sub">Usa siempre ambos documentos juntos al terminar una relación laboral — te protegen de reclamaciones futuras.</div>
+        <div class="rh-formatos-grid" style="margin-bottom:24px">
+          <div class="rh-fc"><div class="rh-fc-icon fci-amber">📝</div><span class="ftag ft-baja">Terminación</span><h4>Formato de Renuncia</h4><p>El trabajador declara su renuncia voluntaria e irrevocable y libera al patrón de responsabilidades. Requiere firma + huella dactilar.</p><button class="rh-btn-dl" onclick="rhDescargar('Formato_Renuncia.docx',this)">⬇ Descargar formato</button></div>
+          <div class="rh-fc"><div class="rh-fc-icon fci-amber">🧾</div><span class="ftag ft-baja">Terminación</span><h4>Formato de Finiquito</h4><p>Documenta el pago proporcional de aguinaldo, vacaciones y prima vacacional. El trabajador escribe el monto de su puño y letra.</p><button class="rh-btn-dl" onclick="rhDescargar('Formato_Finiquito.docx',this)">⬇ Descargar formato</button></div>
+        </div>
+
+        <hr class="rh-divider">
+        <div class="rh-sec-title">Actas Administrativas</div>
+        <div class="rh-sec-sub">Levanta el acta correspondiente al tipo de falta. Consulta la pestaña "Actas Administrativas" para el proceso correcto.</div>
+        <div class="rh-formatos-grid" style="margin-bottom:24px">
+          <div class="rh-fc"><div class="rh-fc-icon fci-red">⏰</div><span class="ftag ft-acta">Acta Administrativa</span><h4>Acta por Retardos</h4><p>Para documentar llegadas tarde que excedan la tolerancia del Reglamento. Incluye hora exacta del retardo.</p><button class="rh-btn-dl" onclick="rhDescargar('Acta_Administrativa_Retardos.docx',this)">⬇ Descargar formato</button></div>
+          <div class="rh-fc"><div class="rh-fc-icon fci-red">🚫</div><span class="ftag ft-acta">Acta Administrativa</span><h4>Acta por Inasistencias</h4><p>Para faltas sin aviso ni justificación. Incluye referencia a los artículos 47 y 134 de la LFT.</p><button class="rh-btn-dl" onclick="rhDescargar('Acta_Administrativa_Inasistencias.docx',this)">⬇ Descargar formato</button></div>
+          <div class="rh-fc"><div class="rh-fc-icon fci-red">⚡</div><span class="ftag ft-acta">Acta Administrativa</span><h4>Acta por Comportamiento</h4><p>Para conductas indebidas, conflictos, daños u otras faltas al Reglamento. Campo de hechos libre.</p><button class="rh-btn-dl" onclick="rhDescargar('Acta_Administrativa_Comportamiento.docx',this)">⬇ Descargar formato</button></div>
+        </div>
+
+        <hr class="rh-divider">
+        <div class="rh-sec-title">Responsivas de Equipos y Activos</div>
+        <div class="rh-sec-sub">Documenta con una responsiva firmada cada bien que entregues a un empleado. Este formato es general y adaptable — úsalo para celulares, laptops, tokens bancarios, llaves, uniformes, caja chica o cualquier activo de tu restaurante.</div>
+        <div class="rh-info-block" style="margin-bottom:16px">
+          <h3>💡 Ejemplos de uso para tu restaurante</h3>
+          <ul class="rh-checklist">
+            <li>📱 Teléfono celular corporativo entregado a gerente o encargado</li>
+            <li>💻 Laptop o tablet para administración o pedidos en línea</li>
+            <li>🏦 Token bancario para acceso a cuentas empresariales</li>
+            <li>🔑 Llaves del local entregadas a personal de confianza</li>
+            <li>👕 Uniformes o equipo de protección (cuchillos, mandiles, calzado)</li>
+            <li>💳 Tarjeta de crédito o débito corporativa</li>
+            <li>📦 Caja chica o fondo de caja asignado</li>
+          </ul>
+        </div>
+        <div class="rh-formatos-grid">
+          <div class="rh-fc"><div class="rh-fc-icon fci-green">📋</div><span class="ftag ft-seg">Responsiva</span><h4>Responsiva General de Equipos y Activos</h4><p>Formato adaptable para cualquier bien entregado a un empleado. Modifica el nombre del artículo, descripción y condiciones según el caso.</p><button class="rh-btn-dl" onclick="rhDescargar('Responsiva_Telefono_Movil.doc',this)">⬇ Descargar formato</button></div>
+          <div class="rh-fc"><div class="rh-fc-icon fci-green">📖</div><span class="ftag ft-seg">Reglamento</span><h4>Reglamento Interior de Trabajo</h4><p>El documento base que habilita las actas administrativas. Debe registrarse ante la Junta de Conciliación y Arbitraje.</p><button class="rh-btn-dl" onclick="rhDescargar('Reglamento_Interior_de_Trabajo.docx',this)">⬇ Descargar formato</button></div>
+        </div>
+        <div class="rh-alert" style="margin-top:14px">ℹ️ <span>Los archivos se descargan desde el servidor de ROS. Si alguno falla, escríbenos a hola@getros.mx y te lo enviamos directamente.</span></div>
+      </div>
+
+      <script>
+        function rhTab(id, btn) {
+          document.querySelectorAll('.rh-panel').forEach(p => p.classList.remove('active'));
+          document.querySelectorAll('.rh-tab').forEach(b => b.classList.remove('active'));
+          document.getElementById('rh-' + id).classList.add('active');
+          btn.classList.add('active');
+        }
+        function rhDescargar(filename, btn) {
+          // URL de Supabase Storage — actualiza YOUR_PROJECT con tu project ID de Supabase
+          const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co/storage/v1/object/public/formatos/rh/';
+          const orig = btn.innerHTML;
+          btn.innerHTML = '✅ Descargando...';
+          btn.style.cssText += 'background:var(--green);border-color:var(--green);color:#000;font-weight:600';
+          const a = document.createElement('a');
+          a.href = SUPABASE_URL + filename;
+          a.download = filename;
+          a.target = '_blank';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => {
+            btn.innerHTML = orig;
+            btn.style.background = '';
+            btn.style.borderColor = '';
+            btn.style.color = '';
+            btn.style.fontWeight = '';
+          }, 2500);
+        }
+      </script>
+    </div>
     <div class="page" id="page-permisos"><div class="coming"><div class="coming-icon">📁</div><div class="coming-title">Permisos y Licencias</div><div class="coming-sub">Vault digital de documentos. Próximamente.</div></div></div>
     <div class="page" id="page-auditoria"><div class="coming"><div class="coming-icon">✅</div><div class="coming-title">Auditorías y Checklists</div><div class="coming-sub">Control semanal, mensual y anual. Próximamente.</div></div></div>
 
