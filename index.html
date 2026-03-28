@@ -290,6 +290,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <button class="s-item" onclick="goTo('permisos')"><span style="font-size:14px">📁</span><span>Permisos</span><span class="s-badge soon">Pronto</span></button>
     <div class="s-sec">Control</div>
     <button class="s-item" onclick="goTo('auditoria')"><span style="font-size:14px">✅</span><span>Auditorías</span><span class="s-badge soon">Pronto</span></button>
+    <div class="s-sec">Compras y Pagos</div>
+    <button class="s-item" onclick="goTo('pedidos')"><span style="font-size:14px">🛒</span><span>Pedidos</span></button>
+    <button class="s-item" onclick="goTo('cxp')"><span style="font-size:14px">💳</span><span>Cuentas x Pagar</span></button>
+    <button class="s-item" onclick="goTo('flujo')"><span style="font-size:14px">💧</span><span>Flujo de Caja</span></button>
     <div class="s-sec">Gestión</div>
     <button class="s-item" onclick="goTo('pendientes')"><span style="font-size:14px">📌</span><span>Pendientes</span></button>
   </nav>
@@ -812,6 +816,233 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
     </div>
 
+    <!-- ═══ PEDIDOS ═══ -->
+    <div class="page" id="page-pedidos">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:18px">Pedidos Semanales</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Registra compras por proveedor — alimenta automáticamente el COGS del P&L</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select class="sel" id="ped-week-sel" onchange="loadPedidos()">
+            <option value="1">Sem 1</option><option value="2">Sem 2</option><option value="3">Sem 3</option>
+            <option value="4">Sem 4</option><option value="5">Sem 5</option><option value="6">Sem 6</option>
+            <option value="7">Sem 7</option><option value="8">Sem 8</option><option value="9">Sem 9</option>
+            <option value="10">Sem 10</option><option value="11">Sem 11</option><option value="12" selected>Sem 12</option>
+            <option value="13">Sem 13</option><option value="14">Sem 14</option><option value="15">Sem 15</option>
+            <option value="16">Sem 16</option><option value="48">Sem 48</option><option value="49">Sem 49</option>
+            <option value="50">Sem 50</option><option value="51">Sem 51</option><option value="52">Sem 52</option>
+          </select>
+          <button class="btn btn-ghost" onclick="openPedidoModal()" style="font-size:12px">+ Agregar proveedor</button>
+          <button class="btn btn-accent" onclick="savePedidos()" id="ped-save-btn">💾 Guardar</button>
+        </div>
+      </div>
+
+      <!-- TOTALES -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+        <div class="kpi yl" style="padding:14px"><div class="kl">Alimentos</div><div class="kv" id="ped-total-ali" style="font-size:18px">$0</div><div class="ks">esta semana</div></div>
+        <div class="kpi bl" style="padding:14px"><div class="kl">Bebidas</div><div class="kv" id="ped-total-beb" style="font-size:18px">$0</div><div class="ks">esta semana</div></div>
+        <div class="kpi pu" style="padding:14px"><div class="kl">Indirectos</div><div class="kv" id="ped-total-ind" style="font-size:18px">$0</div><div class="ks">esta semana</div></div>
+        <div class="kpi ac" style="padding:14px"><div class="kl">Total compras</div><div class="kv" id="ped-total" style="font-size:18px">$0</div><div class="ks" id="ped-pct-vn">—</div></div>
+      </div>
+
+      <!-- TABLA PEDIDOS -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Compras de la semana</div>
+          <div class="card-hint">Los totales se suman automáticamente al COGS del P&L</div>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;min-width:700px">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border2)">
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:8px 14px;text-align:left">Proveedor</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:8px;text-align:center">Categoría</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:8px;text-align:right">Lun</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:8px;text-align:right">Mar</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:8px;text-align:right">Mié</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:8px;text-align:right">Jue</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:8px;text-align:right">Vie</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:8px;text-align:right">Sáb</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:8px;text-align:right">Dom</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:8px;text-align:right">Total</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;padding:8px;text-align:center">Crédito</th>
+                <th style="padding:8px;width:40px"></th>
+              </tr>
+            </thead>
+            <tbody id="ped-tbody"></tbody>
+            <tfoot>
+              <tr style="background:var(--surface2);border-top:1px solid var(--border2)">
+                <td style="font-size:12px;font-weight:600;padding:9px 14px" colspan="2">TOTAL</td>
+                <td id="ped-foot-lun" style="font-size:12px;font-weight:600;padding:9px 8px;text-align:right;color:var(--accent)">$0</td>
+                <td id="ped-foot-mar" style="font-size:12px;font-weight:600;padding:9px 8px;text-align:right;color:var(--accent)">$0</td>
+                <td id="ped-foot-mie" style="font-size:12px;font-weight:600;padding:9px 8px;text-align:right;color:var(--accent)">$0</td>
+                <td id="ped-foot-jue" style="font-size:12px;font-weight:600;padding:9px 8px;text-align:right;color:var(--accent)">$0</td>
+                <td id="ped-foot-vie" style="font-size:12px;font-weight:600;padding:9px 8px;text-align:right;color:var(--accent)">$0</td>
+                <td id="ped-foot-sab" style="font-size:12px;font-weight:600;padding:9px 8px;text-align:right;color:var(--accent)">$0</td>
+                <td id="ped-foot-dom" style="font-size:12px;font-weight:600;padding:9px 8px;text-align:right;color:var(--accent)">$0</td>
+                <td id="ped-foot-tot" style="font-size:13px;font-weight:700;padding:9px 8px;text-align:right;color:var(--accent)">$0</td>
+                <td colspan="2"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <div style="padding:10px 14px;border-top:1px solid var(--border);background:rgba(200,241,53,.03)">
+          <div style="font-size:11px;color:var(--muted)">💡 Al guardar, los totales de Alimentos y Bebidas se suman automáticamente al COGS del P&L de esta semana.</div>
+        </div>
+      </div>
+
+      <!-- MODAL AGREGAR PROVEEDOR A PEDIDOS -->
+      <div id="ped-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center">
+        <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:22px;width:100%;max-width:420px;margin:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div style="font-size:14px;font-weight:600">Agregar proveedor al pedido</div>
+            <button onclick="closePedidoModal()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px">×</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Proveedor *</label>
+            <input class="ri" type="text" id="ped-prov-nombre" placeholder="Nombre del proveedor" style="width:100%"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Categoría</label>
+              <select class="ri" id="ped-prov-cat" style="width:100%">
+                <option value="alimentos">Alimentos</option>
+                <option value="bebidas">Bebidas</option>
+                <option value="indirectos">Indirectos</option>
+                <option value="otros">Otros</option>
+              </select></div>
+              <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Crédito</label>
+              <select class="ri" id="ped-prov-credito" style="width:100%">
+                <option value="0">Contado</option>
+                <option value="7">7 días</option>
+                <option value="15">15 días</option>
+                <option value="21">21 días</option>
+                <option value="30">30 días</option>
+              </select></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+            <button onclick="closePedidoModal()" class="btn btn-ghost">Cancelar</button>
+            <button onclick="addPedidoProveedor()" class="btn btn-accent">Agregar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CXP ═══ -->
+    <div class="page" id="page-cxp">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:18px">Cuentas por Pagar</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Control de crédito con proveedores · Vencimientos y saldos</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <select class="sel" id="cxp-week-sel" onchange="renderCXP()">
+            <option value="10">Sem 10</option><option value="11">Sem 11</option><option value="12" selected>Sem 12</option>
+            <option value="13">Sem 13</option><option value="14">Sem 14</option>
+          </select>
+          <button class="btn btn-accent" onclick="saveCXP()" id="cxp-save-btn">💾 Guardar</button>
+        </div>
+      </div>
+
+      <!-- CXP TOTALES -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+        <div class="kpi rd" style="padding:14px"><div class="kl">Vence esta semana</div><div class="kv" id="cxp-t7" style="font-size:18px;color:var(--red)">$0</div><div class="ks">crédito 7 días</div></div>
+        <div class="kpi yl" style="padding:14px"><div class="kl">Próximas 2 semanas</div><div class="kv" id="cxp-t15" style="font-size:18px">$0</div><div class="ks">crédito 15 días</div></div>
+        <div class="kpi bl" style="padding:14px"><div class="kl">Próximo mes</div><div class="kv" id="cxp-t30" style="font-size:18px">$0</div><div class="ks">crédito 21-30 días</div></div>
+        <div class="kpi ac" style="padding:14px"><div class="kl">Total a pagar</div><div class="kv" id="cxp-total" style="font-size:18px">$0</div><div class="ks">todas las cuentas</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--red)"></span>Cuentas pendientes de pago</div></div>
+        <div id="cxp-table-container">
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border2)">
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px 14px;text-align:left">Proveedor</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:center">Categoría</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:right">Monto</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:center">Crédito</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:center">Vencimiento</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:center">Estado</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:center">Pagado</th>
+              </tr>
+            </thead>
+            <tbody id="cxp-tbody"></tbody>
+          </table>
+        </div>
+        <div style="padding:10px 14px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">
+          Las cuentas se generan automáticamente desde los Pedidos semanales registrados.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ FLUJO DE CAJA ═══ -->
+    <div class="page" id="page-flujo">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:18px">Flujo de Caja</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Entradas y salidas reales de efectivo</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <select class="sel" id="flujo-week-sel" onchange="renderFlujo()">
+            <option value="10">Sem 10</option><option value="11">Sem 11</option><option value="12" selected>Sem 12</option>
+            <option value="13">Sem 13</option><option value="14">Sem 14</option>
+          </select>
+          <button class="btn btn-accent" onclick="saveFlujo()" id="flujo-save-btn">💾 Guardar</button>
+        </div>
+      </div>
+
+      <!-- SALDOS -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+        <div class="kpi bl" style="padding:14px"><div class="kl">Saldo inicial</div><div class="kv" id="fl-saldo-ini" style="font-size:20px">$0</div><div class="ks">inicio de semana</div></div>
+        <div class="kpi gr" style="padding:14px"><div class="kl">Total entradas</div><div class="kv" id="fl-entradas" style="font-size:20px;color:var(--green)">$0</div><div class="ks">ingresos semana</div></div>
+        <div class="kpi ac" style="padding:14px"><div class="kl">Saldo final</div><div class="kv" id="fl-saldo-fin" style="font-size:20px">$0</div><div class="ks" id="fl-saldo-fin-sub">proyectado</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <!-- ENTRADAS -->
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--green)"></span>Entradas</div></div>
+          <div class="thdr"><div class="th">Concepto</div><div class="th r">Importe ($)</div></div>
+          <div class="row"><div class="rl s">Ventas efectivo</div><input class="ri" type="number" id="fl-efe" value="0" oninput="calcFlujo()"><div></div></div>
+          <div class="row"><div class="rl s">Ventas Blockpay / TPV</div><input class="ri" type="number" id="fl-tpv" value="0" oninput="calcFlujo()"><div></div></div>
+          <div class="row"><div class="rl s">Ventas plataformas (Didi, Rappi)</div><input class="ri" type="number" id="fl-plat" value="0" oninput="calcFlujo()"><div></div></div>
+          <div class="row"><div class="rl s">Cobro de eventos / anticipos</div><input class="ri" type="number" id="fl-event" value="0" oninput="calcFlujo()"><div></div></div>
+          <div class="row"><div class="rl s">Otros ingresos</div><input class="ri" type="number" id="fl-otros-in" value="0" oninput="calcFlujo()"><div></div></div>
+          <div class="row stot"><div class="rl">Total entradas</div><div class="rc pos" id="fl-tot-ent">$0</div><div></div></div>
+        </div>
+
+        <!-- SALIDAS -->
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--red)"></span>Salidas</div></div>
+          <div class="thdr"><div class="th">Concepto</div><div class="th r">Importe ($)</div></div>
+          <div class="row"><div class="rl s">Pago proveedores (de compras)</div><div class="rc neg" id="fl-prov-auto">$0</div><div></div></div>
+          <div class="row"><div class="rl s">Nómina efectivo</div><input class="ri" type="number" id="fl-nomina" value="0" oninput="calcFlujo()"><div></div></div>
+          <div class="row"><div class="rl s">Renta</div><input class="ri" type="number" id="fl-renta" value="0" oninput="calcFlujo()"><div></div></div>
+          <div class="row"><div class="rl s">Impuestos / SAT</div><input class="ri" type="number" id="fl-impuestos" value="0" oninput="calcFlujo()"><div></div></div>
+          <div class="row"><div class="rl s">Servicios (luz, gas, agua)</div><input class="ri" type="number" id="fl-servicios" value="0" oninput="calcFlujo()"><div></div></div>
+          <div class="row"><div class="rl s">Otros pagos</div><input class="ri" type="number" id="fl-otros-out" value="0" oninput="calcFlujo()"><div></div></div>
+          <div class="row stot"><div class="rl">Total salidas</div><div class="rc neg" id="fl-tot-sal">$0</div><div></div></div>
+        </div>
+      </div>
+
+      <!-- SALDO INICIAL INPUT -->
+      <div class="card" style="margin-top:14px">
+        <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>Saldo de bancos al inicio de la semana</div></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px">
+          <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Cuenta BBVA Operadora</label><input class="ri" type="number" id="fl-bbva" value="0" oninput="calcFlujo()" style="width:100%"></div>
+          <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Cuenta Blockpay</label><input class="ri" type="number" id="fl-blockpay" value="0" oninput="calcFlujo()" style="width:100%"></div>
+          <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Efectivo en caja</label><input class="ri" type="number" id="fl-caja" value="0" oninput="calcFlujo()" style="width:100%"></div>
+        </div>
+        <div class="row grand" style="padding:16px">
+          <div class="rl" style="font-size:16px">💰 Saldo final proyectado</div>
+          <div class="rc" id="fl-saldo-final" style="font-size:20px">$0</div>
+          <div class="rpct" id="fl-saldo-final-dif" style="font-size:12px">—</div>
+          <div class="rsem" id="fl-saldo-semaforo"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ═══ PENDIENTES ═══ -->
     <div class="page" id="page-pendientes">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
@@ -1072,6 +1303,9 @@ function ptab(id){
   if(id==='res')buildResumen();
   if(id==='cmp')buildComp();
   if(id==='analisis'){loadAllWeeks().then(()=>renderAnalisis());}
+  if(id==='pedidos')loadPedidos();
+  if(id==='cxp'){loadPedidos().then(()=>loadCXP());}
+  if(id==='flujo')loadFlujo();
 }
 function toggleManual(){
   const b=document.getElementById('m-body'),a=document.getElementById('m-arrow');
@@ -2013,6 +2247,275 @@ Responde en máximo 5 puntos concisos. Usa emojis. Sé directo y práctico. Iden
 
   btn.textContent='✨ Analizar mis números'; btn.disabled=false;
 }
+
+// ── PEDIDOS ──────────────────────────────────────────────────────────────
+let pedidosData = {}; // { weekNum: { proveedores: [...] } }
+let pedidosList = []; // proveedores activos esta semana
+
+const PED_DIAS = ['lun','mar','mie','jue','vie','sab','dom'];
+const PED_CAT_COLORS = {
+  alimentos:'rgba(74,222,128,0.15)',
+  bebidas:'rgba(96,165,250,0.15)',
+  indirectos:'rgba(167,139,250,0.15)',
+  otros:'rgba(107,114,128,0.15)'
+};
+
+function getPedWN(){ return parseInt(document.getElementById('ped-week-sel').value); }
+
+function renderPedidos(){
+  const tbody = document.getElementById('ped-tbody');
+  if(!tbody) return;
+  let html = '';
+  const totDia = {lun:0,mar:0,mie:0,jue:0,vie:0,sab:0,dom:0};
+  let totAli=0, totBeb=0, totInd=0, grand=0;
+
+  pedidosList.forEach((p,i) => {
+    const tot = PED_DIAS.reduce((s,d)=>s+(parseFloat(p[d])||0),0);
+    PED_DIAS.forEach(d=>totDia[d]+=(parseFloat(p[d])||0));
+    if(p.cat==='alimentos') totAli+=tot;
+    else if(p.cat==='bebidas') totBeb+=tot;
+    else if(p.cat==='indirectos') totInd+=tot;
+    grand+=tot;
+
+    const catColor = PED_CAT_COLORS[p.cat]||PED_CAT_COLORS.otros;
+    html += `<tr style="border-bottom:1px solid var(--border);background:${catColor}">
+      <td style="padding:7px 14px;font-size:12px;font-weight:500">${p.nombre}</td>
+      <td style="padding:7px 8px;text-align:center">
+        <span style="font-size:10px;padding:2px 7px;border-radius:99px;background:var(--surface2);color:var(--muted)">${p.cat}</span>
+      </td>
+      ${PED_DIAS.map(d=>`<td style="padding:4px 3px">
+        <input type="number" value="${p[d]||''}" oninput="pedidoInput(${i},'${d}',this.value)"
+          style="background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:4px;font-size:11px;color:var(--text);text-align:right;width:72px;font-family:'DM Sans',sans-serif"
+          placeholder="0">
+      </td>`).join('')}
+      <td style="padding:7px 8px;text-align:right;font-size:12px;font-weight:600;color:var(--accent)">${fmtPed(tot)}</td>
+      <td style="padding:7px 8px;text-align:center">
+        <span style="font-size:10px;padding:2px 7px;border-radius:99px;background:${p.credito>0?'var(--yellow-bg)':'var(--green-bg)'};color:${p.credito>0?'var(--yellow)':'var(--green)'}">${p.credito>0?p.credito+'d':'Contado'}</span>
+      </td>
+      <td style="padding:7px 8px;text-align:center">
+        <button onclick="removePedProv(${i})" style="background:none;border:1px solid var(--red-bg);border-radius:4px;color:var(--red);cursor:pointer;padding:2px 6px;font-size:10px">×</button>
+      </td>
+    </tr>`;
+  });
+
+  tbody.innerHTML = html;
+
+  // Totales footer
+  PED_DIAS.forEach(d=>{
+    const el=document.getElementById('ped-foot-'+d);
+    if(el) el.textContent=fmtPed(totDia[d]);
+  });
+  const totEl=document.getElementById('ped-foot-tot');
+  if(totEl) totEl.textContent=fmtPed(grand);
+
+  // KPIs
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('ped-total-ali',fmtPed(totAli));
+  set('ped-total-beb',fmtPed(totBeb));
+  set('ped-total-ind',fmtPed(totInd));
+  set('ped-total',fmtPed(grand));
+}
+
+function fmtPed(n){ return n>0?'$'+Math.round(n).toLocaleString('es-MX'):'$0'; }
+
+function pedidoInput(idx,dia,val){
+  pedidosList[idx][dia] = parseFloat(val)||0;
+  renderPedidos();
+}
+
+function removePedProv(idx){
+  pedidosList.splice(idx,1);
+  renderPedidos();
+}
+
+function openPedidoModal(){ document.getElementById('ped-modal').style.display='flex'; }
+function closePedidoModal(){ document.getElementById('ped-modal').style.display='none'; }
+
+function addPedidoProveedor(){
+  const nombre=document.getElementById('ped-prov-nombre').value.trim();
+  if(!nombre) return;
+  const cat=document.getElementById('ped-prov-cat').value;
+  const credito=parseInt(document.getElementById('ped-prov-credito').value);
+  pedidosList.push({nombre,cat,credito,lun:0,mar:0,mie:0,jue:0,vie:0,sab:0,dom:0});
+  document.getElementById('ped-prov-nombre').value='';
+  closePedidoModal();
+  renderPedidos();
+}
+
+async function savePedidos(){
+  if(!CU) return;
+  const wn=getPedWN();
+  pedidosData[wn]={proveedores:[...pedidosList]};
+  const btn=document.getElementById('ped-save-btn');
+  btn.textContent='Guardando...';btn.disabled=true;
+
+  // Calcular totales para actualizar COGS en pnl_weeks
+  let totAli=0,totBeb=0;
+  pedidosList.forEach(p=>{
+    const tot=PED_DIAS.reduce((s,d)=>s+(parseFloat(p[d])||0),0);
+    if(p.cat==='alimentos') totAli+=tot;
+    else if(p.cat==='bebidas') totBeb+=tot;
+  });
+
+  try{
+    // Guardar pedidos
+    await sb.from('pnl_data').upsert({
+      user_id:CU.id,period:'pedidos-sem-'+wn,data:{proveedores:pedidosList},updated_at:new Date().toISOString()
+    },{onConflict:'user_id,period'});
+
+    // Actualizar COGS en pnl_weeks si hay datos
+    if(totAli>0||totBeb>0){
+      const{data:weekData}=await sb.from('pnl_weeks').select('data').eq('user_id',CU.id).eq('year',2025).eq('week_num',wn).maybeSingle();
+      if(weekData?.data){
+        const newData={...weekData.data,'c-ali':totAli,'c-beb':totBeb};
+        await sb.from('pnl_weeks').upsert({user_id:CU.id,year:2025,week_num:wn,data:newData,updated_at:new Date().toISOString()},{onConflict:'user_id,year,week_num'});
+      }
+    }
+
+    btn.textContent='✓ Guardado';btn.className='btn btn-saved';
+    setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);
+    renderCXP(); // actualizar CxP
+  }catch(e){btn.textContent='Error';btn.disabled=false;}
+}
+
+async function loadPedidos(){
+  if(!CU) return;
+  const wn=getPedWN();
+  const{data}=await sb.from('pnl_data').select('data').eq('user_id',CU.id).eq('period','pedidos-sem-'+wn).maybeSingle();
+  pedidosList = data?.data?.proveedores||[];
+  renderPedidos();
+}
+
+// ── CXP ──────────────────────────────────────────────────────────────────
+let cxpData = {};
+
+function getCxpWN(){ return parseInt(document.getElementById('cxp-week-sel')?.value||12); }
+
+function renderCXP(){
+  const wn=getCxpWN();
+  const tbody=document.getElementById('cxp-tbody');
+  if(!tbody) return;
+
+  // Construir CxP desde pedidos guardados
+  let rows=[], t7=0, t15=0, t30=0, total=0;
+  const pedSem = pedidosData[wn]?.proveedores||[];
+
+  pedSem.forEach(p=>{
+    const monto=PED_DIAS.reduce((s,d)=>s+(parseFloat(p[d])||0),0);
+    if(monto<=0) return;
+    const pagado = cxpData[wn]?.[p.nombre]||false;
+    if(p.credito<=7) t7+=monto;
+    else if(p.credito<=15) t15+=monto;
+    else t30+=monto;
+    if(!pagado) total+=monto;
+    rows.push({...p,monto,pagado});
+  });
+
+  let html='';
+  rows.sort((a,b)=>a.credito-b.credito).forEach(r=>{
+    const statusColor = r.credito<=7?'var(--red)':r.credito<=15?'var(--yellow)':'var(--blue)';
+    const statusLabel = r.credito===0?'Contado':r.credito<=7?'🚨 Vence pronto':r.credito<=15?'⚠️ Esta quincena':'📅 Este mes';
+    html+=`<tr style="border-bottom:1px solid var(--border);${r.pagado?'opacity:.5':''}">
+      <td style="padding:9px 14px;font-size:12px;font-weight:500">${r.nombre}</td>
+      <td style="padding:9px 8px;text-align:center;font-size:11px;color:var(--muted)">${r.cat}</td>
+      <td style="padding:9px 8px;text-align:right;font-size:13px;font-weight:600">${fmtPed(r.monto)}</td>
+      <td style="padding:9px 8px;text-align:center"><span style="font-size:10px;padding:2px 7px;border-radius:99px;background:var(--surface2);color:var(--muted)">${r.credito>0?r.credito+'d':'Contado'}</span></td>
+      <td style="padding:9px 8px;text-align:center;font-size:11px;color:${statusColor}">${statusLabel}</td>
+      <td style="padding:9px 8px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:99px;background:${r.pagado?'var(--green-bg)':'var(--red-bg)'};color:${r.pagado?'var(--green)':'var(--red)'}">${r.pagado?'✅ Pagado':'Pendiente'}</span></td>
+      <td style="padding:9px 8px;text-align:center">
+        <input type="checkbox" ${r.pagado?'checked':''} onchange="toggleCxpPago('${r.nombre}',this.checked,${wn})" style="cursor:pointer;width:16px;height:16px">
+      </td>
+    </tr>`;
+  });
+
+  tbody.innerHTML=html||'<tr><td colspan="7" style="text-align:center;padding:24px;font-size:12px;color:var(--muted)">Registra pedidos primero para ver las cuentas por pagar</td></tr>';
+
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('cxp-t7',fmtPed(t7));set('cxp-t15',fmtPed(t15));set('cxp-t30',fmtPed(t30));set('cxp-total',fmtPed(total));
+}
+
+function toggleCxpPago(nombre,val,wn){
+  if(!cxpData[wn]) cxpData[wn]={};
+  cxpData[wn][nombre]=val;
+  renderCXP();
+}
+
+async function saveCXP(){
+  if(!CU) return;
+  const wn=getCxpWN();
+  const btn=document.getElementById('cxp-save-btn');
+  btn.textContent='Guardando...';btn.disabled=true;
+  try{
+    await sb.from('pnl_data').upsert({
+      user_id:CU.id,period:'cxp-sem-'+wn,data:cxpData[wn]||{},updated_at:new Date().toISOString()
+    },{onConflict:'user_id,period'});
+    btn.textContent='✓ Guardado';btn.className='btn btn-saved';
+    setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);
+  }catch(e){btn.textContent='Error';btn.disabled=false;}
+}
+
+async function loadCXP(){
+  if(!CU) return;
+  const wn=getCxpWN();
+  const{data}=await sb.from('pnl_data').select('data').eq('user_id',CU.id).eq('period','cxp-sem-'+wn).maybeSingle();
+  if(data?.data) cxpData[wn]=data.data;
+  renderCXP();
+}
+
+// ── FLUJO DE CAJA ─────────────────────────────────────────────────────────
+function calcFlujo(){
+  const vf=(id)=>parseFloat(document.getElementById(id)?.value)||0;
+  const saldoIni=vf('fl-bbva')+vf('fl-blockpay')+vf('fl-caja');
+  const entradas=vf('fl-efe')+vf('fl-tpv')+vf('fl-plat')+vf('fl-event')+vf('fl-otros-in');
+  const pagoProv=PED_DIAS.reduce((s,d)=>{
+    return s+(pedidosList.filter(p=>p.credito===0).reduce((ss,p)=>ss+(parseFloat(p[d])||0),0));
+  },0);
+  const salidas=pagoProv+vf('fl-nomina')+vf('fl-renta')+vf('fl-impuestos')+vf('fl-servicios')+vf('fl-otros-out');
+  const saldoFin=saldoIni+entradas-salidas;
+
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  const fmtS=(n)=>(n<0?'-':'')+'$'+Math.abs(Math.round(n)).toLocaleString('es-MX');
+  set('fl-saldo-ini',fmtS(saldoIni));
+  set('fl-entradas',fmtS(entradas));
+  set('fl-tot-ent',fmtS(entradas));
+  set('fl-prov-auto',pagoProv>0?'-'+fmtS(pagoProv):'$0');
+  set('fl-tot-sal','-'+fmtS(salidas));
+  const finEl=document.getElementById('fl-saldo-final');
+  if(finEl){finEl.textContent=fmtS(saldoFin);finEl.className='rc '+(saldoFin>=0?'pos':'neg');}
+  set('fl-saldo-fin',fmtS(saldoFin));
+  const semEl=document.getElementById('fl-saldo-semaforo');
+  if(semEl) semEl.innerHTML=saldoFin>0?'<span class="badge bok">✅ Positivo</span>':'<span class="badge bbad">🚨 Negativo</span>';
+}
+
+async function saveFlujo(){
+  if(!CU) return;
+  const wn=parseInt(document.getElementById('flujo-week-sel')?.value||12);
+  const vf=(id)=>parseFloat(document.getElementById(id)?.value)||0;
+  const flujoFields=['fl-bbva','fl-blockpay','fl-caja','fl-efe','fl-tpv','fl-plat','fl-event','fl-otros-in','fl-nomina','fl-renta','fl-impuestos','fl-servicios','fl-otros-out'];
+  const data={};
+  flujoFields.forEach(f=>{data[f]=vf(f);});
+  const btn=document.getElementById('flujo-save-btn');
+  btn.textContent='Guardando...';btn.disabled=true;
+  try{
+    await sb.from('pnl_data').upsert({
+      user_id:CU.id,period:'flujo-sem-'+wn,data,updated_at:new Date().toISOString()
+    },{onConflict:'user_id,period'});
+    btn.textContent='✓ Guardado';btn.className='btn btn-saved';
+    setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);
+  }catch(e){btn.textContent='Error';btn.disabled=false;}
+}
+
+async function loadFlujo(){
+  if(!CU) return;
+  const wn=parseInt(document.getElementById('flujo-week-sel')?.value||12);
+  const{data}=await sb.from('pnl_data').select('data').eq('user_id',CU.id).eq('period','flujo-sem-'+wn).maybeSingle();
+  if(data?.data){
+    Object.entries(data.data).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v;});
+  }
+  calcFlujo();
+}
+
+function renderFlujo(){ loadFlujo(); }
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 calc();
