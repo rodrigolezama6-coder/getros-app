@@ -175,6 +175,12 @@ nav.s-nav{flex:1;overflow-y:auto;overflow-x:hidden}
 .ctable tr.cpct td{color:var(--muted);font-size:11px}
 .ctable td.tot-col{color:var(--accent);font-weight:500}
 
+/* REMOVE SPINNERS - GLOBAL */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button,
+input[type=text]::-webkit-inner-spin-button,
+input[type=text]::-webkit-outer-spin-button{-webkit-appearance:none!important;display:none!important;margin:0}
+input{-moz-appearance:textfield!important}
 /* REMOVE SPINNERS */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
@@ -383,27 +389,27 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>Ventas por día</div><div class="card-hint">Lunes a Domingo</div></div>
           <div class="days">
-            <div class="day"><div class="dname">Lunes</div><input class="dinput" type="number" id="d-lun" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-lun" style="width:0%"></div></div><div class="dpct" id="p-lun">0%</div></div>
-            <div class="day"><div class="dname">Martes</div><input class="dinput" type="number" id="d-mar" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-mar" style="width:0%"></div></div><div class="dpct" id="p-mar">0%</div></div>
-            <div class="day"><div class="dname">Miércoles</div><input class="dinput" type="number" id="d-mie" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-mie" style="width:0%"></div></div><div class="dpct" id="p-mie">0%</div></div>
-            <div class="day"><div class="dname">Jueves</div><input class="dinput" type="number" id="d-jue" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-jue" style="width:0%"></div></div><div class="dpct" id="p-jue">0%</div></div>
-            <div class="day"><div class="dname">Viernes</div><input class="dinput" type="number" id="d-vie" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-vie" style="width:0%"></div></div><div class="dpct" id="p-vie">0%</div></div>
-            <div class="day"><div class="dname">Sábado</div><input class="dinput" type="number" id="d-sab" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-sab" style="width:0%"></div></div><div class="dpct" id="p-sab">0%</div></div>
-            <div class="day"><div class="dname">Domingo</div><input class="dinput" type="number" id="d-dom" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-dom" style="width:0%"></div></div><div class="dpct" id="p-dom">0%</div></div>
+            <div class="day"><div class="dname">Lunes</div><input class="dinput" type="text" inputmode="decimal" id="d-lun" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-lun" style="width:0%"></div></div><div class="dpct" id="p-lun">0%</div></div>
+            <div class="day"><div class="dname">Martes</div><input class="dinput" type="text" inputmode="decimal" id="d-mar" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-mar" style="width:0%"></div></div><div class="dpct" id="p-mar">0%</div></div>
+            <div class="day"><div class="dname">Miércoles</div><input class="dinput" type="text" inputmode="decimal" id="d-mie" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-mie" style="width:0%"></div></div><div class="dpct" id="p-mie">0%</div></div>
+            <div class="day"><div class="dname">Jueves</div><input class="dinput" type="text" inputmode="decimal" id="d-jue" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-jue" style="width:0%"></div></div><div class="dpct" id="p-jue">0%</div></div>
+            <div class="day"><div class="dname">Viernes</div><input class="dinput" type="text" inputmode="decimal" id="d-vie" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-vie" style="width:0%"></div></div><div class="dpct" id="p-vie">0%</div></div>
+            <div class="day"><div class="dname">Sábado</div><input class="dinput" type="text" inputmode="decimal" id="d-sab" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-sab" style="width:0%"></div></div><div class="dpct" id="p-sab">0%</div></div>
+            <div class="day"><div class="dname">Domingo</div><input class="dinput" type="text" inputmode="decimal" id="d-dom" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-dom" style="width:0%"></div></div><div class="dpct" id="p-dom">0%</div></div>
           </div>
         </div>
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--accent)"></span>PAX y Ticket Promedio</div></div>
           <div class="thdr"><div class="th">Concepto</div><div class="th r">Esta semana</div><div class="th c">Sem. anterior</div><div class="th c">Variación</div></div>
-          <div class="row"><div class="rl">Número de clientes (PAX)</div><input class="ri" type="number" id="pax-a" value="0" oninput="calc()"><input class="ri" type="number" id="pax-b" value="0" oninput="calc()" placeholder="ant."><div class="rsem" id="d-pax">—</div></div>
+          <div class="row"><div class="rl">Número de clientes (PAX)</div><input class="ri" type="text" inputmode="decimal" id="pax-a" value="0" oninput="calc()"><input class="ri" type="text" inputmode="decimal" id="pax-b" value="0" oninput="calc()" placeholder="ant."><div class="rsem" id="d-pax">—</div></div>
           <div class="row"><div class="rl">Ticket promedio</div><div class="rc" id="tk-c">$0</div><div class="rpct" id="tk-b">—</div><div class="rsem" id="d-tk">—</div></div>
         </div>
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--red)"></span>Deducciones</div><div class="card-hint">Descuentos, cortesías, cancelaciones</div></div>
           <div class="thdr"><div class="th">Concepto</div><div class="th r">Importe ($)</div><div class="th c">% Ventas</div><div class="th c">Estado</div></div>
-          <div class="row"><div class="rl s">Descuentos sobre ventas</div><input class="ri" type="number" id="dc-dto" value="0" oninput="calc()"><div class="rpct" id="pp-dto">—</div><div class="rsem" id="ss-dto"></div></div>
-          <div class="row"><div class="rl s">Cortesías</div><input class="ri" type="number" id="dc-cor" value="0" oninput="calc()"><div class="rpct" id="pp-cor">—</div><div></div></div>
-          <div class="row"><div class="rl s">Cancelaciones / CxP</div><input class="ri" type="number" id="dc-can" value="0" oninput="calc()"><div class="rpct" id="pp-can">—</div><div></div></div>
+          <div class="row"><div class="rl s">Descuentos sobre ventas</div><input class="ri" type="text" inputmode="decimal" id="dc-dto" value="0" oninput="calc()"><div class="rpct" id="pp-dto">—</div><div class="rsem" id="ss-dto"></div></div>
+          <div class="row"><div class="rl s">Cortesías</div><input class="ri" type="text" inputmode="decimal" id="dc-cor" value="0" oninput="calc()"><div class="rpct" id="pp-cor">—</div><div></div></div>
+          <div class="row"><div class="rl s">Cancelaciones / CxP</div><input class="ri" type="text" inputmode="decimal" id="dc-can" value="0" oninput="calc()"><div class="rpct" id="pp-can">—</div><div></div></div>
           <div class="row stot"><div class="rl">Total deducciones</div><div class="rc neg" id="tot-ded">$0</div><div class="rpct" id="pp-ded">—</div><div></div></div>
           <div class="row res"><div class="rl">★ Ventas Netas</div><div class="rc pos" id="vnetas">$0</div><div class="rpct" id="pp-vn">—</div><div class="rsem" id="ss-vn"></div></div>
         </div>
@@ -414,10 +420,10 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Costo de Reposición de Inventario</div><div class="card-hint">Ideal: alimentos 28–35% · bebidas 20–28%</div></div>
           <div class="thdr"><div class="th">Concepto</div><div class="th r">Importe ($)</div><div class="th c">% V. Netas</div><div class="th c">Estado</div></div>
-          <div class="row"><div class="rl s">Alimentos</div><input class="ri" type="number" id="c-ali" value="0" oninput="calc()"><div class="rpct" id="pp-cali">—</div><div class="rsem" id="ss-cali"></div></div>
-          <div class="row"><div class="rl s">Bebidas</div><input class="ri" type="number" id="c-beb" value="0" oninput="calc()"><div class="rpct" id="pp-cbeb">—</div><div class="rsem" id="ss-cbeb"></div></div>
-          <div class="row"><div class="rl s">Mermas y desperdicios</div><input class="ri" type="number" id="c-mer" value="0" oninput="calc()"><div class="rpct" id="pp-cmer">—</div><div class="rsem" id="ss-cmer"></div></div>
-          <div class="row"><div class="rl s">Insumos generales</div><input class="ri" type="number" id="c-gen" value="0" oninput="calc()"><div class="rpct" id="pp-cgen">—</div><div></div></div>
+          <div class="row"><div class="rl s">Alimentos</div><input class="ri" type="text" inputmode="decimal" id="c-ali" value="0" oninput="calc()"><div class="rpct" id="pp-cali">—</div><div class="rsem" id="ss-cali"></div></div>
+          <div class="row"><div class="rl s">Bebidas</div><input class="ri" type="text" inputmode="decimal" id="c-beb" value="0" oninput="calc()"><div class="rpct" id="pp-cbeb">—</div><div class="rsem" id="ss-cbeb"></div></div>
+          <div class="row"><div class="rl s">Mermas y desperdicios</div><input class="ri" type="text" inputmode="decimal" id="c-mer" value="0" oninput="calc()"><div class="rpct" id="pp-cmer">—</div><div class="rsem" id="ss-cmer"></div></div>
+          <div class="row"><div class="rl s">Insumos generales</div><input class="ri" type="text" inputmode="decimal" id="c-gen" value="0" oninput="calc()"><div class="rpct" id="pp-cgen">—</div><div></div></div>
           <div class="row stot"><div class="rl">Total COGS</div><div class="rc" id="tot-cogs">$0</div><div class="rpct" id="pp-cogs">—</div><div class="rsem" id="ss-cogs"></div></div>
           <div class="row res"><div class="rl">★ Utilidad Bruta</div><div class="rc pos" id="util-bruta">$0</div><div class="rpct" id="pp-ub">—</div><div class="rsem" id="ss-ub"></div></div>
         </div>
@@ -428,25 +434,25 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>Mano de Obra Directa</div><div class="card-hint">Ideal: 18–22% ventas netas</div></div>
           <div class="thdr"><div class="th">Concepto</div><div class="th r">Real / Provisión ($)</div><div class="th c">% V. Netas</div><div class="th c">Tipo</div></div>
-          <div class="row"><div class="rl s">Sueldos semana</div><input class="ri" type="number" id="mo-sue" value="0" oninput="calc()"><div class="rpct" id="pp-sue">—</div><div class="rsem"><span class="badge breal">real</span></div></div>
-          <div class="row"><div class="rl s">Horas extras / turnos dobles</div><input class="ri" type="number" id="mo-ext" value="0" oninput="calc()"><div class="rpct" id="pp-ext">—</div><div class="rsem"><span class="badge breal">real</span></div></div>
-          <div class="row"><div class="rl p">↳ Provisión IMSS (mensual ÷ 4)</div><input class="ri prov" type="number" id="mo-ims" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-ims">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
-          <div class="row"><div class="rl p">↳ Provisión aguinaldo (anual ÷ 52)</div><input class="ri prov" type="number" id="mo-agu" value="0" oninput="calc()" placeholder="anual÷52"><div class="rpct" id="pp-agu">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
-          <div class="row"><div class="rl p">↳ Provisión vacaciones (anual ÷ 52)</div><input class="ri prov" type="number" id="mo-vac" value="0" oninput="calc()" placeholder="anual÷52"><div class="rpct" id="pp-vac">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
+          <div class="row"><div class="rl s">Sueldos semana</div><input class="ri" type="text" inputmode="decimal" id="mo-sue" value="0" oninput="calc()"><div class="rpct" id="pp-sue">—</div><div class="rsem"><span class="badge breal">real</span></div></div>
+          <div class="row"><div class="rl s">Horas extras / turnos dobles</div><input class="ri" type="text" inputmode="decimal" id="mo-ext" value="0" oninput="calc()"><div class="rpct" id="pp-ext">—</div><div class="rsem"><span class="badge breal">real</span></div></div>
+          <div class="row"><div class="rl p">↳ Provisión IMSS (mensual ÷ 4)</div><input class="ri prov" type="text" inputmode="decimal" id="mo-ims" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-ims">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
+          <div class="row"><div class="rl p">↳ Provisión aguinaldo (anual ÷ 52)</div><input class="ri prov" type="text" inputmode="decimal" id="mo-agu" value="0" oninput="calc()" placeholder="anual÷52"><div class="rpct" id="pp-agu">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
+          <div class="row"><div class="rl p">↳ Provisión vacaciones (anual ÷ 52)</div><input class="ri prov" type="text" inputmode="decimal" id="mo-vac" value="0" oninput="calc()" placeholder="anual÷52"><div class="rpct" id="pp-vac">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
           <div class="row stot"><div class="rl">Total Mano de Obra</div><div class="rc" id="tot-mo">$0</div><div class="rpct" id="pp-mo">—</div><div class="rsem" id="ss-mo"></div></div>
         </div>
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--purple)"></span>Gastos Indirectos</div><div class="card-hint">Celdas verdes = provisiones proporcionales</div></div>
           <div class="thdr"><div class="th">Concepto</div><div class="th r">Real / Provisión ($)</div><div class="th c">% V. Netas</div><div class="th c">Tipo</div></div>
-          <div class="row"><div class="rl s">Renta / arrendamiento (÷4)</div><input class="ri prov" type="number" id="gi-ren" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-giren">—</div><div class="rsem" id="ss-giren"></div></div>
-          <div class="row"><div class="rl s">Energía eléctrica (÷4)</div><input class="ri prov" type="number" id="gi-luz" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-giluz">—</div><div></div></div>
-          <div class="row"><div class="rl s">Gas (÷4)</div><input class="ri prov" type="number" id="gi-gas" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-gigas">—</div><div></div></div>
-          <div class="row"><div class="rl s">Agua (÷4)</div><input class="ri prov" type="number" id="gi-agu" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-giagu">—</div><div></div></div>
-          <div class="row"><div class="rl s">Marketing digital (÷4)</div><input class="ri prov" type="number" id="gi-mkt" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-gimkt">—</div><div></div></div>
-          <div class="row"><div class="rl s">Mantenimiento (÷4)</div><input class="ri prov" type="number" id="gi-man" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-giman">—</div><div></div></div>
-          <div class="row"><div class="rl s">Limpieza e higiene</div><input class="ri" type="number" id="gi-lim" value="0" oninput="calc()"><div class="rpct" id="pp-gilim">—</div><div></div></div>
-          <div class="row"><div class="rl s">Comisiones bancarias</div><input class="ri" type="number" id="gi-ban" value="0" oninput="calc()"><div class="rpct" id="pp-iban">—</div><div></div></div>
-          <div class="row"><div class="rl s">Contabilidad / honorarios (÷4)</div><input class="ri prov" type="number" id="gi-con" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-gicon">—</div><div></div></div>
+          <div class="row"><div class="rl s">Renta / arrendamiento (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gi-ren" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-giren">—</div><div class="rsem" id="ss-giren"></div></div>
+          <div class="row"><div class="rl s">Energía eléctrica (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gi-luz" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-giluz">—</div><div></div></div>
+          <div class="row"><div class="rl s">Gas (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gi-gas" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-gigas">—</div><div></div></div>
+          <div class="row"><div class="rl s">Agua (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gi-agu" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-giagu">—</div><div></div></div>
+          <div class="row"><div class="rl s">Marketing digital (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gi-mkt" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-gimkt">—</div><div></div></div>
+          <div class="row"><div class="rl s">Mantenimiento (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gi-man" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-giman">—</div><div></div></div>
+          <div class="row"><div class="rl s">Limpieza e higiene</div><input class="ri" type="text" inputmode="decimal" id="gi-lim" value="0" oninput="calc()"><div class="rpct" id="pp-gilim">—</div><div></div></div>
+          <div class="row"><div class="rl s">Comisiones bancarias</div><input class="ri" type="text" inputmode="decimal" id="gi-ban" value="0" oninput="calc()"><div class="rpct" id="pp-iban">—</div><div></div></div>
+          <div class="row"><div class="rl s">Contabilidad / honorarios (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gi-con" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-gicon">—</div><div></div></div>
           <div id="extra-gi-rows"></div>
           <button class="add-btn" onclick="addGiRow()">+ Agregar concepto</button>
           <div class="row stot"><div class="rl">Total Gastos Indirectos</div><div class="rc" id="tot-gi">$0</div><div class="rpct" id="pp-gi">—</div><div class="rsem" id="ss-gi"></div></div>
@@ -454,9 +460,9 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--red)"></span>Gastos Financieros y Fiscales</div><div class="card-hint">Ideal: &lt; 6% ventas</div></div>
           <div class="thdr"><div class="th">Concepto</div><div class="th r">Real / Provisión ($)</div><div class="th c">% V. Netas</div><div class="th c">Tipo</div></div>
-          <div class="row"><div class="rl s">Provisión ISR (mensual ÷ 4)</div><input class="ri prov" type="number" id="fin-isr" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-isr">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
-          <div class="row"><div class="rl s">Intereses / créditos</div><input class="ri" type="number" id="fin-int" value="0" oninput="calc()"><div class="rpct" id="pp-int">—</div><div class="rsem"><span class="badge breal">real</span></div></div>
-          <div class="row"><div class="rl s">Depreciaciones (anual ÷ 52)</div><input class="ri prov" type="number" id="fin-dep" value="0" oninput="calc()" placeholder="anual÷52"><div class="rpct" id="pp-dep">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
+          <div class="row"><div class="rl s">Provisión ISR (mensual ÷ 4)</div><input class="ri prov" type="text" inputmode="decimal" id="fin-isr" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-isr">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
+          <div class="row"><div class="rl s">Intereses / créditos</div><input class="ri" type="text" inputmode="decimal" id="fin-int" value="0" oninput="calc()"><div class="rpct" id="pp-int">—</div><div class="rsem"><span class="badge breal">real</span></div></div>
+          <div class="row"><div class="rl s">Depreciaciones (anual ÷ 52)</div><input class="ri prov" type="text" inputmode="decimal" id="fin-dep" value="0" oninput="calc()" placeholder="anual÷52"><div class="rpct" id="pp-dep">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
           <div class="row stot"><div class="rl">Total Financiero / Fiscal</div><div class="rc" id="tot-fin">$0</div><div class="rpct" id="pp-fin">—</div><div></div></div>
         </div>
         <div class="card">
@@ -478,8 +484,8 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Bonos y Extras</div><div class="card-hint">Opcional</div></div>
           <div class="thdr"><div class="th">Concepto</div><div class="th r">Importe ($)</div><div class="th c">% Ventas</div><div class="th c"></div></div>
-          <div class="row"><div class="rl s">Bonos de desempeño</div><input class="ri" type="number" id="ex-bon" value="0" oninput="calc()"><div class="rpct" id="pp-bon">—</div><div></div></div>
-          <div class="row"><div class="rl s">Gastos extras / imprevistos</div><input class="ri" type="number" id="ex-ext" value="0" oninput="calc()"><div class="rpct" id="pp-eext">—</div><div></div></div>
+          <div class="row"><div class="rl s">Bonos de desempeño</div><input class="ri" type="text" inputmode="decimal" id="ex-bon" value="0" oninput="calc()"><div class="rpct" id="pp-bon">—</div><div></div></div>
+          <div class="row"><div class="rl s">Gastos extras / imprevistos</div><input class="ri" type="text" inputmode="decimal" id="ex-ext" value="0" oninput="calc()"><div class="rpct" id="pp-eext">—</div><div></div></div>
           <div class="row stot"><div class="rl">Total extras</div><div class="rc neg" id="tot-ext">$0</div><div class="rpct" id="pp-text">—</div><div></div></div>
         </div>
         <div class="card">
@@ -498,7 +504,7 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <div id="socios-body" style="display:none">
             <div style="padding:10px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
               <input type="text" id="soc-nom" class="ri" style="width:150px" placeholder="Nombre del socio">
-              <input type="number" id="soc-pct" class="ri" style="width:70px" placeholder="%">
+              <input type="text" inputmode="decimal" id="soc-pct" class="ri" style="width:70px" placeholder="%">
               <button class="btn btn-ghost" onclick="addSocio()" style="padding:5px 10px;font-size:12px">+ Agregar</button>
             </div>
             <div id="socios-rows"></div>
@@ -1161,7 +1167,7 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--green)"></span>Entradas</div></div>
           <div class="thdr"><div class="th">Concepto</div><div class="th r">Importe ($)</div></div>
           <div class="row"><div class="rl s">Ventas efectivo</div><input class="ri" type="text" inputmode="decimal" id="fl-efe" value="0" oninput="calcFlujo()"><div></div></div>
-          <div class="row"><div class="rl s">Ventas Blockpay / TPV</div><input class="ri" type="text" inputmode="decimal" id="fl-tpv" value="0" oninput="calcFlujo()"><div></div></div>
+          <div class="row"><div class="rl s">Ventas terminal / TPV</div><input class="ri" type="text" inputmode="decimal" id="fl-tpv" value="0" oninput="calcFlujo()"><div></div></div>
           <div class="row"><div class="rl s">Ventas plataformas (Didi, Rappi)</div><input class="ri" type="text" inputmode="decimal" id="fl-plat" value="0" oninput="calcFlujo()"><div></div></div>
           <div class="row"><div class="rl s">Cobro de eventos / anticipos</div><input class="ri" type="text" inputmode="decimal" id="fl-event" value="0" oninput="calcFlujo()"><div></div></div>
           <div class="row"><div class="rl s">Otros ingresos</div><input class="ri" type="text" inputmode="decimal" id="fl-otros-in" value="0" oninput="calcFlujo()"><div></div></div>
@@ -1615,7 +1621,7 @@ function addGiRow(){
   const c=document.getElementById('extra-gi-rows'),d=document.createElement('div');
   d.className='row';d.id='gi-ex-row-'+id;
   d.innerHTML=`<div style="display:flex;align-items:center;gap:7px;padding-left:12px"><input type="text" class="ri" style="width:160px;font-size:11px" placeholder="Concepto..." id="gi-ex-name-${id}"><button onclick="removeGiRow(${id})" style="background:none;border:1px solid var(--border2);border-radius:4px;color:var(--muted);cursor:pointer;padding:2px 6px;font-size:10px">×</button></div>
-  <input class="ri prov" type="number" id="gi-ex-${id}" value="0" oninput="calc()" placeholder="0">
+  <input class="ri prov" type="text" inputmode="decimal" id="gi-ex-${id}" value="0" oninput="calc()" placeholder="0">
   <div class="rpct" id="pp-giex-${id}">—</div><div></div>`;
   c.appendChild(d);
 }
@@ -1809,9 +1815,9 @@ function addIngRow(def){
   const [n,q,u,c]=def||['','','',''];
   const tr=document.createElement('tr');
   tr.innerHTML=`<td><input class="ing-ri" type="text" value="${n}" placeholder="Nombre"></td>
-  <td><input class="ing-ri" type="number" value="${q}" oninput="calcCosteo()" style="width:70px" placeholder="0"></td>
+  <td><input class="ing-ri" type="text" inputmode="decimal" value="${q}" oninput="calcCosteo()" style="width:70px" placeholder="0"></td>
   <td><input class="ing-ri" type="text" value="${u}" placeholder="kg"></td>
-  <td><input class="ing-ri" type="number" value="${c}" oninput="calcCosteo()" placeholder="0.00"></td>
+  <td><input class="ing-ri" type="text" inputmode="decimal" value="${c}" oninput="calcCosteo()" placeholder="0.00"></td>
   <td id="sub-${id}" style="color:var(--muted);text-align:right">$0.00</td>`;
   tbody.appendChild(tr);calcCosteo();
 }
@@ -2708,7 +2714,7 @@ function renderBancos(){
       <input type="text" value="${b.nombre}" oninput="flBancos[${i}].nombre=this.value"
         style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif"
         placeholder="Nombre del banco o cuenta">
-      <input type="number" value="${b.saldo||''}" oninput="flBancos[${i}].saldo=parseFloat(this.value)||0;calcFlujo()"
+      <input type="text" inputmode="decimal" value="${b.saldo||''}" oninput="flBancos[${i}].saldo=parseFloat(this.value)||0;calcFlujo()"
         style="width:140px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);text-align:right;font-family:'DM Sans',sans-serif"
         placeholder="Saldo $0">
       ${flBancos.length>1?`<button onclick="removeBankAccount(${i})" style="background:none;border:1px solid var(--red-bg);border-radius:5px;color:var(--red);cursor:pointer;padding:4px 8px;font-size:11px">×</button>`:'<div style="width:36px"></div>'}
