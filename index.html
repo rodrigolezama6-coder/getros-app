@@ -1028,11 +1028,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
       <!-- SALDO INICIAL INPUT -->
       <div class="card" style="margin-top:14px">
-        <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>Saldo de bancos al inicio de la semana</div></div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px">
-          <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Cuenta BBVA Operadora</label><input class="ri" type="number" id="fl-bbva" value="0" oninput="calcFlujo()" style="width:100%"></div>
-          <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Cuenta Blockpay</label><input class="ri" type="number" id="fl-blockpay" value="0" oninput="calcFlujo()" style="width:100%"></div>
-          <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Efectivo en caja</label><input class="ri" type="number" id="fl-caja" value="0" oninput="calcFlujo()" style="width:100%"></div>
+        <div class="card-hdr">
+          <div class="card-title"><span class="dot" style="background:var(--blue)"></span>Saldo de cuentas al inicio de la semana</div>
+          <button onclick="addBankAccount()" class="btn btn-ghost" style="font-size:11px;padding:4px 10px">+ Agregar cuenta</button>
+        </div>
+        <div id="fl-bancos-container" style="padding:14px;display:flex;flex-direction:column;gap:8px">
+          <!-- cuentas dinámicas -->
+        </div>
+        <div style="padding:0 14px 14px;border-top:1px solid var(--border)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px">
+            <div style="font-size:12px;color:var(--muted)">Saldo inicial total</div>
+            <div style="font-size:16px;font-weight:600;color:var(--blue)" id="fl-saldo-ini-total">$0</div>
+          </div>
         </div>
         <div class="row grand" style="padding:16px">
           <div class="rl" style="font-size:16px">💰 Saldo final proyectado</div>
@@ -2465,7 +2472,9 @@ async function loadCXP(){
 // ── FLUJO DE CAJA ─────────────────────────────────────────────────────────
 function calcFlujo(){
   const vf=(id)=>parseFloat(document.getElementById(id)?.value)||0;
-  const saldoIni=vf('fl-bbva')+vf('fl-blockpay')+vf('fl-caja');
+  const saldoIni=flBancos.reduce((s,b)=>s+(parseFloat(b.saldo)||0),0);
+  const el=document.getElementById('fl-saldo-ini-total');
+  if(el) el.textContent='$'+Math.round(saldoIni).toLocaleString('es-MX');
   const entradas=vf('fl-efe')+vf('fl-tpv')+vf('fl-plat')+vf('fl-event')+vf('fl-otros-in');
   const pagoProv=PED_DIAS.reduce((s,d)=>{
     return s+(pedidosList.filter(p=>p.credito===0).reduce((ss,p)=>ss+(parseFloat(p[d])||0),0));
@@ -2491,8 +2500,8 @@ async function saveFlujo(){
   if(!CU) return;
   const wn=parseInt(document.getElementById('flujo-week-sel')?.value||12);
   const vf=(id)=>parseFloat(document.getElementById(id)?.value)||0;
-  const flujoFields=['fl-bbva','fl-blockpay','fl-caja','fl-efe','fl-tpv','fl-plat','fl-event','fl-otros-in','fl-nomina','fl-renta','fl-impuestos','fl-servicios','fl-otros-out'];
-  const data={};
+  const flujoFields=['fl-efe','fl-tpv','fl-plat','fl-event','fl-otros-in','fl-nomina','fl-renta','fl-impuestos','fl-servicios','fl-otros-out'];
+  const data={bancos:flBancos};
   flujoFields.forEach(f=>{data[f]=vf(f);});
   const btn=document.getElementById('flujo-save-btn');
   btn.textContent='Guardando...';btn.disabled=true;
@@ -2510,12 +2519,50 @@ async function loadFlujo(){
   const wn=parseInt(document.getElementById('flujo-week-sel')?.value||12);
   const{data}=await sb.from('pnl_data').select('data').eq('user_id',CU.id).eq('period','flujo-sem-'+wn).maybeSingle();
   if(data?.data){
-    Object.entries(data.data).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v;});
+    if(data.data.bancos) flBancos=data.data.bancos;
+    Object.entries(data.data).forEach(([k,v])=>{if(k!=='bancos'){const e=document.getElementById(k);if(e)e.value=v;}});
   }
+  renderBancos();
   calcFlujo();
 }
 
-function renderFlujo(){ loadFlujo(); }
+function renderFlujo(){ renderBancos(); loadFlujo(); }
+
+// ── FLUJO BANCOS ─────────────────────────────────────────────────────────
+let flBancos = [
+  {nombre:'Efectivo en caja', saldo:0}
+];
+
+function renderBancos(){
+  const container = document.getElementById('fl-bancos-container');
+  if(!container) return;
+  container.innerHTML = flBancos.map((b,i)=>`
+    <div style="display:flex;align-items:center;gap:8px">
+      <input type="text" value="${b.nombre}" oninput="flBancos[${i}].nombre=this.value"
+        style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif"
+        placeholder="Nombre del banco o cuenta">
+      <input type="number" value="${b.saldo||''}" oninput="flBancos[${i}].saldo=parseFloat(this.value)||0;calcFlujo()"
+        style="width:140px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);text-align:right;font-family:'DM Sans',sans-serif"
+        placeholder="Saldo $0">
+      ${flBancos.length>1?`<button onclick="removeBankAccount(${i})" style="background:none;border:1px solid var(--red-bg);border-radius:5px;color:var(--red);cursor:pointer;padding:4px 8px;font-size:11px">×</button>`:'<div style="width:36px"></div>'}
+    </div>`).join('');
+  calcFlujo();
+}
+
+function addBankAccount(){
+  flBancos.push({nombre:'',saldo:0});
+  renderBancos();
+  // Focus on new input
+  setTimeout(()=>{
+    const inputs=document.querySelectorAll('#fl-bancos-container input[type="text"]');
+    if(inputs.length) inputs[inputs.length-1].focus();
+  },50);
+}
+
+function removeBankAccount(idx){
+  flBancos.splice(idx,1);
+  renderBancos();
+}
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 calc();
