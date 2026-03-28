@@ -1066,7 +1066,8 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
                 <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:center">Categoría</th>
                 <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:right">Monto</th>
                 <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:center">Crédito</th>
-                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:center">Vencimiento</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:center">Sem. origen</th>
+                <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:center">Tipo</th>
                 <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:center">Estado</th>
                 <th style="font-size:10px;color:var(--muted);text-transform:uppercase;padding:8px;text-align:center">Pagado</th>
               </tr>
@@ -2511,54 +2512,16 @@ async function savePedidos(){
   pedidosData[wn]={proveedores:[...pedidosList]};
   const btn=document.getElementById('ped-save-btn');
   btn.textContent='Guardando...';btn.disabled=true;
-
-  // Calcular totales COGS
-  let totAli=0,totBeb=0;
-  pedidosList.forEach(p=>{
-    const tot=PED_DIAS.reduce((s,d)=>s+(parseFloat(p[d])||0),0);
-    if(p.cat==='alimentos') totAli+=tot;
-    else if(p.cat==='bebidas') totBeb+=tot;
-  });
-
   try{
-    // 1. Guardar pedidos
     await sb.from('pnl_data').upsert({
       user_id:CU.id,period:'pedidos-sem-'+wn,
       data:{proveedores:pedidosList},
       updated_at:new Date().toISOString()
     },{onConflict:'user_id,period'});
-
-    // 2. Actualizar COGS en pnl_weeks — buscar el año correcto
-    const currentYear = new Date().getFullYear();
-    const{data:weekData}=await sb.from('pnl_weeks')
-      .select('data,year')
-      .eq('user_id',CU.id)
-      .eq('week_num',wn)
-      .order('year',{ascending:false})
-      .limit(1)
-      .maybeSingle();
-
-    if(weekData?.data){
-      // Semana ya existe — actualizar COGS
-      const newData={...weekData.data,'c-ali':totAli,'c-beb':totBeb};
-      await sb.from('pnl_weeks').upsert({
-        user_id:CU.id,year:weekData.year,week_num:wn,
-        data:newData,updated_at:new Date().toISOString()
-      },{onConflict:'user_id,year,week_num'});
-      console.log('COGS actualizado en P&L Sem '+wn+': ali=$'+totAli+' beb=$'+totBeb);
-    } else if(totAli>0||totBeb>0){
-      // Semana no existe — crearla con COGS
-      await sb.from('pnl_weeks').upsert({
-        user_id:CU.id,year:currentYear,week_num:wn,
-        data:{'c-ali':totAli,'c-beb':totBeb},
-        updated_at:new Date().toISOString()
-      },{onConflict:'user_id,year,week_num'});
-      console.log('Nueva semana '+wn+' creada con COGS');
-    }
-
     btn.textContent='✓ Guardado';btn.className='btn btn-saved';
     setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);
-    renderCXP();
+    // Actualizar CxP automáticamente
+    distribuirCXP();
   }catch(e){
     console.error('savePedidos error:',e);
     btn.textContent='Error';btn.disabled=false;
@@ -2574,67 +2537,81 @@ async function loadPedidos(){
 }
 
 // ── CXP ──────────────────────────────────────────────────────────────────
-let cxpData = {};
+let cxpData = {}; // { "sem-1-ProvName": { pagado: bool } }
 
-function getCxpWN(){ return parseInt(document.getElementById('cxp-week-sel')?.value||12); }
+function getCxpWN(){ return parseInt(document.getElementById('cxp-week-sel')?.value||1); }
+
+// Distributes all saved pedidos into their correct payment weeks
+function distribuirCXP(){
+  // Build a map: payWeek -> [{proveedor, monto, cat, credito, fromWeek}]
+  window.cxpMap = {};
+  Object.entries(pedidosData).forEach(([wn, semData])=>{
+    const provs = semData?.proveedores||[];
+    provs.forEach(p=>{
+      const monto = PED_DIAS.reduce((s,d)=>s+(parseFloat(p[d])||0),0);
+      if(monto<=0) return;
+      const weeksCredit = Math.round((p.credito||0)/7);
+      const payWeek = Math.min(52, parseInt(wn)+weeksCredit);
+      if(!window.cxpMap[payWeek]) window.cxpMap[payWeek]=[];
+      window.cxpMap[payWeek].push({
+        nombre:p.nombre, cat:p.cat, credito:p.credito,
+        monto, fromWeek:parseInt(wn),
+        key:'sem-'+wn+'-'+p.nombre
+      });
+    });
+  });
+  renderCXP();
+}
 
 function renderCXP(){
   const wn=getCxpWN();
   const tbody=document.getElementById('cxp-tbody');
   if(!tbody) return;
+  if(!window.cxpMap) window.cxpMap={};
 
-  // Construir CxP desde pedidos guardados
-  let rows=[], t7=0, t15=0, t30=0, total=0;
-  const pedSem = pedidosData[wn]?.proveedores||[];
-
-  pedSem.forEach(p=>{
-    const monto=PED_DIAS.reduce((s,d)=>s+(parseFloat(p[d])||0),0);
-    if(monto<=0) return;
-    const pagado = cxpData[wn]?.[p.nombre]||false;
-    if(p.credito<=7) t7+=monto;
-    else if(p.credito<=15) t15+=monto;
-    else t30+=monto;
-    if(!pagado) total+=monto;
-    rows.push({...p,monto,pagado});
-  });
+  const rows = window.cxpMap[wn]||[];
+  let t7=0,t15=0,t30=0,total=0;
 
   let html='';
   rows.sort((a,b)=>a.credito-b.credito).forEach(r=>{
-    const statusColor = r.credito<=7?'var(--red)':r.credito<=15?'var(--yellow)':'var(--blue)';
-    const statusLabel = r.credito===0?'Contado':r.credito<=7?'🚨 Vence pronto':r.credito<=15?'⚠️ Esta quincena':'📅 Este mes';
-    html+=`<tr style="border-bottom:1px solid var(--border);${r.pagado?'opacity:.5':''}">
+    const pagado = cxpData[r.key]||false;
+    if(r.credito<=7) t7+=r.monto;
+    else if(r.credito<=15) t15+=r.monto;
+    else t30+=r.monto;
+    if(!pagado) total+=r.monto;
+    const statusColor=r.credito===0?'var(--green)':r.credito<=7?'var(--red)':r.credito<=15?'var(--yellow)':'var(--blue)';
+    const statusLabel=r.credito===0?'Contado':r.credito<=7?'🚨 Vence pronto':r.credito<=15?'⚠️ 15 días':'📅 30 días';
+    html+=`<tr style="border-bottom:1px solid var(--border);${pagado?'opacity:.45':''}">
       <td style="padding:9px 14px;font-size:12px;font-weight:500">${r.nombre}</td>
       <td style="padding:9px 8px;text-align:center;font-size:11px;color:var(--muted)">${r.cat}</td>
       <td style="padding:9px 8px;text-align:right;font-size:13px;font-weight:600">${fmtPed(r.monto)}</td>
       <td style="padding:9px 8px;text-align:center"><span style="font-size:10px;padding:2px 7px;border-radius:99px;background:var(--surface2);color:var(--muted)">${r.credito>0?r.credito+'d':'Contado'}</span></td>
+      <td style="padding:9px 8px;text-align:center;font-size:11px;color:var(--muted)">Sem ${r.fromWeek}</td>
       <td style="padding:9px 8px;text-align:center;font-size:11px;color:${statusColor}">${statusLabel}</td>
-      <td style="padding:9px 8px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:99px;background:${r.pagado?'var(--green-bg)':'var(--red-bg)'};color:${r.pagado?'var(--green)':'var(--red)'}">${r.pagado?'✅ Pagado':'Pendiente'}</span></td>
+      <td style="padding:9px 8px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:99px;background:${pagado?'var(--green-bg)':'var(--red-bg)'};color:${pagado?'var(--green)':'var(--red)'}">${pagado?'✅ Pagado':'Pendiente'}</span></td>
       <td style="padding:9px 8px;text-align:center">
-        <input type="checkbox" ${r.pagado?'checked':''} onchange="toggleCxpPago('${r.nombre}',this.checked,${wn})" style="cursor:pointer;width:16px;height:16px">
+        <input type="checkbox" ${pagado?'checked':''} onchange="toggleCxpPago('${r.key}',this.checked)" style="cursor:pointer;width:16px;height:16px">
       </td>
     </tr>`;
   });
 
-  tbody.innerHTML=html||'<tr><td colspan="7" style="text-align:center;padding:24px;font-size:12px;color:var(--muted)">Registra pedidos primero para ver las cuentas por pagar</td></tr>';
-
+  tbody.innerHTML=html||'<tr><td colspan="8" style="text-align:center;padding:24px;font-size:12px;color:var(--muted)">No hay cuentas por pagar en esta semana</td></tr>';
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
   set('cxp-t7',fmtPed(t7));set('cxp-t15',fmtPed(t15));set('cxp-t30',fmtPed(t30));set('cxp-total',fmtPed(total));
 }
 
-function toggleCxpPago(nombre,val,wn){
-  if(!cxpData[wn]) cxpData[wn]={};
-  cxpData[wn][nombre]=val;
+function toggleCxpPago(key,val){
+  cxpData[key]=val;
   renderCXP();
 }
 
 async function saveCXP(){
   if(!CU) return;
-  const wn=getCxpWN();
   const btn=document.getElementById('cxp-save-btn');
   btn.textContent='Guardando...';btn.disabled=true;
   try{
     await sb.from('pnl_data').upsert({
-      user_id:CU.id,period:'cxp-sem-'+wn,data:cxpData[wn]||{},updated_at:new Date().toISOString()
+      user_id:CU.id,period:'cxp-pagos',data:cxpData,updated_at:new Date().toISOString()
     },{onConflict:'user_id,period'});
     btn.textContent='✓ Guardado';btn.className='btn btn-saved';
     setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);
@@ -2643,10 +2620,19 @@ async function saveCXP(){
 
 async function loadCXP(){
   if(!CU) return;
-  const wn=getCxpWN();
-  const{data}=await sb.from('pnl_data').select('data').eq('user_id',CU.id).eq('period','cxp-sem-'+wn).maybeSingle();
-  if(data?.data) cxpData[wn]=data.data;
-  renderCXP();
+  // Load all pedidos first to build cxpMap
+  const{data:allPeds}=await sb.from('pnl_data')
+    .select('period,data')
+    .eq('user_id',CU.id)
+    .like('period','pedidos-sem-%');
+  if(allPeds) allPeds.forEach(r=>{
+    const wn=parseInt(r.period.replace('pedidos-sem-',''));
+    pedidosData[wn]=r.data;
+  });
+  // Load pagos
+  const{data:pagos}=await sb.from('pnl_data').select('data').eq('user_id',CU.id).eq('period','cxp-pagos').maybeSingle();
+  if(pagos?.data) cxpData=pagos.data;
+  distribuirCXP();
 }
 
 // ── FLUJO DE CAJA ─────────────────────────────────────────────────────────
