@@ -1381,8 +1381,10 @@ const sb=createClient(SB_URL,SB_KEY,{
     storageKey:'ros-auth-v1',
     storage:window.localStorage,
     autoRefreshToken:true,
-    detectSessionInUrl:false,
-    lock: async (name, acquireTimeout, fn) => fn()
+    detectSessionInUrl:false
+  },
+  global:{
+    fetch: (...args) => fetch(...args)
   }
 });
 window.sb=sb;
