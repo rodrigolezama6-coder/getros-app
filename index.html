@@ -314,12 +314,12 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     <button class="s-item" onclick="goTo('pendientes')"><span style="font-size:14px">📌</span><span>Pendientes</span></button>
   </nav>
   <div class="s-footer">
-    <a href="https://discord.gg/Gf2tufwp4" target="_blank" class="s-discord"><span style="font-size:15px">💬</span><span>Discord ROS</span></a>
     <div class="s-user">
       <div class="s-avatar" id="u-avatar">R</div>
       <div class="s-email" id="u-email">cargando...</div>
     </div>
     <button class="logout-btn" onclick="doLogout()">Cerrar sesión</button>
+    <a href="https://discord.gg/Gf2tufwp4" target="_blank" class="s-discord" style="margin-top:6px"><span style="font-size:15px">💬</span><span>Discord ROS</span></a>
   </div>
 </aside>
 
@@ -1420,8 +1420,7 @@ async function doReset(){
   await sb.auth.resetPasswordForEmail(e,{redirectTo:'https://app.getros.mx'});
   showMsg('Correo de recuperación enviado','ok');
 }
-async function doLogout(){
-  try{await sb.auth.signOut({scope:'local'});}catch(e){}
+function doLogout(){ localStorage.clear(); sessionStorage.clear(); location.href='https://app.getros.mx'; });}catch(e){}
   localStorage.clear();sessionStorage.clear();window.location.reload();
 }
 
