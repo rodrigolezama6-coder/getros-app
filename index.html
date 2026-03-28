@@ -839,7 +839,7 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <div style="font-family:'Syne',sans-serif;font-size:18px">Pedidos Semanales</div>
           <div style="font-size:12px;color:var(--muted);margin-top:2px">Registra compras por proveedor — alimenta automáticamente el COGS del P&L</div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
+        <div id="week-sel-wrap" style="display:flex;gap:8px;align-items:center">
           <select class="sel" id="ped-week-sel" onchange="loadPedidos()">
             <option value="1" selected>Sem 1</option>
             <option value="2">Sem 2</option>
@@ -1473,8 +1473,12 @@ function ptab(id){
   if(id==='cmp')buildComp();
   if(id==='analisis'){loadAllWeeks().then(()=>renderAnalisis());}
   if(id==='pedidos')loadPedidos();
-  if(id==='cxp'){loadPedidos().then(()=>loadCXP());}
+  if(id==='cxp'){loadCXP();}
   if(id==='flujo')loadFlujo();
+  // Hide P&L week selector on non-P&L pages
+  const plPages=['semanal','mensual','trimestral','anual'];
+  const weekSel=document.getElementById('week-sel-wrap');
+  if(weekSel) weekSel.style.display=plPages.includes(id)?'flex':'none';
 }
 function toggleManual(){
   const b=document.getElementById('m-body'),a=document.getElementById('m-arrow');
@@ -2520,18 +2524,19 @@ async function savePedidos(){
   const btn=document.getElementById('ped-save-btn');
   btn.textContent='Guardando...';btn.disabled=true;
   try{
-    await sb.from('pnl_data').upsert({
-      user_id:CU.id,period:'pedidos-sem-'+wn,
-      data:{proveedores:pedidosList},
-      updated_at:new Date().toISOString()
+    const{error}=await sb.from('pnl_data').upsert({
+      user_id:CU.id,
+      period:'pedidos-sem-'+wn,
+      data:{proveedores:pedidosList}
     },{onConflict:'user_id,period'});
+    if(error) throw error;
     btn.textContent='✓ Guardado';btn.className='btn btn-saved';
     setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);
-    // Actualizar CxP automáticamente
     distribuirCXP();
   }catch(e){
     console.error('savePedidos error:',e);
-    btn.textContent='Error';btn.disabled=false;
+    btn.textContent='Error: '+e.message;
+    setTimeout(()=>{btn.textContent='💾 Guardar';btn.disabled=false;},3000);
   }
 }
 
@@ -2618,7 +2623,7 @@ async function saveCXP(){
   btn.textContent='Guardando...';btn.disabled=true;
   try{
     await sb.from('pnl_data').upsert({
-      user_id:CU.id,period:'cxp-pagos',data:cxpData,updated_at:new Date().toISOString()
+      user_id:CU.id,period:'cxp-pagos',data:cxpData
     },{onConflict:'user_id,period'});
     btn.textContent='✓ Guardado';btn.className='btn btn-saved';
     setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);
