@@ -53,15 +53,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .s-logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:18px}
 .s-logo-name span{color:var(--accent)}
 .s-logo-sub{font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
-.s-nav{padding:12px 10px;display:flex;flex-direction:column;gap:2px}
+.s-nav{padding:8px 0;display:flex;flex-direction:column;gap:2px}
 .s-sec{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;padding:10px 8px 4px}
 .s-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif}
 .s-item:hover{background:var(--surface2);color:var(--text)}
 .s-item.active{background:var(--accent-dim);color:var(--accent);font-weight:500}
 .s-badge{margin-left:auto;font-size:9px;background:var(--surface2);color:var(--muted);padding:2px 6px;border-radius:99px}
 .s-badge.soon{background:rgba(200,241,53,.1);color:var(--accent2)}
-.s-footer{padding:14px;border-top:1px solid var(--border);flex-shrink:0}
-nav.s-nav{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0}
+.s-footer{padding:12px 14px;border-top:1px solid var(--border);flex-shrink:0;position:relative;background:var(--surface)}
+nav.s-nav{flex:1;overflow-y:scroll;overflow-x:hidden;min-height:0;max-height:calc(100vh - 160px)}
 .s-discord{width:100%;background:rgba(88,101,242,.15);border:1px solid rgba(88,101,242,.3);border-radius:7px;padding:8px;font-size:12px;color:#8891f7;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
 .s-discord:hover{background:rgba(88,101,242,.25)}
 .s-user{display:flex;align-items:center;gap:8px;margin-bottom:8px}
@@ -1655,7 +1655,7 @@ async function guardarSemana(){
   btn.textContent='Guardando...';btn.disabled=true;
   try{
     const{error}=await sb.from('pnl_weeks').upsert(
-      {user_id:CU.id,year:2025,week_num:wn,data,updated_at:new Date().toISOString()},
+      {user_id:CU.id,year:2025,week_num:wn,data},
       {onConflict:'user_id,year,week_num'}
     );
     if(!error){
@@ -1927,7 +1927,7 @@ async function saveKanban(){
   btn.textContent='Guardando...';btn.disabled=true;
   try{
     const{error}=await sb.from('pnl_data').upsert({
-      user_id:CU.id,period:'kanban-2025',data:kanbanData,updated_at:new Date().toISOString()
+      user_id:CU.id,period:'kanban-2025',data:kanbanData
     },{onConflict:'user_id,period'});
     if(!error){btn.textContent='✓ Guardado';btn.className='btn btn-saved';setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);}
     else{btn.textContent='Error';btn.disabled=false;}
@@ -2154,7 +2154,7 @@ async function saveProveedores(){
   btn.textContent='Guardando...';btn.disabled=true;
   try{
     const{error}=await sb.from('pnl_data').upsert({
-      user_id:CU.id,period:'proveedores-2025',data:provData,updated_at:new Date().toISOString()
+      user_id:CU.id,period:'proveedores-2025',data:provData
     },{onConflict:'user_id,period'});
     if(!error){btn.textContent='✓ Guardado';btn.style.background='var(--green-bg)';btn.style.color='var(--green)';setTimeout(()=>{btn.textContent='💾 Guardar';btn.style.background='';btn.style.color='';btn.disabled=false;},2000);}
     else{btn.textContent='Error';btn.disabled=false;}
@@ -2685,7 +2685,7 @@ async function saveFlujo(){
   btn.textContent='Guardando...';btn.disabled=true;
   try{
     await sb.from('pnl_data').upsert({
-      user_id:CU.id,period:'flujo-sem-'+wn,data,updated_at:new Date().toISOString()
+      user_id:CU.id,period:'flujo-sem-'+wn,data
     },{onConflict:'user_id,period'});
     btn.textContent='✓ Guardado';btn.className='btn btn-saved';
     setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);
