@@ -1433,10 +1433,13 @@ sb.auth.onAuthStateChange(async(event,session)=>{
     const em=session.user.email;
     document.getElementById('u-email').textContent=em;
     document.getElementById('u-avatar').textContent=em[0].toUpperCase();
-    // Load all data immediately - don't wait for profiles
+    // Load all data immediately
     loadSemana();
     loadKanban();
     loadProveedores();
+    loadPedidos();
+    loadCXP();
+    loadFlujo();
     // Load profile name without blocking
     sb.from('profiles').select('restaurant_name').eq('id',session.user.id).maybeSingle().then(({data:prof})=>{
       if(prof?.restaurant_name){document.getElementById('rest-name').textContent=prof.restaurant_name;}
