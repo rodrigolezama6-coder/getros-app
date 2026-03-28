@@ -2436,8 +2436,10 @@ function renderPedidos(){
         <span style="font-size:10px;padding:2px 7px;border-radius:99px;background:var(--surface2);color:var(--muted)">${p.cat}</span>
       </td>
       ${PED_DIAS.map(d=>`<td style="padding:4px 3px">
-        <input type="text" inputmode="decimal" value="${p[d]||''}" oninput="pedidoInput(${i},'${d}',this.value)"
-          style="background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:4px;font-size:11px;color:var(--text);text-align:right;width:72px;font-family:'DM Sans',sans-serif"
+        <input type="text" inputmode="decimal" value="${p[d]||''}" 
+          onkeypress="return /[0-9.]/.test(event.key)"
+          oninput="pedidoInput(${i},'${d}',this.value.replace(/[^0-9.]/g,''))"
+          style="background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:5px 6px;font-size:11px;color:var(--text);text-align:right;width:72px;font-family:'DM Sans',sans-serif;-moz-appearance:textfield"
           placeholder="0">
       </td>`).join('')}
       <td style="padding:7px 8px;text-align:right;font-size:12px;font-weight:600;color:var(--accent)">${fmtPed(tot)}</td>
@@ -2501,7 +2503,7 @@ async function savePedidos(){
   const btn=document.getElementById('ped-save-btn');
   btn.textContent='Guardando...';btn.disabled=true;
 
-  // Calcular totales para actualizar COGS en pnl_weeks
+  // Calcular totales COGS
   let totAli=0,totBeb=0;
   pedidosList.forEach(p=>{
     const tot=PED_DIAS.reduce((s,d)=>s+(parseFloat(p[d])||0),0);
@@ -2510,24 +2512,48 @@ async function savePedidos(){
   });
 
   try{
-    // Guardar pedidos
+    // 1. Guardar pedidos
     await sb.from('pnl_data').upsert({
-      user_id:CU.id,period:'pedidos-sem-'+wn,data:{proveedores:pedidosList},updated_at:new Date().toISOString()
+      user_id:CU.id,period:'pedidos-sem-'+wn,
+      data:{proveedores:pedidosList},
+      updated_at:new Date().toISOString()
     },{onConflict:'user_id,period'});
 
-    // Actualizar COGS en pnl_weeks si hay datos
-    if(totAli>0||totBeb>0){
-      const{data:weekData}=await sb.from('pnl_weeks').select('data').eq('user_id',CU.id).eq('year',2025).eq('week_num',wn).maybeSingle();
-      if(weekData?.data){
-        const newData={...weekData.data,'c-ali':totAli,'c-beb':totBeb};
-        await sb.from('pnl_weeks').upsert({user_id:CU.id,year:2025,week_num:wn,data:newData,updated_at:new Date().toISOString()},{onConflict:'user_id,year,week_num'});
-      }
+    // 2. Actualizar COGS en pnl_weeks — buscar el año correcto
+    const currentYear = new Date().getFullYear();
+    const{data:weekData}=await sb.from('pnl_weeks')
+      .select('data,year')
+      .eq('user_id',CU.id)
+      .eq('week_num',wn)
+      .order('year',{ascending:false})
+      .limit(1)
+      .maybeSingle();
+
+    if(weekData?.data){
+      // Semana ya existe — actualizar COGS
+      const newData={...weekData.data,'c-ali':totAli,'c-beb':totBeb};
+      await sb.from('pnl_weeks').upsert({
+        user_id:CU.id,year:weekData.year,week_num:wn,
+        data:newData,updated_at:new Date().toISOString()
+      },{onConflict:'user_id,year,week_num'});
+      console.log('COGS actualizado en P&L Sem '+wn+': ali=$'+totAli+' beb=$'+totBeb);
+    } else if(totAli>0||totBeb>0){
+      // Semana no existe — crearla con COGS
+      await sb.from('pnl_weeks').upsert({
+        user_id:CU.id,year:currentYear,week_num:wn,
+        data:{'c-ali':totAli,'c-beb':totBeb},
+        updated_at:new Date().toISOString()
+      },{onConflict:'user_id,year,week_num'});
+      console.log('Nueva semana '+wn+' creada con COGS');
     }
 
     btn.textContent='✓ Guardado';btn.className='btn btn-saved';
     setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);
-    renderCXP(); // actualizar CxP
-  }catch(e){btn.textContent='Error';btn.disabled=false;}
+    renderCXP();
+  }catch(e){
+    console.error('savePedidos error:',e);
+    btn.textContent='Error';btn.disabled=false;
+  }
 }
 
 async function loadPedidos(){
