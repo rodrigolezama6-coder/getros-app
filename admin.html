@@ -1,1 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROS Admin — Notificaciones</title>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222;
+    --border: #2a2a2a;
+    --accent: #e8c547;
+    --text: #f0f0f0;
+    --muted: #888;
+    --green: #4CAF50;
+    --red: #e74c3c;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
 
+  .container { width: 100%; max-width: 580px; }
+
+  .logo { text-align: center; margin-bottom: 32px; }
+  .logo .r { font-size: 28px; font-weight: 800; color: var(--accent); letter-spacing: -1px; }
+  .logo .sub { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 2px; }
+  .logo .badge { display: inline-block; background: #2d0040; color: #c87be8; font-size: 10px; padding: 2px 10px; border-radius: 20px; font-weight: 600; margin-top: 8px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 16px; }
+  .card h2 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; font-weight: 600; }
+  .field input, .field textarea, .field select {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 13px;
+    font-family: inherit; outline: none; transition: border-color .2s;
+    -webkit-appearance: none;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); }
+  .field textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+  .field .hint { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+
+  .preview-box {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px; margin-top: 8px; font-size: 12px; color: var(--muted); line-height: 1.6;
+    white-space: pre-wrap; min-height: 60px;
+  }
+  .preview-box .pv-titulo { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .preview-box .pv-version { display: inline-block; background: #1a1a00; color: var(--accent); font-size: 11px; padding: 2px 8px; border-radius: 20px; margin-bottom: 10px; font-weight: 600; }
+
+  .btn-send {
+    width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: 8px;
+    color: #000; font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity .2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: inherit;
+  }
+  .btn-send:hover { opacity: .88; }
+  .btn-send:disabled { opacity: .4; cursor: not-allowed; }
+
+  .result {
+    border-radius: 10px; padding: 16px 20px; font-size: 13px; line-height: 1.6;
+    display: none; margin-top: 14px;
+  }
+  .result.ok { background: #0d2d12; border: 1px solid #1a4a20; color: #7be8a0; display: block; }
+  .result.err { background: #2d0d0d; border: 1px solid #4a1a1a; color: #e87b7b; display: block; }
+  .result .res-num { font-size: 28px; font-weight: 800; color: var(--accent); display: block; margin-bottom: 4px; }
+
+  .spinner { width: 18px; height: 18px; border: 2px solid #00000040; border-top-color: #000; border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .templates { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .tpl-btn { padding: 8px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 11px; cursor: pointer; text-align: left; transition: all .15s; font-family: inherit; }
+  .tpl-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .tpl-btn strong { display: block; color: var(--text); margin-bottom: 2px; font-size: 12px; }
+
+  .sep { border: none; border-top: 1px solid var(--border); margin: 6px 0 16px; }
+
+  .char-count { font-size: 11px; color: var(--muted); text-align: right; margin-top: 4px; }
+  .char-count.warn { color: #f5d87a; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="logo">
+    <div class="r">R.O.S</div>
+    <div class="sub">Restaurant Operating System</div>
+    <div class="badge">🔐 Panel de Admin — Notificaciones</div>
+  </div>
+
+  <div class="card">
+    <h2>🔑 Autenticación</h2>
+    <div class="field">
+      <label>Admin Secret</label>
+      <input type="password" id="secret" placeholder="Tu ADMIN_NOTIFY_SECRET de Vercel" autocomplete="off">
+      <div class="hint">Solo tú conoces este valor — está en las variables de entorno de Vercel</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📝 Contenido de la Notificación</h2>
+
+    <div class="field">
+      <label>Plantilla rápida</label>
+      <div class="templates">
+        <button class="tpl-btn" onclick="usarTemplate('nueva-funcion')">
+          <strong>🚀 Nueva función</strong>
+          Se agregó un módulo nuevo
+        </button>
+        <button class="tpl-btn" onclick="usarTemplate('mejora')">
+          <strong>✨ Mejora</strong>
+          Actualización de módulo existente
+        </button>
+        <button class="tpl-btn" onclick="usarTemplate('bugfix')">
+          <strong>🐛 Corrección</strong>
+          Se resolvieron errores reportados
+        </button>
+        <button class="tpl-btn" onclick="usarTemplate('mantenimiento')">
+          <strong>🔧 Mantenimiento</strong>
+          Mejoras de rendimiento
+        </button>
+      </div>
+    </div>
+
+    <hr class="sep">
+
+    <div class="field">
+      <label>Versión <span style="color:var(--muted);font-weight:400;text-transform:none">(opcional — ej: v4.1)</span></label>
+      <input type="text" id="version" placeholder="v4.1" maxlength="20">
+    </div>
+
+    <div class="field">
+      <label>Título del correo</label>
+      <input type="text" id="titulo" placeholder="ej: Manual de Uso y Módulo de Permisos" maxlength="80" oninput="actualizarPreview(); contarChars(this, 80, 'cnt-titulo')">
+      <div class="char-count" id="cnt-titulo">0 / 80</div>
+    </div>
+
+    <div class="field">
+      <label>Mensaje</label>
+      <textarea id="mensaje" placeholder="Describe los cambios. Puedes usar saltos de línea para separar puntos." maxlength="1200" oninput="actualizarPreview(); contarChars(this, 1200, 'cnt-mensaje')"></textarea>
+      <div class="char-count" id="cnt-mensaje">0 / 1200</div>
+      <div class="hint">Tip: usa • al inicio de cada línea para hacer una lista de puntos</div>
+    </div>
+
+    <div class="field">
+      <label>Vista previa del correo</label>
+      <div class="preview-box" id="preview">
+        <div style="color:var(--muted);font-size:12px">Escribe el título y mensaje para ver la vista previa...</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-send" id="btn-enviar" onclick="enviar()">
+    📧 Enviar notificación a todos los usuarios
+  </button>
+
+  <div class="result" id="resultado"></div>
+
+</div>
+
+<script>
+const ENDPOINT = 'https://app.getros.mx/api/notificar-update';
+
+const templates = {
+  'nueva-funcion': {
+    titulo: 'Nueva función disponible en ROS',
+    mensaje: 'Hemos agregado un nuevo módulo a tu plataforma:\n\n• [Nombre del módulo] — [Descripción breve]\n• Encuéntralo en el menú lateral\n• [Detalle adicional si aplica]\n\nComo siempre, tus datos están seguros y no necesitas hacer nada — la actualización ya está activa.'
+  },
+  'mejora': {
+    titulo: 'Mejoras en ROS',
+    mensaje: 'Actualizamos algunos módulos de tu plataforma:\n\n• [Módulo] — [Qué mejoró]\n• [Módulo] — [Qué mejoró]\n\nEstas mejoras están activas desde hoy. Entra a app.getros.mx para verlas.'
+  },
+  'bugfix': {
+    titulo: 'Correcciones en ROS',
+    mensaje: 'Resolvimos algunos errores que fueron reportados:\n\n• [Descripción del error corregido]\n• [Descripción del error corregido]\n\nGracias por reportarlos. Si encuentras algún otro problema, escríbenos a hola@getros.mx o en Discord.'
+  },
+  'mantenimiento': {
+    titulo: 'Mejoras de rendimiento en ROS',
+    mensaje: 'Realizamos ajustes internos para que ROS funcione más rápido y de forma más estable.\n\nNo hay cambios visibles, pero tu experiencia de uso mejora con esta actualización.\n\nGracias por confiar en ROS para gestionar tu restaurante.'
+  }
+};
+
+function usarTemplate(id) {
+  const t = templates[id];
+  document.getElementById('titulo').value = t.titulo;
+  document.getElementById('mensaje').value = t.mensaje;
+  contarChars(document.getElementById('titulo'), 80, 'cnt-titulo');
+  contarChars(document.getElementById('mensaje'), 1200, 'cnt-mensaje');
+  actualizarPreview();
+}
+
+function contarChars(el, max, counterId) {
+  const n = el.value.length;
+  const el2 = document.getElementById(counterId);
+  el2.textContent = `${n} / ${max}`;
+  el2.className = 'char-count' + (n > max * 0.85 ? ' warn' : '');
+}
+
+function actualizarPreview() {
+  const titulo = document.getElementById('titulo').value.trim();
+  const mensaje = document.getElementById('mensaje').value.trim();
+  const version = document.getElementById('version').value.trim();
+  const box = document.getElementById('preview');
+
+  if (!titulo && !mensaje) {
+    box.innerHTML = '<div style="color:var(--muted);font-size:12px">Escribe el título y mensaje para ver la vista previa...</div>';
+    return;
+  }
+
+  box.innerHTML = `
+    ${version ? `<div class="pv-version">${version}</div>` : ''}
+    ${titulo ? `<div class="pv-titulo">${titulo}</div>` : ''}
+    <div style="color:var(--muted);font-size:12px;line-height:1.7;white-space:pre-wrap">${mensaje}</div>
+    <div style="margin-top:12px;display:inline-block;background:var(--accent);color:#000;font-size:12px;font-weight:700;padding:8px 18px;border-radius:6px">Ver la actualización →</div>
+  `;
+}
+
+async function enviar() {
+  const secret  = document.getElementById('secret').value.trim();
+  const titulo  = document.getElementById('titulo').value.trim();
+  const mensaje = document.getElementById('mensaje').value.trim();
+  const version = document.getElementById('version').value.trim();
+  const btn     = document.getElementById('btn-enviar');
+  const res     = document.getElementById('resultado');
+
+  // Validaciones
+  if (!secret) { mostrarError('Ingresa el Admin Secret'); return; }
+  if (!titulo)  { mostrarError('El título es requerido'); return; }
+  if (!mensaje) { mostrarError('El mensaje es requerido'); return; }
+
+  // Confirmación
+  const total = '¿Enviar este correo a TODOS los usuarios de ROS?\n\nAsunto: ' + titulo;
+  if (!confirm(total)) return;
+
+  // Loading
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Enviando...';
+  res.className = 'result';
+  res.style.display = 'none';
+
+  try {
+    const resp = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret, titulo, mensaje, version: version || undefined }),
+    });
+
+    let data;
+    try {
+      data = await resp.json();
+    } catch(jsonErr) {
+      mostrarError('El servidor respondió con un formato inesperado. Revisa los logs en Vercel → Functions.');
+      return;
+    }
+
+    if (!resp.ok || data.error) {
+      mostrarError(`Error ${resp.status}: ${data.error || data.detalle || 'Error desconocido'}`);
+    } else {
+      res.className = 'result ok';
+      res.innerHTML = `
+        <span class="res-num">✅ ${data.enviados}</span>
+        correos enviados exitosamente de ${data.total_usuarios} usuarios registrados.
+        ${data.errores > 0 ? `<br><br>⚠️ ${data.errores} correo(s) fallaron — revisa Vercel → Functions → notificar-update para ver los logs.` : ''}
+      `;
+      document.getElementById('titulo').value = '';
+      document.getElementById('mensaje').value = '';
+      document.getElementById('version').value = '';
+      actualizarPreview();
+      contarChars(document.getElementById('titulo'), 80, 'cnt-titulo');
+      contarChars(document.getElementById('mensaje'), 1200, 'cnt-mensaje');
+    }
+  } catch (e) {
+    mostrarError('No se pudo conectar: ' + e.message + '. Asegúrate de abrir esta página desde app.getros.mx/admin y no desde tu computadora directamente.');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '📧 Enviar notificación a todos los usuarios';
+}
+
+function mostrarError(msg) {
+  const res = document.getElementById('resultado');
+  res.className = 'result err';
+  res.innerHTML = '❌ ' + msg;
+}
+</script>
+</body>
+</html>
