@@ -1652,7 +1652,7 @@ async function guardarSemana(){
   btn.textContent='Guardando...';btn.disabled=true;
   try{
     const{error}=await sb.from('pnl_weeks').upsert(
-      {user_id:CU.id,year:2025,week_num:wn,data},
+      {user_id:CU.id,year:new Date().getFullYear(),week_num:wn,data},
       {onConflict:'user_id,year,week_num'}
     );
     if(!error){
@@ -1672,7 +1672,7 @@ async function guardarSemana(){
 async function loadSemana(){
   if(!CU)return;
   const wn=parseInt(document.getElementById('week-sel').value);
-  const{data,error}=await sb.from('pnl_weeks').select('data').eq('user_id',CU.id).eq('year',2025).eq('week_num',wn).maybeSingle();
+  const{data,error}=await sb.from('pnl_weeks').select('data').eq('user_id',CU.id).eq('year',new Date().getFullYear()).eq('week_num',wn).maybeSingle();
   if(data?.data){
     WFIELDS.forEach(f=>{const e=document.getElementById(f);if(e)e.value=data.data[f]||0;});
   }else{
@@ -1690,7 +1690,7 @@ let allWeeks={};
 
 async function loadAllWeeks(){
   if(!CU)return;
-  const{data}=await sb.from('pnl_weeks').select('week_num,data').eq('user_id',CU.id).eq('year',2025);
+  const{data}=await sb.from('pnl_weeks').select('week_num,data').eq('user_id',CU.id).eq('year',new Date().getFullYear());
   if(data)data.forEach(r=>{allWeeks[r.week_num]=r.data;});
 }
 
