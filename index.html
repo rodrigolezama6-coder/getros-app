@@ -235,8 +235,22 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 
 /* FISCAL */
 .fiscal3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-.fcal-row{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12px}
+.fcal-row{display:grid;grid-template-columns:1fr 140px 80px;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12px}
 .fcal-row:last-child{border-bottom:none}
+.fcal-date{text-align:right;font-size:12px;color:var(--muted);white-space:nowrap}
+.fcal-badge{text-align:right}
+/* FISCAL TRACKER */
+.ftrack-grid{display:grid;grid-template-columns:100px 1fr 1fr repeat(4,60px);gap:0;font-size:11px}
+.ftrack-grid.annual{grid-template-columns:80px 1fr 1fr repeat(3,80px)}
+.ftrack-hdr{background:var(--surface2);padding:8px 10px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);white-space:nowrap;text-align:center}
+.ftrack-hdr:first-child{text-align:left}
+.ftrack-cell{padding:7px 6px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+.ftrack-cell:first-child{justify-content:flex-start}
+.ftrack-cell input[type="text"]{background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:4px 6px;font-size:11px;color:var(--text);width:100%;font-family:'DM Sans',sans-serif}
+.ftrack-cell input[type="text"]:focus{outline:none;border-color:var(--accent)}
+.ftrack-check{width:22px;height:22px;border-radius:5px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);transition:all .15s;user-select:none}
+.ftrack-check.done{background:var(--green-bg);border-color:rgba(74,222,128,.4);color:var(--green)}
+.ftrack-month{font-size:12px;font-weight:500;color:var(--text)}
 
 @media(max-width:900px){
   .sidebar{width:56px}
@@ -675,13 +689,17 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
       <div id="fp-cal">
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Calendario de Obligaciones Fiscales</div></div>
-          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">IVA · ISR · Retenciones</div><div style="font-size:11px;color:var(--muted)">Pagos provisionales y definitivos · Portal SAT</div></div><div style="font-size:12px;color:var(--muted)">Día 17</div><div><span class="badge bwarn">Mensual</span></div></div>
-          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">Cuotas patronales IMSS</div><div style="font-size:11px;color:var(--muted)">Sistema SUA</div></div><div style="font-size:12px;color:var(--muted)">Día 17</div><div><span class="badge bwarn">Mensual</span></div></div>
-          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">ISERTP — Impuesto sobre nómina</div><div style="font-size:11px;color:var(--muted)">3% Puebla · Registro estatal</div></div><div style="font-size:12px;color:var(--muted)">Día 17</div><div><span class="badge bwarn">Mensual</span></div></div>
-          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">DIOT — Operaciones con terceros</div><div style="font-size:11px;color:var(--muted)">Declaración informativa · Portal SAT</div></div><div style="font-size:12px;color:var(--muted)">Último día del mes</div><div><span class="badge bwarn">Mensual</span></div></div>
-          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">Declaración anual ISR — Personas Morales</div><div style="font-size:11px;color:var(--muted)">Declarasat · Portal SAT</div></div><div style="font-size:12px;color:var(--muted)">31 de Marzo</div><div><span class="badge bok">Anual</span></div></div>
-          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">Declaración anual ISR — Personas Físicas</div><div style="font-size:11px;color:var(--muted)">Portal SAT</div></div><div style="font-size:12px;color:var(--muted)">30 de Abril</div><div><span class="badge bok">Anual</span></div></div>
-          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">PTU — Reparto de utilidades</div><div style="font-size:11px;color:var(--muted)">60 días después de declaración anual</div></div><div style="font-size:12px;color:var(--muted)">Mayo 30</div><div><span class="badge bwarn">Anual</span></div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">IVA · ISR · Retenciones</div><div style="font-size:11px;color:var(--muted)">Pagos provisionales y definitivos · Portal SAT</div></div><div class="fcal-date">Día 17</div><div class="fcal-badge"><span class="badge bwarn">Mensual</span></div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">Cuotas patronales IMSS</div><div style="font-size:11px;color:var(--muted)">Sistema SUA</div></div><div class="fcal-date">Día 17</div><div class="fcal-badge"><span class="badge bwarn">Mensual</span></div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">ISERTP — Impuesto sobre nómina</div><div style="font-size:11px;color:var(--muted)">3% Puebla · Registro estatal</div></div><div class="fcal-date">Día 17</div><div class="fcal-badge"><span class="badge bwarn">Mensual</span></div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">DIOT — Operaciones con terceros</div><div style="font-size:11px;color:var(--muted)">Declaración informativa · Portal SAT</div></div><div class="fcal-date">Último día del mes</div><div class="fcal-badge"><span class="badge bwarn">Mensual</span></div></div>
+          <!-- Nota RFC dígito verificador -->
+          <div style="padding:10px 16px;background:rgba(96,165,250,0.06);border-bottom:1px solid var(--border)">
+            <div style="font-size:11px;color:var(--blue);line-height:1.5;display:flex;gap:6px;align-items:flex-start"><span style="flex-shrink:0">ℹ️</span><span>Los días adicionales según dígito verificador del RFC aplican solo a declaraciones provisionales mensuales.</span></div>
+          </div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">Declaración anual ISR — Personas Morales</div><div style="font-size:11px;color:var(--muted)">Declarasat · Portal SAT</div></div><div class="fcal-date">31 de Marzo</div><div class="fcal-badge"><span class="badge bok">Anual</span></div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">Declaración anual ISR — Personas Físicas</div><div style="font-size:11px;color:var(--muted)">Portal SAT</div></div><div class="fcal-date">30 de Abril</div><div class="fcal-badge"><span class="badge bok">Anual</span></div></div>
+          <div class="fcal-row"><div><div style="font-size:13px;font-weight:500">PTU — Reparto de utilidades</div><div style="font-size:11px;color:var(--muted)">60 días después de declaración anual</div></div><div class="fcal-date">Mayo 30</div><div class="fcal-badge"><span class="badge bwarn">Anual</span></div></div>
         </div>
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>Días adicionales según RFC</div><div class="card-hint">6° dígito numérico de tu RFC</div></div>
@@ -804,6 +822,7 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 
       <!-- MONITOREO -->
       <div id="fp-mon" style="display:none">
+        <!-- Checklist de monitoreo mensual -->
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--green)"></span>Monitoreo Mensual con tu Contador</div></div>
           <div style="padding:14px 16px">
@@ -815,6 +834,51 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
             <div style="font-size:12px;color:var(--muted);padding:7px 0;display:flex;gap:8px"><span style="color:var(--green);flex-shrink:0">✓</span><span>Verificar que tu domicilio fiscal esté localizable ante el SAT</span></div>
           </div>
         </div>
+
+        <!-- TRACKER MENSUAL -->
+        <div class="card" style="margin-top:12px">
+          <div class="card-hdr">
+            <div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Tracker Obligaciones Mensuales</div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <select id="ftrack-year-sel" class="sel" onchange="renderFiscalTracker()"></select>
+              <button class="btn btn-accent" id="ftrack-save-btn" onclick="saveFiscalTracker()">💾 Guardar</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;padding:0">
+            <div class="ftrack-grid" id="ftrack-monthly-grid">
+              <!-- Header row -->
+              <div class="ftrack-hdr">Mes</div>
+              <div class="ftrack-hdr">Fecha presentación</div>
+              <div class="ftrack-hdr">No. operación</div>
+              <div class="ftrack-hdr">IVA·ISR</div>
+              <div class="ftrack-hdr">IMSS</div>
+              <div class="ftrack-hdr">ISERTP</div>
+              <div class="ftrack-hdr">DIOT</div>
+              <!-- Rows rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TRACKER ANUAL -->
+        <div class="card" style="margin-top:12px">
+          <div class="card-hdr">
+            <div class="card-title"><span class="dot" style="background:var(--red)"></span>Tracker Declaraciones Anuales</div>
+          </div>
+          <div style="overflow-x:auto;padding:0">
+            <div class="ftrack-grid annual" id="ftrack-annual-grid">
+              <!-- Header row -->
+              <div class="ftrack-hdr">Año</div>
+              <div class="ftrack-hdr">Fecha presentación</div>
+              <div class="ftrack-hdr">No. operación</div>
+              <div class="ftrack-hdr">ISR PM</div>
+              <div class="ftrack-hdr">ISR PF</div>
+              <div class="ftrack-hdr">PTU</div>
+              <!-- Rows rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Expediente anual reference -->
         <div class="card" style="margin-top:12px">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--accent)"></span>Expediente Anual</div></div>
           <div style="padding:14px 16px">
@@ -2663,6 +2727,7 @@ sb.auth.onAuthStateChange(async(event,session)=>{
     loadPedidos();
     loadCXP();
     loadFlujo();
+    loadFiscalTracker();
     // Load profile name without blocking
     sb.from('profiles').select('restaurant_name').eq('id',session.user.id).maybeSingle().then(({data:prof})=>{
       if(prof?.restaurant_name){document.getElementById('rest-name').textContent=prof.restaurant_name;}
@@ -3077,6 +3142,164 @@ function fTab(id){
     if(el) el.style.display=t===id?'block':'none';
     if(btn) btn.classList.toggle('active',t===id);
   });
+  if(id==='mon') renderFiscalTracker();
+}
+
+// ── FISCAL TRACKER ───────────────────────────────────────────────────────
+const FTRACK_MONTHS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const FTRACK_MONTHLY_CONCEPTS=['iva_isr','imss','isertp','diot'];
+const FTRACK_ANNUAL_CONCEPTS=['isr_pm','isr_pf','ptu'];
+const FTRACK_ANNUAL_YEARS=[2024,2025,2026];
+let fiscalTrackerData={monthly:{},annual:{}};
+
+function initFiscalTrackerYears(){
+  const sel=document.getElementById('ftrack-year-sel');
+  if(!sel) return;
+  const cy=new Date().getFullYear();
+  sel.innerHTML='';
+  for(let y=cy-2;y<=cy+1;y++){
+    const o=document.createElement('option');
+    o.value=y;o.textContent=y;
+    if(y===cy) o.selected=true;
+    sel.appendChild(o);
+  }
+}
+
+function renderFiscalTracker(){
+  const year=parseInt(document.getElementById('ftrack-year-sel')?.value)||new Date().getFullYear();
+  const grid=document.getElementById('ftrack-monthly-grid');
+  if(!grid) return;
+  // Keep header (first 7 children)
+  const headers=grid.querySelectorAll('.ftrack-hdr');
+  grid.innerHTML='';
+  headers.forEach(h=>grid.appendChild(h));
+  // Render 12 months
+  const yd=fiscalTrackerData.monthly[year]||{};
+  FTRACK_MONTHS.forEach((m,i)=>{
+    const mk=i+1;
+    const md=yd[mk]||{};
+    // Month label
+    const mCell=document.createElement('div');
+    mCell.className='ftrack-cell';
+    mCell.innerHTML=`<span class="ftrack-month">${m}</span>`;
+    grid.appendChild(mCell);
+    // Fecha presentación
+    const fCell=document.createElement('div');
+    fCell.className='ftrack-cell';
+    fCell.innerHTML=`<input type="text" placeholder="dd/mm/aaaa" value="${md.fecha||''}" onchange="updateFTrackMonthly(${year},${mk},'fecha',this.value)">`;
+    grid.appendChild(fCell);
+    // No. operación
+    const nCell=document.createElement('div');
+    nCell.className='ftrack-cell';
+    nCell.innerHTML=`<input type="text" placeholder="No. operación" value="${md.num_op||''}" onchange="updateFTrackMonthly(${year},${mk},'num_op',this.value)">`;
+    grid.appendChild(nCell);
+    // 4 checkboxes
+    FTRACK_MONTHLY_CONCEPTS.forEach(c=>{
+      const cCell=document.createElement('div');
+      cCell.className='ftrack-cell';
+      const done=md[c]||false;
+      cCell.innerHTML=`<div class="ftrack-check${done?' done':''}" onclick="toggleFTrackMonthly(${year},${mk},'${c}',this)">${done?'✓':'✗'}</div>`;
+      grid.appendChild(cCell);
+    });
+  });
+  // Render annual tracker
+  renderFiscalTrackerAnnual();
+}
+
+function renderFiscalTrackerAnnual(){
+  const grid=document.getElementById('ftrack-annual-grid');
+  if(!grid) return;
+  const headers=grid.querySelectorAll('.ftrack-hdr');
+  grid.innerHTML='';
+  headers.forEach(h=>grid.appendChild(h));
+  FTRACK_ANNUAL_YEARS.forEach(y=>{
+    const ad=fiscalTrackerData.annual[y]||{};
+    // Year label
+    const yCell=document.createElement('div');
+    yCell.className='ftrack-cell';
+    yCell.innerHTML=`<span class="ftrack-month">${y}</span>`;
+    grid.appendChild(yCell);
+    // Fecha
+    const fCell=document.createElement('div');
+    fCell.className='ftrack-cell';
+    fCell.innerHTML=`<input type="text" placeholder="dd/mm/aaaa" value="${ad.fecha||''}" onchange="updateFTrackAnnual(${y},'fecha',this.value)">`;
+    grid.appendChild(fCell);
+    // No. operación
+    const nCell=document.createElement('div');
+    nCell.className='ftrack-cell';
+    nCell.innerHTML=`<input type="text" placeholder="No. operación" value="${ad.num_op||''}" onchange="updateFTrackAnnual(${y},'num_op',this.value)">`;
+    grid.appendChild(nCell);
+    // 3 checkboxes
+    FTRACK_ANNUAL_CONCEPTS.forEach(c=>{
+      const cCell=document.createElement('div');
+      cCell.className='ftrack-cell';
+      const done=ad[c]||false;
+      cCell.innerHTML=`<div class="ftrack-check${done?' done':''}" onclick="toggleFTrackAnnual(${y},'${c}',this)">${done?'✓':'✗'}</div>`;
+      grid.appendChild(cCell);
+    });
+  });
+}
+
+function updateFTrackMonthly(year,month,field,value){
+  if(!fiscalTrackerData.monthly[year]) fiscalTrackerData.monthly[year]={};
+  if(!fiscalTrackerData.monthly[year][month]) fiscalTrackerData.monthly[year][month]={};
+  fiscalTrackerData.monthly[year][month][field]=value;
+}
+
+function toggleFTrackMonthly(year,month,concept,el){
+  if(!fiscalTrackerData.monthly[year]) fiscalTrackerData.monthly[year]={};
+  if(!fiscalTrackerData.monthly[year][month]) fiscalTrackerData.monthly[year][month]={};
+  const cur=fiscalTrackerData.monthly[year][month][concept]||false;
+  fiscalTrackerData.monthly[year][month][concept]=!cur;
+  el.classList.toggle('done',!cur);
+  el.textContent=!cur?'✓':'✗';
+}
+
+function updateFTrackAnnual(year,field,value){
+  if(!fiscalTrackerData.annual[year]) fiscalTrackerData.annual[year]={};
+  fiscalTrackerData.annual[year][field]=value;
+}
+
+function toggleFTrackAnnual(year,concept,el){
+  if(!fiscalTrackerData.annual[year]) fiscalTrackerData.annual[year]={};
+  const cur=fiscalTrackerData.annual[year][concept]||false;
+  fiscalTrackerData.annual[year][concept]=!cur;
+  el.classList.toggle('done',!cur);
+  el.textContent=!cur?'✓':'✗';
+}
+
+async function saveFiscalTracker(){
+  if(!CU) return;
+  const btn=document.getElementById('ftrack-save-btn');
+  btn.textContent='Guardando...';btn.disabled=true;
+  try{
+    const{error}=await sb.from('fiscal_tracker').upsert(
+      {user_id:CU.id,data:fiscalTrackerData},
+      {onConflict:'user_id'}
+    );
+    if(!error){
+      btn.textContent='✓ Guardado';btn.className='btn btn-saved';
+      setTimeout(()=>{btn.textContent='💾 Guardar';btn.className='btn btn-accent';btn.disabled=false;},2000);
+    }else{
+      console.error('Fiscal tracker save error:',error);
+      btn.textContent='Error — reintentar';btn.disabled=false;
+    }
+  }catch(e){
+    console.error('Fiscal tracker save error:',e);
+    btn.textContent='Error — reintentar';btn.disabled=false;
+  }
+}
+
+async function loadFiscalTracker(){
+  if(!CU) return;
+  try{
+    const{data,error}=await sb.from('fiscal_tracker').select('data').eq('user_id',CU.id).maybeSingle();
+    if(data&&data.data){
+      fiscalTrackerData=data.data;
+    }
+  }catch(e){console.error('Fiscal tracker load error:',e);}
+  initFiscalTrackerYears();
+  renderFiscalTracker();
 }
 
 // ── KANBAN ────────────────────────────────────────────────────────────────
