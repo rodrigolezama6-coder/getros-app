@@ -3909,9 +3909,9 @@ function renderPedidos(){
         <span style="font-size:10px;padding:2px 7px;border-radius:99px;background:var(--surface2);color:var(--muted)">${p.cat}</span>
       </td>
       ${PED_DIAS.map(d=>`<td style="padding:4px 3px">
-        <input type="text" inputmode="decimal" value="${p[d]||''}" 
-          onkeypress="return /[0-9.]/.test(event.key)"
-          oninput="pedidoInput(${i},'${d}',this.value.replace(/[^0-9.]/g,''))"
+        <input type="text" inputmode="decimal" value="${p[d]||''}"
+          onchange="pedidoInput(${i},'${d}',this.value.replace(/[^0-9.]/g,''))"
+          onblur="pedidoInput(${i},'${d}',this.value.replace(/[^0-9.]/g,''))"
           style="background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:5px 6px;font-size:11px;color:var(--text);text-align:right;width:72px;font-family:'DM Sans',sans-serif;-moz-appearance:textfield"
           placeholder="0">
       </td>`).join('')}
