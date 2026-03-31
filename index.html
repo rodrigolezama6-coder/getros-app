@@ -634,28 +634,162 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 
     <!-- ═══ COSTEO ═══ -->
     <div class="page" id="page-costeo">
-      <div id="costeo-menu">
-        <div class="costeo-cards">
-          <div class="cc" onclick="openCosteo('food')" style="border-color:#1D9E75"><div class="cc-factor" style="background:var(--green-bg);color:var(--green)">Factor 3.3x</div><div class="cc-icon">🍽️</div><div class="cc-title">Alimentos</div><div class="cc-sub">Food cost 30% · Precio = Costo ÷ 0.30</div></div>
-          <div class="cc" onclick="openCosteo('liq')" style="border-color:#60a5fa"><div class="cc-factor" style="background:var(--blue-bg);color:var(--blue)">Factor ~5x</div><div class="cc-icon">🍸</div><div class="cc-title">Bebidas con Licor</div><div class="cc-sub">Food cost 20% · +10% indirectos incluidos</div></div>
-          <div class="cc" onclick="openCosteo('wine')" style="border-color:#c084fc"><div class="cc-factor" style="background:rgba(192,132,252,.12);color:#c084fc">2x – 2.5x</div><div class="cc-icon">🍷</div><div class="cc-title">Vino</div><div class="cc-sub">Botella ×2 · Copa ×2.5</div></div>
-          <div class="cc" onclick="openCosteo('cafe')" style="border-color:#fb923c"><div class="cc-factor" style="background:rgba(251,146,60,.12);color:#fb923c">Factor 5x</div><div class="cc-icon">☕</div><div class="cc-title">Café</div><div class="cc-sub">Food cost 20% · Incluye vaso/desechable</div></div>
-        </div>
+      <!-- COSTEO TABS -->
+      <div style="display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:3px;margin-bottom:16px;width:fit-content">
+        <button class="ptab active" onclick="costeoTab('calc')" id="ctab-calc">📊 Calculadora</button>
+        <button class="ptab" onclick="costeoTab('guia')" id="ctab-guia">📖 Guía de Costos</button>
       </div>
-      <div class="costeo-form" id="costeo-detail">
-        <button class="back-btn" onclick="closeCosteo()">← Volver</button>
-        <div class="card">
-          <div class="card-hdr"><div class="card-title" id="costeo-title"></div><div class="card-hint" id="costeo-hint"></div></div>
-          <div style="padding:16px">
-            <table class="ing-table"><thead><tr><th>Ingrediente</th><th style="width:80px">Cantidad</th><th style="width:65px">Unidad</th><th style="width:100px">Costo unit. $</th><th style="width:90px">Subtotal $</th></tr></thead><tbody id="ing-body"></tbody></table>
-            <button class="add-btn" onclick="addIngRow()" style="margin:8px 0 0">+ Agregar ingrediente</button>
-            <div class="result-row" style="margin-top:14px">
-              <div><div style="font-size:12px;color:var(--muted)">Precio de venta sugerido</div><div class="result-info" id="costeo-fc"></div></div>
-              <div class="result-price" id="costeo-price">$0</div>
-            </div>
-            <div id="costeo-note" style="font-size:11px;color:var(--muted);margin-top:8px;display:none">* Incluye +10% de indirectos sobre el costo de insumos</div>
+
+      <!-- TAB: CALCULADORA (existing calculator, unchanged) -->
+      <div id="cp-calc">
+        <div id="costeo-menu">
+          <div class="costeo-cards">
+            <div class="cc" onclick="openCosteo('food')" style="border-color:#1D9E75"><div class="cc-factor" style="background:var(--green-bg);color:var(--green)">Factor 3.3x</div><div class="cc-icon">🍽️</div><div class="cc-title">Alimentos</div><div class="cc-sub">Food cost 30% · Precio = Costo ÷ 0.30</div></div>
+            <div class="cc" onclick="openCosteo('liq')" style="border-color:#60a5fa"><div class="cc-factor" style="background:var(--blue-bg);color:var(--blue)">Factor ~5x</div><div class="cc-icon">🍸</div><div class="cc-title">Bebidas con Licor</div><div class="cc-sub">Food cost 20% · +10% indirectos incluidos</div></div>
+            <div class="cc" onclick="openCosteo('wine')" style="border-color:#c084fc"><div class="cc-factor" style="background:rgba(192,132,252,.12);color:#c084fc">2x – 2.5x</div><div class="cc-icon">🍷</div><div class="cc-title">Vino</div><div class="cc-sub">Botella ×2 · Copa ×2.5</div></div>
+            <div class="cc" onclick="openCosteo('cafe')" style="border-color:#fb923c"><div class="cc-factor" style="background:rgba(251,146,60,.12);color:#fb923c">Factor 5x</div><div class="cc-icon">☕</div><div class="cc-title">Café</div><div class="cc-sub">Food cost 20% · Incluye vaso/desechable</div></div>
           </div>
         </div>
+        <div class="costeo-form" id="costeo-detail">
+          <button class="back-btn" onclick="closeCosteo()">← Volver</button>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title" id="costeo-title"></div><div class="card-hint" id="costeo-hint"></div></div>
+            <div style="padding:16px">
+              <table class="ing-table"><thead><tr><th>Ingrediente</th><th style="width:80px">Cantidad</th><th style="width:65px">Unidad</th><th style="width:100px">Costo unit. $</th><th style="width:90px">Subtotal $</th></tr></thead><tbody id="ing-body"></tbody></table>
+              <button class="add-btn" onclick="addIngRow()" style="margin:8px 0 0">+ Agregar ingrediente</button>
+              <div class="result-row" style="margin-top:14px">
+                <div><div style="font-size:12px;color:var(--muted)">Precio de venta sugerido</div><div class="result-info" id="costeo-fc"></div></div>
+                <div class="result-price" id="costeo-price">$0</div>
+              </div>
+              <div id="costeo-note" style="font-size:11px;color:var(--muted);margin-top:8px;display:none">* Incluye +10% de indirectos sobre el costo de insumos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: GUÍA DE COSTOS -->
+      <div id="cp-guia" style="display:none">
+
+        <!-- Márgenes ideales por categoría -->
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--green)"></span>Márgenes Ideales de Costo por Categoría</div></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px">
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:16px;border:1px solid var(--border2)">
+              <div style="font-size:20px;margin-bottom:8px">🍽️</div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:4px;color:var(--green)">Alimentos</div>
+              <div style="font-family:'Syne',sans-serif;font-size:20px;color:var(--text);margin-bottom:6px">28 – 35%</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.6">Rango ideal para la mayoría de los restaurantes. Aceptable hasta 38% en conceptos de cocina con ingredientes premium o alta merma. Arriba de 40% indica un problema serio de costeo o proveedores.</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:16px;border:1px solid var(--border2)">
+              <div style="font-size:20px;margin-bottom:8px">🍸</div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:4px;color:var(--blue)">Bebidas con Alcohol</div>
+              <div style="font-family:'Syne',sans-serif;font-size:20px;color:var(--text);margin-bottom:6px">18 – 25%</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.6">Las bebidas alcohólicas tienen el mejor margen del menú. Cocteles bien costeados pueden tener un food cost de 15–18%. El vino por copa ofrece mejor margen que por botella.</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:16px;border:1px solid var(--border2)">
+              <div style="font-size:20px;margin-bottom:8px">☕</div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:4px;color:var(--yellow)">Bebidas sin Alcohol</div>
+              <div style="font-family:'Syne',sans-serif;font-size:20px;color:var(--text);margin-bottom:6px">15 – 25%</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.6">Café, aguas frescas, refrescos y jugos. El café preparado tiene uno de los mejores márgenes del negocio (food cost 10–15%). Incluye el costo del desechable si aplica.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ¿Por qué importan estos márgenes? -->
+        <div class="card" style="margin-top:12px">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--yellow)"></span>¿Por Qué Importan Estos Márgenes?</div></div>
+          <div style="padding:16px">
+            <div style="font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:14px">El food cost es el porcentaje de tus ingresos que se va directamente en ingredientes. Es el gasto más grande y más controlable de un restaurante. Si no lo mides, no puedes saber si estás ganando o perdiendo dinero en cada plato que vendes.</div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+              <div style="background:var(--surface2);border-radius:8px;padding:14px">
+                <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:6px">Si tu food cost está en rango</div>
+                <div style="font-size:12px;color:var(--muted);line-height:1.7">Tienes espacio para cubrir nómina (25%), renta y servicios (10%), gastos indirectos, y aún así quedarte con un margen neto de 10–15%. Tu operación es sostenible.</div>
+              </div>
+              <div style="background:var(--surface2);border-radius:8px;padding:14px">
+                <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:6px">Si tu food cost está descontrolado</div>
+                <div style="font-size:12px;color:var(--muted);line-height:1.7">Cada punto porcentual arriba del ideal es dinero que dejas en la mesa. Un restaurante con ventas de $500K mensuales y food cost de 40% en vez de 32% pierde $40,000 al mes — casi medio millón al año.</div>
+              </div>
+            </div>
+            <div style="margin-top:14px;background:rgba(200,241,53,0.06);border:1px solid rgba(200,241,53,0.15);border-radius:8px;padding:12px">
+              <div style="font-size:11px;color:var(--accent);line-height:1.7"><strong>Regla general:</strong> El food cost combinado de todo tu menú (alimentos + bebidas ponderado por ventas) debería estar entre 28% y 33%. Si tu menú tiene buena venta de bebidas, el blended cost baja. Si solo vendes comida, apunta al 30% o menos.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conceptos clave -->
+        <div class="card" style="margin-top:12px">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--purple)"></span>Conceptos Clave para el Control de Costos</div></div>
+          <div style="padding:0">
+
+            <!-- Mermas y desperdicios -->
+            <div style="padding:16px;border-bottom:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-size:16px">🗑️</span>
+                <div style="font-size:13px;font-weight:600;color:var(--text)">Mermas y Desperdicios</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:10px">La merma es la diferencia entre lo que compras y lo que realmente termina en el plato del cliente. Es inevitable, pero medirla es obligatorio. Sin control de mermas, tu food cost teórico no sirve de nada porque no refleja la realidad.</div>
+              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+                <div style="background:var(--surface2);border-radius:6px;padding:10px">
+                  <div style="font-size:11px;font-weight:500;color:var(--text);margin-bottom:4px">Mermas típicas por categoría</div>
+                  <div style="font-size:11px;color:var(--muted);line-height:1.7">Carnes y aves: 15–25% (limpieza, hueso, grasa). Pescados y mariscos: 30–50% (cabeza, espinas, piel). Frutas y verduras: 10–20% (cáscaras, tallos, golpes). Lácteos y secos: 2–5%.</div>
+                </div>
+                <div style="background:var(--surface2);border-radius:6px;padding:10px">
+                  <div style="font-size:11px;font-weight:500;color:var(--text);margin-bottom:4px">Cómo reducir mermas</div>
+                  <div style="font-size:11px;color:var(--muted);line-height:1.7">Registrar cada producto desechado con peso y motivo. Usar ingredientes en múltiples platillos. Implementar PEPS (primeras entradas, primeras salidas). Negociar entregas más frecuentes y en menor volumen.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Inventario teórico vs real -->
+            <div style="padding:16px;border-bottom:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-size:16px">📦</span>
+                <div style="font-size:13px;font-weight:600;color:var(--text)">Inventario Teórico vs Real</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:10px">El inventario teórico es lo que deberías tener según las ventas y las recetas. El inventario real es lo que cuentas físicamente. La diferencia entre ambos revela mermas no registradas, porciones excesivas, robo o errores de compra.</div>
+              <div style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.15);border-radius:6px;padding:10px">
+                <div style="font-size:11px;color:var(--yellow);line-height:1.7"><strong>Benchmark:</strong> Una variación aceptable entre inventario teórico y real es menor al 2%. Si la diferencia supera el 5%, hay un problema operativo serio que necesita atención inmediata. Haz inventarios físicos al menos una vez por semana en productos de alto costo (proteínas, licores).</div>
+              </div>
+            </div>
+
+            <!-- Recetas estandarizadas -->
+            <div style="padding:16px;border-bottom:1px solid var(--border)">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-size:16px">📋</span>
+                <div style="font-size:13px;font-weight:600;color:var(--text)">Recetas Estandarizadas con Gramajes</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:10px">Una receta estandarizada define exactamente cuántos gramos o mililitros de cada ingrediente van en un platillo. Sin esto, cada cocinero sirve porciones diferentes, tu food cost es impredecible y no puedes costear nada con precisión.</div>
+              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+                <div style="background:var(--surface2);border-radius:6px;padding:10px">
+                  <div style="font-size:11px;font-weight:500;color:var(--text);margin-bottom:4px">Qué debe incluir cada receta</div>
+                  <div style="font-size:11px;color:var(--muted);line-height:1.7">Lista de ingredientes con gramaje exacto. Rendimiento por ingrediente (peso bruto vs peso neto). Procedimiento paso a paso. Foto de emplatado con referencia visual de porción. Costo total y precio de venta.</div>
+                </div>
+                <div style="background:var(--surface2);border-radius:6px;padding:10px">
+                  <div style="font-size:11px;font-weight:500;color:var(--text);margin-bottom:4px">Errores comunes</div>
+                  <div style="font-size:11px;color:var(--muted);line-height:1.7">Costear con peso bruto sin descontar merma. No actualizar precios de proveedores regularmente. Permitir sustituciones sin recostear. No pesar ingredientes clave (proteínas, quesos, licores).</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Coordinador de costos -->
+            <div style="padding:16px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-size:16px">👤</span>
+                <div style="font-size:13px;font-weight:600;color:var(--text)">El Rol del Coordinador de Costos</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:10px">En restaurantes con ventas superiores a $300K mensuales, vale la pena tener a una persona (o medio tiempo) dedicada exclusivamente al control de costos. No necesita ser chef — necesita ser metódica, buena con números y obsesiva con el detalle.</div>
+              <div style="background:var(--surface2);border-radius:var(--radius);padding:14px">
+                <div style="font-size:11px;font-weight:500;color:var(--text);margin-bottom:6px">Responsabilidades principales</div>
+                <div style="font-size:11px;color:var(--muted);line-height:1.8">Costear y mantener actualizadas todas las recetas del menú. Hacer inventarios físicos semanales de productos de alto costo. Comparar inventario teórico vs real y reportar variaciones. Verificar que los proveedores respeten los precios pactados. Controlar y registrar mermas diarias. Auditar porciones en cocina aleatoriamente. Presentar al dueño un reporte semanal de food cost real vs teórico.</div>
+              </div>
+              <div style="margin-top:10px;background:rgba(200,241,53,0.06);border:1px solid rgba(200,241,53,0.15);border-radius:8px;padding:12px">
+                <div style="font-size:11px;color:var(--accent);line-height:1.7"><strong>Tip ROS:</strong> Usa la calculadora de costeo para registrar cada platillo de tu menú. Una vez que tengas todos tus costos capturados, sabrás exactamente tu food cost teórico y podrás compararlo con el real cada semana usando tu P&L.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -3097,6 +3231,16 @@ const COSTEO_CFG={
   cafe:{title:'☕ Café',hint:'Factor 5x · Incluye vaso',factor:5,indirect:false,rows:[['Café molido (g)','14','g','0.35'],['Leche (ml)','150','ml','0.016'],['Vaso / taza','1','pza','1.50']]},
 };
 let ingCount=0;
+// ── COSTEO TABS ──────────────────────────────────────────────────────────
+function costeoTab(id){
+  ['calc','guia'].forEach(t=>{
+    const el=document.getElementById('cp-'+t);
+    const btn=document.getElementById('ctab-'+t);
+    if(el) el.style.display=t===id?'block':'none';
+    if(btn) btn.classList.toggle('active',t===id);
+  });
+}
+
 function openCosteo(t){
   costeoType=t;const cfg=COSTEO_CFG[t];
   document.getElementById('costeo-menu').style.display='none';
