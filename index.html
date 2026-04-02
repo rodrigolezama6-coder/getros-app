@@ -518,11 +518,12 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <div class="row res"><div class="rl">★ Utilidad Bruta</div><div class="rc pos" id="util-bruta">$0</div><div class="rpct" id="pp-ub">—</div><div class="rsem" id="ss-ub"></div></div>
         </div>
         <div class="card" id="cogs-breakdown-card">
+          <style>#cogs-breakdown-card .row,#cogs-breakdown-card .thdr{grid-template-columns:1fr 110px 110px 120px;column-gap:14px}#cogs-breakdown-card .rc,#cogs-breakdown-card .th.c,#cogs-breakdown-card .th.r{padding:0 6px}</style>
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--red)"></span>Costo % por Categoría de Venta</div><div class="card-hint">Food cost vs ventas de cada categoría</div></div>
           <div class="thdr"><div class="th">Concepto</div><div class="th r">Costo</div><div class="th c">Venta categoría</div><div class="th c">Costo % · Estado</div></div>
-          <div class="row"><div class="rl s">🍽️ Costo Alimentos vs Venta Alimentos</div><div class="rc" id="cb-cali">$0</div><div class="rc" id="cb-vali">$0</div><div class="rsem" style="display:flex;align-items:center;gap:6px"><span id="cb-pali" style="font-size:12px;font-weight:600">—</span><span id="cb-sali"></span></div></div>
-          <div class="row"><div class="rl s">🍸 Costo Bebidas vs Venta Bebidas</div><div class="rc" id="cb-cbeb">$0</div><div class="rc" id="cb-vbeb">$0</div><div class="rsem" style="display:flex;align-items:center;gap:6px"><span id="cb-pbeb" style="font-size:12px;font-weight:600">—</span><span id="cb-sbeb"></span></div></div>
-          <div class="row stot"><div class="rl">Total COGS vs Ventas Netas</div><div class="rc" id="cb-ctot">$0</div><div class="rc" id="cb-vtot">$0</div><div class="rsem" style="display:flex;align-items:center;gap:6px"><span id="cb-ptot" style="font-size:12px;font-weight:600">—</span><span id="cb-stot"></span></div></div>
+          <div class="row"><div class="rl s">🍽️ Costo Alimentos vs Venta Alimentos</div><div class="rc" id="cb-cali">$0</div><div class="rc" id="cb-vali" style="min-width:90px;padding-right:8px">$0</div><div class="rsem" style="display:flex;align-items:center;gap:10px"><span id="cb-pali" style="font-size:12px;font-weight:600;min-width:42px;text-align:right">—</span><span id="cb-sali"></span></div></div>
+          <div class="row"><div class="rl s">🍸 Costo Bebidas vs Venta Bebidas</div><div class="rc" id="cb-cbeb">$0</div><div class="rc" id="cb-vbeb" style="min-width:90px;padding-right:8px">$0</div><div class="rsem" style="display:flex;align-items:center;gap:10px"><span id="cb-pbeb" style="font-size:12px;font-weight:600;min-width:42px;text-align:right">—</span><span id="cb-sbeb"></span></div></div>
+          <div class="row stot"><div class="rl">Total COGS vs Ventas Netas</div><div class="rc" id="cb-ctot">$0</div><div class="rc" id="cb-vtot" style="min-width:90px;padding-right:8px">$0</div><div class="rsem" style="display:flex;align-items:center;gap:10px"><span id="cb-ptot" style="font-size:12px;font-weight:600;min-width:42px;text-align:right">—</span><span id="cb-stot"></span></div></div>
         </div>
       </div>
 
@@ -3298,6 +3299,14 @@ async function loadSemana(){
     }
   }else{
     WFIELDS.forEach(f=>{const e=document.getElementById(f);if(e)e.value=0;});
+  }
+  // Auto-populate PAX "Sem. Anterior" from previous week
+  if(wn>1){
+    const{data:prev}=await sb.from('pnl_weeks').select('data').eq('user_id',CU.id).eq('year',new Date().getFullYear()).eq('week_num',wn-1).maybeSingle();
+    if(prev?.data){
+      const el=document.getElementById('pax-b');
+      if(el) el.value=prev.data['pax-a']||0;
+    }
   }
   calc();
 }
