@@ -518,12 +518,16 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <div class="row res"><div class="rl">★ Utilidad Bruta</div><div class="rc pos" id="util-bruta">$0</div><div class="rpct" id="pp-ub">—</div><div class="rsem" id="ss-ub"></div></div>
         </div>
         <div class="card" id="cogs-breakdown-card">
-          <style>#cogs-breakdown-card .row,#cogs-breakdown-card .thdr{grid-template-columns:1fr 110px 110px 120px;column-gap:14px}#cogs-breakdown-card .rc,#cogs-breakdown-card .th.c,#cogs-breakdown-card .th.r{padding:0 6px}</style>
+          <style>
+#cogs-breakdown-card .row,#cogs-breakdown-card .thdr{grid-template-columns:1fr 100px 100px 130px;column-gap:0}
+#cogs-breakdown-card .cb-col{padding:0 12px;text-align:right;white-space:nowrap}
+#cogs-breakdown-card .cb-sep{border-left:1px solid var(--border2);padding-left:14px;min-width:110px;display:flex;align-items:center;gap:8px}
+          </style>
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--red)"></span>Costo % por Categoría de Venta</div><div class="card-hint">Food cost vs ventas de cada categoría</div></div>
-          <div class="thdr"><div class="th">Concepto</div><div class="th r">Costo</div><div class="th c">Venta categoría</div><div class="th c">Costo % · Estado</div></div>
-          <div class="row"><div class="rl s">🍽️ Costo Alimentos vs Venta Alimentos</div><div class="rc" id="cb-cali">$0</div><div class="rc" id="cb-vali" style="min-width:90px;padding-right:8px">$0</div><div class="rsem" style="display:flex;align-items:center;gap:10px"><span id="cb-pali" style="font-size:12px;font-weight:600;min-width:42px;text-align:right">—</span><span id="cb-sali"></span></div></div>
-          <div class="row"><div class="rl s">🍸 Costo Bebidas vs Venta Bebidas</div><div class="rc" id="cb-cbeb">$0</div><div class="rc" id="cb-vbeb" style="min-width:90px;padding-right:8px">$0</div><div class="rsem" style="display:flex;align-items:center;gap:10px"><span id="cb-pbeb" style="font-size:12px;font-weight:600;min-width:42px;text-align:right">—</span><span id="cb-sbeb"></span></div></div>
-          <div class="row stot"><div class="rl">Total COGS vs Ventas Netas</div><div class="rc" id="cb-ctot">$0</div><div class="rc" id="cb-vtot" style="min-width:90px;padding-right:8px">$0</div><div class="rsem" style="display:flex;align-items:center;gap:10px"><span id="cb-ptot" style="font-size:12px;font-weight:600;min-width:42px;text-align:right">—</span><span id="cb-stot"></span></div></div>
+          <div class="thdr"><div class="th">Concepto</div><div class="th r" style="padding:0 12px">Costo</div><div class="th r" style="padding:0 12px">Venta cat.</div><div class="th c" style="padding-left:14px;border-left:1px solid var(--border2)">Costo % · Estado</div></div>
+          <div class="row"><div class="rl s">🍽️ Alimentos</div><div class="rc cb-col" id="cb-cali">$0</div><div class="rc cb-col" id="cb-vali">$0</div><div class="cb-sep"><span id="cb-pali" style="font-size:12px;font-weight:600;min-width:46px;text-align:right">—</span><span id="cb-sali"></span></div></div>
+          <div class="row"><div class="rl s">🍸 Bebidas</div><div class="rc cb-col" id="cb-cbeb">$0</div><div class="rc cb-col" id="cb-vbeb">$0</div><div class="cb-sep"><span id="cb-pbeb" style="font-size:12px;font-weight:600;min-width:46px;text-align:right">—</span><span id="cb-sbeb"></span></div></div>
+          <div class="row stot"><div class="rl">Total COGS vs Ventas Netas</div><div class="rc cb-col" id="cb-ctot">$0</div><div class="rc cb-col" id="cb-vtot">$0</div><div class="cb-sep"><span id="cb-ptot" style="font-size:12px;font-weight:600;min-width:46px;text-align:right">—</span><span id="cb-stot"></span></div></div>
         </div>
       </div>
 
@@ -3095,9 +3099,16 @@ function calc(){
   set('kv-md',maxD>0?DNAMES[im]:'—');set('kv-mdv',fmt(maxD));
 
   const paxA=v('pax-a'),paxB=v('pax-b');
-  const tk=paxA>0?vb/paxA:0,tkB=paxB>0?vb/paxB:0;// approx prev
-  set('tk-c',fmt(tk));set('kv-tk',fmt(tk));set('kv-pax',Math.round(paxA).toLocaleString());
+  const tk=paxA>0?vb/paxA:0;
+  // Compute real previous week ticket from stored prev week data
+  let tkB=0;
+  if(prevWeekData&&paxB>0){
+    const prevVb=['d-lun','d-mar','d-mie','d-jue','d-vie','d-sab','d-dom'].reduce((s,k)=>s+(parseFloat(prevWeekData[k])||0),0);
+    tkB=prevVb/paxB;
+  }
+  set('tk-c',fmt(tk));set('tk-b',tkB>0?fmt(tkB):'—');set('kv-tk',fmt(tk));set('kv-pax',Math.round(paxA).toLocaleString());
   setH('d-pax',delt(paxA,paxB));setH('kd-pax',paxB?delt(paxA,paxB):'clientes');
+  setH('d-tk',tk>0&&tkB>0?delt(tk,tkB):'—');setH('kd-tk',tk>0&&tkB>0?delt(tk,tkB):'por cliente');
 
   const ded=v('dc-dto')+v('dc-cor')+v('dc-can');
   const vn=vb-ded;
@@ -3232,7 +3243,7 @@ function removeGiRow(id){const i=giExtraIds.indexOf(id);if(i>-1)giExtraIds.splic
 const WFIELDS=[
   'd-lun','d-mar','d-mie','d-jue','d-vie','d-sab','d-dom',
   'vt-ali','vt-beb','vt-otr',
-  'pax-a','pax-b','dc-dto','dc-cor','dc-can',
+  'pax-a','dc-dto','dc-cor','dc-can',
   'c-ali','c-beb','c-mer','c-gen',
   'mo-sue','mo-ext','mo-ims','mo-agu','mo-vac',
   'gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-ban','gi-con',
@@ -3300,13 +3311,19 @@ async function loadSemana(){
   }else{
     WFIELDS.forEach(f=>{const e=document.getElementById(f);if(e)e.value=0;});
   }
-  // Auto-populate PAX "Sem. Anterior" from previous week
+  // Auto-populate PAX & ticket "Sem. Anterior" from previous week
+  prevWeekData=null;
+  const paxBEl=document.getElementById('pax-b');
   if(wn>1){
     const{data:prev}=await sb.from('pnl_weeks').select('data').eq('user_id',CU.id).eq('year',new Date().getFullYear()).eq('week_num',wn-1).maybeSingle();
     if(prev?.data){
-      const el=document.getElementById('pax-b');
-      if(el) el.value=prev.data['pax-a']||0;
+      prevWeekData=prev.data;
+      if(paxBEl) paxBEl.value=parseFloat(prev.data['pax-a'])||0;
+    }else{
+      if(paxBEl) paxBEl.value=0;
     }
+  }else{
+    if(paxBEl) paxBEl.value=0;
   }
   calc();
 }
@@ -3316,6 +3333,7 @@ function onWeekChange(){loadSemana();
     loadProveedores();}
 
 // ── CASCADE TABLES ────────────────────────────────────────────────────────
+let prevWeekData=null;
 let allWeeks={};
 
 async function loadAllWeeks(){
