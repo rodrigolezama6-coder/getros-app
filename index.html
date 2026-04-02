@@ -264,6 +264,64 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
   .content{padding:14px}
   .topbar{padding:11px 14px}
 }
+
+/* PRINT / EXPORT PDF */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+  body{background:#fff!important;color:#1a1a1a!important;font-size:11px}
+  /* Hide everything except print content */
+  .sidebar,.topbar,.s-footer,.logout-btn,.s-discord,
+  .ptabs,.manual,.add-btn,.btn,.btn-accent,.btn-ghost,
+  .sel,#week-sel,#save-btn,.no-print,
+  #auth-screen,.s-nav,.s-logo,
+  input[type=text],input[type=number],input.ri,input.dinput,
+  button,.back-btn,canvas,
+  #socios-card,#pt-cmp,#pt-analisis,#pt-ing,#pt-cos,#pt-ope{display:none!important}
+  /* Show the print header */
+  .print-header{display:block!important;text-align:center;padding:20px 0 14px;border-bottom:2px solid #222;margin-bottom:16px}
+  .print-header h1{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin:0;color:#000}
+  .print-header .print-sub{font-size:12px;color:#666;margin-top:4px}
+  .print-header .print-date{font-size:10px;color:#999;margin-top:2px}
+  /* Layout */
+  .main{margin-left:0!important;padding:0!important}
+  .content{padding:10px 0!important}
+  .page{display:none!important}
+  .page.active{display:block!important}
+  /* For semanal: only show resultado tab */
+  #pt-res{display:block!important}
+  /* Cards and rows */
+  .card{border:1px solid #ddd!important;border-radius:6px!important;background:#fff!important;margin-bottom:10px;break-inside:avoid}
+  .card-hdr{background:#f5f5f5!important;border-bottom:1px solid #ddd!important;padding:8px 14px!important}
+  .card-title{color:#000!important;font-size:12px!important}
+  .dot{display:none!important}
+  .row{border-bottom:1px solid #eee!important;padding:5px 14px!important;background:#fff!important}
+  .row.stot{background:#f5f5f5!important}
+  .row.res{background:#e8f5e9!important;border-top:1px solid #4caf50!important}
+  .row.grand{background:#f0f7e6!important;border-top:2px solid #558b2f!important;padding:12px 14px!important}
+  .rl{color:#222!important;font-size:11px!important}
+  .rl.s{color:#555!important}
+  .rc{color:#222!important;font-size:11px!important}
+  .rc.pos{color:#2e7d32!important}.rc.neg{color:#c62828!important}
+  .rpct{color:#666!important;font-size:10px!important}
+  .badge{border:1px solid #ccc!important;background:#f5f5f5!important;color:#333!important}
+  .bok{background:#e8f5e9!important;color:#2e7d32!important;border-color:#a5d6a7!important}
+  .bwarn{background:#fff8e1!important;color:#f57f17!important;border-color:#ffe082!important}
+  .bbad{background:#ffebee!important;color:#c62828!important;border-color:#ef9a9a!important}
+  .kpi{display:none!important}
+  /* Cascade tables (mensual, trimestral, anual) */
+  .ctable{font-size:10px!important}
+  .ctable th{color:#555!important;border-bottom:1px solid #ddd!important;padding:6px 10px!important}
+  .ctable td{color:#222!important;border-bottom:1px solid #eee!important;padding:5px 10px!important}
+  .ctable tr.ctot td{background:#f5f5f5!important;font-weight:600!important;color:#000!important}
+  .ctable tr.cgran td{background:#f0f7e6!important;color:#2e7d32!important;border-top:2px solid #558b2f!important}
+  .ctable tr.csec td{background:#fafafa!important;color:#888!important}
+  .ovx{overflow:visible!important}
+  /* Page setup */
+  @page{size:letter;margin:15mm 12mm}
+}
+.print-header{display:none}
+.btn-export{background:var(--surface2);color:var(--muted);border:1px solid var(--border2);border-radius:7px;padding:7px 14px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+.btn-export:hover{color:var(--text);border-color:var(--accent)}
 </style>
 </head>
 <body>
@@ -309,12 +367,12 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     <button class="s-item" onclick="goTo('mensual')"><span style="font-size:14px">📅</span><span>P&L Mensual</span></button>
     <button class="s-item" onclick="goTo('trimestral')"><span style="font-size:14px">📆</span><span>Trimestral</span></button>
     <button class="s-item" onclick="goTo('anual')"><span style="font-size:14px">🗓️</span><span>Anual</span></button>
-    <button class="s-item" onclick="goTo('costeo')"><span style="font-size:14px">🧾</span><span>Costeo de Menú</span></button>
     <div class="s-sec">Compras y Pagos</div>
     <button class="s-item" onclick="goTo('pedidos')"><span style="font-size:14px">🛒</span><span>Pedidos</span></button>
     <button class="s-item" onclick="goTo('cxp')"><span style="font-size:14px">💳</span><span>Cuentas x Pagar</span></button>
     <button class="s-item" onclick="goTo('flujo')"><span style="font-size:14px">💧</span><span>Flujo de Caja</span></button>
     <div class="s-sec">Operaciones</div>
+    <button class="s-item" onclick="goTo('costeo')"><span style="font-size:14px">🧾</span><span>Costeo de Menú</span></button>
     <button class="s-item" onclick="goTo('inventario')"><span style="font-size:14px">📦</span><span>Inventarios</span><span class="s-badge soon">Pronto</span></button>
     <button class="s-item" onclick="goTo('proveedores')"><span style="font-size:14px">🚛</span><span>Proveedores</span></button>
     <button class="s-item" onclick="goTo('auditoria')"><span style="font-size:14px">✅</span><span>Auditorías</span><span class="s-badge soon">Pronto</span></button>
@@ -366,6 +424,13 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     </div>
   </div>
 
+  <!-- Print-only header (hidden on screen, shown in print) -->
+  <div class="print-header" id="print-header">
+    <h1 id="print-title">P&L Semanal</h1>
+    <div class="print-sub" id="print-sub"></div>
+    <div class="print-date" id="print-date"></div>
+  </div>
+
   <div class="content">
 
     <!-- ═══ SEMANAL ═══ -->
@@ -381,13 +446,16 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
       </div>
 
       <!-- TABS -->
-      <div class="ptabs">
-        <button class="ptab active" onclick="ptab('ing')">💰 Ingresos</button>
-        <button class="ptab" onclick="ptab('cos')">🛒 Costos</button>
-        <button class="ptab" onclick="ptab('ope')">⚙️ Operación</button>
-        <button class="ptab" onclick="ptab('res')">🏆 Resultado</button>
-        <button class="ptab" onclick="ptab('cmp')">📈 Comparativo</button>
-        <button class="ptab" onclick="ptab('analisis')">🤖 Análisis AI</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+        <div class="ptabs" style="margin-bottom:0">
+          <button class="ptab active" onclick="ptab('ing')">💰 Ingresos</button>
+          <button class="ptab" onclick="ptab('cos')">🛒 Costos</button>
+          <button class="ptab" onclick="ptab('ope')">⚙️ Operación</button>
+          <button class="ptab" onclick="ptab('res')">🏆 Resultado</button>
+          <button class="ptab" onclick="ptab('cmp')">📈 Comparativo</button>
+          <button class="ptab" onclick="ptab('analisis')">🤖 Análisis AI</button>
+        </div>
+        <button class="btn-export no-print" onclick="exportPDF('semanal')">🖨️ Exportar PDF</button>
       </div>
 
       <!-- INGRESOS -->
@@ -411,6 +479,14 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
             <div class="day"><div class="dname">Sábado</div><input class="dinput" type="text" inputmode="decimal" id="d-sab" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-sab" style="width:0%"></div></div><div class="dpct" id="p-sab">0%</div></div>
             <div class="day"><div class="dname">Domingo</div><input class="dinput" type="text" inputmode="decimal" id="d-dom" value="0" oninput="calc()"><div class="dbar"><div class="dfill" id="b-dom" style="width:0%"></div></div><div class="dpct" id="p-dom">0%</div></div>
           </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--green)"></span>Desglose de Ventas por Categoría</div><div class="card-hint">Divide tus ventas brutas</div></div>
+          <div class="thdr"><div class="th">Categoría</div><div class="th r">Importe ($)</div><div class="th c">% V. Brutas</div><div class="th c">Estado</div></div>
+          <div class="row"><div class="rl s">🍽️ Alimentos</div><input class="ri" type="text" inputmode="decimal" id="vt-ali" value="0" oninput="calc()"><div class="rpct" id="pp-vtali">—</div><div></div></div>
+          <div class="row"><div class="rl s">🍸 Bebidas</div><input class="ri" type="text" inputmode="decimal" id="vt-beb" value="0" oninput="calc()"><div class="rpct" id="pp-vtbeb">—</div><div></div></div>
+          <div class="row"><div class="rl s">📦 Otros</div><input class="ri" type="text" inputmode="decimal" id="vt-otr" value="0" oninput="calc()"><div class="rpct" id="pp-vtotr">—</div><div></div></div>
+          <div class="row stot"><div class="rl">Suma categorías</div><div class="rc" id="vt-suma">$0</div><div class="rpct" id="pp-vtsuma">—</div><div class="rsem" id="ss-vtsuma"></div></div>
         </div>
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--accent)"></span>PAX y Ticket Promedio</div></div>
@@ -440,6 +516,13 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <div class="row"><div class="rl s">Insumos generales</div><input class="ri" type="text" inputmode="decimal" id="c-gen" value="0" oninput="calc()"><div class="rpct" id="pp-cgen">—</div><div></div></div>
           <div class="row stot"><div class="rl">Total COGS</div><div class="rc" id="tot-cogs">$0</div><div class="rpct" id="pp-cogs">—</div><div class="rsem" id="ss-cogs"></div></div>
           <div class="row res"><div class="rl">★ Utilidad Bruta</div><div class="rc pos" id="util-bruta">$0</div><div class="rpct" id="pp-ub">—</div><div class="rsem" id="ss-ub"></div></div>
+        </div>
+        <div class="card" id="cogs-breakdown-card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--red)"></span>Costo % por Categoría de Venta</div><div class="card-hint">Food cost vs ventas de cada categoría</div></div>
+          <div class="thdr"><div class="th">Concepto</div><div class="th r">Costo</div><div class="th c">Venta categoría</div><div class="th c">Costo % · Estado</div></div>
+          <div class="row"><div class="rl s">🍽️ Costo Alimentos vs Venta Alimentos</div><div class="rc" id="cb-cali">$0</div><div class="rc" id="cb-vali">$0</div><div class="rsem" style="display:flex;align-items:center;gap:6px"><span id="cb-pali" style="font-size:12px;font-weight:600">—</span><span id="cb-sali"></span></div></div>
+          <div class="row"><div class="rl s">🍸 Costo Bebidas vs Venta Bebidas</div><div class="rc" id="cb-cbeb">$0</div><div class="rc" id="cb-vbeb">$0</div><div class="rsem" style="display:flex;align-items:center;gap:6px"><span id="cb-pbeb" style="font-size:12px;font-weight:600">—</span><span id="cb-sbeb"></span></div></div>
+          <div class="row stot"><div class="rl">Total COGS vs Ventas Netas</div><div class="rc" id="cb-ctot">$0</div><div class="rc" id="cb-vtot">$0</div><div class="rsem" style="display:flex;align-items:center;gap:6px"><span id="cb-ptot" style="font-size:12px;font-weight:600">—</span><span id="cb-stot"></span></div></div>
         </div>
       </div>
 
@@ -602,12 +685,15 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     <div class="page" id="page-mensual">
       <div class="card-hdr" style="margin-bottom:16px;background:var(--surface);border-radius:var(--radius-lg);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
         <div style="font-family:'Syne',sans-serif;font-size:16px">P&L Mensual — Suma de semanas</div>
+        <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn-export no-print" onclick="exportPDF('mensual')">🖨️ Exportar PDF</button>
         <select class="sel" id="mes-sel" onchange="buildMensual()">
           <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
           <option value="3" selected>Abril</option><option value="4">Mayo</option><option value="5">Junio</option>
           <option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option>
           <option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
         </select>
+        </div>
       </div>
       <div class="card"><div class="ovx"><table class="ctable" id="mensual-tbl"></table></div></div>
     </div>
@@ -616,18 +702,22 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     <div class="page" id="page-trimestral">
       <div class="card-hdr" style="margin-bottom:16px;background:var(--surface);border-radius:var(--radius-lg);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
         <div style="font-family:'Syne',sans-serif;font-size:16px">P&L Trimestral</div>
+        <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn-export no-print" onclick="exportPDF('trimestral')">🖨️ Exportar PDF</button>
         <select class="sel" id="qtr-sel" onchange="buildTrimestral()">
           <option value="0">Q1 — Ene, Feb, Mar</option><option value="1" selected>Q2 — Abr, May, Jun</option>
           <option value="2">Q3 — Jul, Ago, Sep</option><option value="3">Q4 — Oct, Nov, Dic</option>
         </select>
+        </div>
       </div>
       <div class="card"><div class="ovx"><table class="ctable" id="trim-tbl"></table></div></div>
     </div>
 
     <!-- ═══ ANUAL ═══ -->
     <div class="page" id="page-anual">
-      <div class="card-hdr" style="margin-bottom:16px;background:var(--surface);border-radius:var(--radius-lg);padding:14px 18px">
+      <div class="card-hdr" style="margin-bottom:16px;background:var(--surface);border-radius:var(--radius-lg);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
         <div style="font-family:'Syne',sans-serif;font-size:16px">P&L Anual 2025 — Los 12 meses</div>
+        <button class="btn-export no-print" onclick="exportPDF('anual')">🖨️ Exportar PDF</button>
       </div>
       <div class="card"><div class="ovx"><table class="ctable" id="anual-tbl"></table></div></div>
     </div>
@@ -1894,21 +1984,38 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           const SUPABASE_URL = 'https://gzelzskqelccigfawxph.supabase.co/storage/v1/object/public/formatos/rh/';
           const orig = btn.innerHTML;
           btn.innerHTML = '✅ Descargando...';
+          btn.disabled = true;
           btn.style.cssText += 'background:var(--green);border-color:var(--green);color:#000;font-weight:600';
-          const a = document.createElement('a');
-          a.href = SUPABASE_URL + filename;
-          a.download = filename;
-          a.target = '_blank';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          setTimeout(() => {
-            btn.innerHTML = orig;
-            btn.style.background = '';
-            btn.style.borderColor = '';
-            btn.style.color = '';
-            btn.style.fontWeight = '';
-          }, 2500);
+          // Fetch as blob to bypass cross-origin download attribute limitation
+          fetch(SUPABASE_URL + encodeURIComponent(filename))
+            .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.blob(); })
+            .then(blob => {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = filename;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            })
+            .catch(e => {
+              console.error('Download error:', e);
+              btn.innerHTML = '❌ Error — reintentar';
+              btn.style.background = 'var(--red-bg)';
+              btn.style.borderColor = 'var(--red)';
+              btn.style.color = 'var(--red)';
+            })
+            .finally(() => {
+              setTimeout(() => {
+                btn.innerHTML = orig;
+                btn.disabled = false;
+                btn.style.background = '';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+                btn.style.fontWeight = '';
+              }, 2500);
+            });
         }
       </script>
     </div>
@@ -2320,57 +2427,57 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 
           <div class="pl-check-section">
             <h4>🇲🇽 Federales</h4>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>RFC activo y constancia de situación fiscal vigente (SAT)</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Aviso de Funcionamiento COFEPRIS presentado (DIGIPRIS)</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Cumplimiento NOM-251-SSA1-2009 — bitácoras de limpieza al día</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Registro patronal IMSS activo</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Licencia SACM/SOMEXFON vigente (si usas música)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>RFC activo y constancia de situación fiscal vigente (SAT)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Aviso de Funcionamiento COFEPRIS presentado (DIGIPRIS)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Cumplimiento NOM-251-SSA1-2009 — bitácoras de limpieza al día</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Registro patronal IMSS activo</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Licencia SACM/SOMEXFON vigente (si usas música)</label></div>
           </div>
 
           <div class="pl-check-section">
             <h4>🏛️ Estatales</h4>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Licencia Estatal de Alcoholes vigente (si aplica)</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Permiso de anuncio exterior vigente</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Licencia / Dictamen Ambiental (si aplica)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Licencia Estatal de Alcoholes vigente (si aplica)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Permiso de anuncio exterior vigente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Licencia / Dictamen Ambiental (si aplica)</label></div>
           </div>
 
           <div class="pl-check-section">
             <h4>🏙️ Municipales</h4>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Dictamen de Uso de Suelo vigente</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Declaración / Aviso de Apertura colocado a la vista</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Licencia de Funcionamiento Municipal vigente</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Visto Bueno de Protección Civil vigente</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Pago de recolección de basura al corriente</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Constancias de manejo de alimentos del personal vigentes</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Dictamen de Uso de Suelo vigente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Declaración / Aviso de Apertura colocado a la vista</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Licencia de Funcionamiento Municipal vigente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Visto Bueno de Protección Civil vigente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Pago de recolección de basura al corriente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Constancias de manejo de alimentos del personal vigentes</label></div>
           </div>
 
           <div class="pl-check-section">
             <h4>🔥 Protección Civil — Operativo</h4>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Extintores vigentes (revisar fecha de carga cada año)</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Rutas de evacuación despejadas y señalizadas</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Luces de emergencia funcionando</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Botiquín de primeros auxilios completo y accesible</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Personal capacitado en evacuación (simulacro anual)</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Detectores de humo y/o gas funcionando</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Extintores vigentes (revisar fecha de carga cada año)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Rutas de evacuación despejadas y señalizadas</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Luces de emergencia funcionando</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Botiquín de primeros auxilios completo y accesible</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Personal capacitado en evacuación (simulacro anual)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Detectores de humo y/o gas funcionando</label></div>
           </div>
 
           <div class="pl-check-section">
             <h4>🧹 Higiene y Sanidad — Operativo</h4>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Bitácora de limpieza diaria actualizada</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Control de plagas con empresa certificada (contrato vigente)</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Temperaturas de refrigeración registradas diariamente</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Productos de limpieza correctamente etiquetados y almacenados</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Personal con exámenes médicos al corriente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Bitácora de limpieza diaria actualizada</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Control de plagas con empresa certificada (contrato vigente)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Temperaturas de refrigeración registradas diariamente</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Productos de limpieza correctamente etiquetados y almacenados</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Personal con exámenes médicos al corriente</label></div>
           </div>
 
           <div class="pl-check-section">
             <h4>📅 Renovaciones Anuales Críticas</h4>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Refrendo Licencia de Funcionamiento — verifica fecha límite en tu municipio</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Refrendo Licencia de Alcoholes — verifica fecha límite en tu estado</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Renovación Visto Bueno Protección Civil</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Renovación de extintores (recarga anual)</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Renovación licencia de música (SACM/SOMEXFON)</label></div>
-            <div class="pl-check-item" onclick="plToggle(this)"><input type="checkbox"><label>Revisión de Uso de Suelo (vigencia ~2 años)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Refrendo Licencia de Funcionamiento — verifica fecha límite en tu municipio</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Refrendo Licencia de Alcoholes — verifica fecha límite en tu estado</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Renovación Visto Bueno Protección Civil</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Renovación de extintores (recarga anual)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Renovación licencia de música (SACM/SOMEXFON)</label></div>
+            <div class="pl-check-item" onclick="plToggle(this,event)"><input type="checkbox"><label>Revisión de Uso de Suelo (vigencia ~2 años)</label></div>
           </div>
 
         </div>
@@ -2387,7 +2494,8 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           document.getElementById('pl-' + id).classList.add('active');
           btn.classList.add('active');
         }
-        function plToggle(row) {
+        function plToggle(row, ev) {
+          if(ev && ev.target.tagName==='INPUT') return;
           const cb = row.querySelector('input[type=checkbox]');
           cb.checked = !cb.checked;
           row.classList.toggle('done', cb.checked);
@@ -2908,6 +3016,42 @@ function ptab(id){
   const weekSel=document.getElementById('week-sel-wrap');
   if(weekSel) weekSel.style.display=plPages.includes(id)?'flex':'none';
 }
+// ── EXPORT PDF ───────────────────────────────────────────────────────────
+function exportPDF(tipo){
+  const restName=document.getElementById('rest-name')?.textContent||'Mi Restaurante';
+  const printTitle=document.getElementById('print-title');
+  const printSub=document.getElementById('print-sub');
+  const printDate=document.getElementById('print-date');
+  const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  let title='',sub='';
+  if(tipo==='semanal'){
+    const sel=document.getElementById('week-sel');
+    const wText=sel.options[sel.selectedIndex]?.text||'';
+    title='P&L Semanal';
+    sub=restName+' · '+wText;
+    // Switch to Resultado tab before printing
+    ptab('res');
+  }else if(tipo==='mensual'){
+    const sel=document.getElementById('mes-sel');
+    const mText=sel.options[sel.selectedIndex]?.text||'';
+    title='P&L Mensual';
+    sub=restName+' · '+mText+' '+new Date().getFullYear();
+  }else if(tipo==='trimestral'){
+    const sel=document.getElementById('qtr-sel');
+    const qText=sel.options[sel.selectedIndex]?.text||'';
+    title='P&L Trimestral';
+    sub=restName+' · '+qText;
+  }else if(tipo==='anual'){
+    title='P&L Anual '+new Date().getFullYear();
+    sub=restName;
+  }
+  printTitle.textContent=title;
+  printSub.textContent=sub;
+  printDate.textContent='Generado: '+new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  // Use setTimeout to ensure DOM updates before print dialog
+  setTimeout(()=>window.print(),150);
+}
+
 function toggleManual(){
   const b=document.getElementById('m-body'),a=document.getElementById('m-arrow');
   const v=b.style.display==='none';b.style.display=v?'block':'none';
@@ -2962,6 +3106,18 @@ function calc(){
   if(vb){set('pp-dto',pct(v('dc-dto'),vb));set('pp-cor',pct(v('dc-cor'),vb));set('pp-can',pct(v('dc-can'),vb));set('pp-ded',pct(ded,vb));set('pp-vn',pct(vn,vb));}
   setH('ss-vn',vb?sem(ded/vb,.02,.05,false):'');
 
+  // Sales breakdown by category
+  const vtAli=v('vt-ali'),vtBeb=v('vt-beb'),vtOtr=v('vt-otr');
+  const vtSuma=vtAli+vtBeb+vtOtr;
+  set('vt-suma',fmt(vtSuma));
+  if(vb){set('pp-vtali',pct(vtAli,vb));set('pp-vtbeb',pct(vtBeb,vb));set('pp-vtotr',pct(vtOtr,vb));set('pp-vtsuma',pct(vtSuma,vb));}
+  // Validation: suma should equal ventas brutas
+  if(vtSuma>0&&vb>0){
+    const diff=Math.abs(vtSuma-vb);
+    if(diff<1) setH('ss-vtsuma','<span class="badge bok">✅ Cuadra</span>');
+    else setH('ss-vtsuma','<span class="badge bbad">≠ '+fmt(vb)+'</span>');
+  }else{setH('ss-vtsuma','');}
+
   const cogs=v('c-ali')+v('c-beb')+v('c-mer')+v('c-gen');
   const ub=vn-cogs;
   set('tot-cogs',fmt(cogs));set('util-bruta',fmt(ub));
@@ -2973,6 +3129,17 @@ function calc(){
     set('pp-cogs',pct(cogs,base));setH('ss-cogs',sem(cogs/base,.38,.42,false));
     set('pp-ub',pct(ub,base));setH('ss-ub',sem(ub/base,.60,.50,true));
   }
+  // Cost % by sales category breakdown
+  const cAli=v('c-ali'),cBeb=v('c-beb');
+  set('cb-cali',fmt(cAli));set('cb-vali',fmt(vtAli));
+  set('cb-cbeb',fmt(cBeb));set('cb-vbeb',fmt(vtBeb));
+  set('cb-ctot',fmt(cogs));set('cb-vtot',fmt(vn));
+  if(vtAli>0){const r=cAli/vtAli;set('cb-pali',(r*100).toFixed(1)+'%');setH('cb-sali',sem(r,.35,.40,false));}
+  else{set('cb-pali','—');setH('cb-sali','');}
+  if(vtBeb>0){const r=cBeb/vtBeb;set('cb-pbeb',(r*100).toFixed(1)+'%');setH('cb-sbeb',sem(r,.25,.30,false));}
+  else{set('cb-pbeb','—');setH('cb-sbeb','');}
+  if(vn>0){const r=cogs/vn;set('cb-ptot',(r*100).toFixed(1)+'%');setH('cb-stot',sem(r,.38,.42,false));}
+  else{set('cb-ptot','—');setH('cb-stot','');}
 
   const mo=v('mo-sue')+v('mo-ext')+v('mo-ims')+v('mo-agu')+v('mo-vac');
   set('tot-mo',fmt(mo));
@@ -3063,6 +3230,7 @@ function removeGiRow(id){const i=giExtraIds.indexOf(id);if(i>-1)giExtraIds.splic
 // Todos los IDs exactos de los inputs del formulario
 const WFIELDS=[
   'd-lun','d-mar','d-mie','d-jue','d-vie','d-sab','d-dom',
+  'vt-ali','vt-beb','vt-otr',
   'pax-a','pax-b','dc-dto','dc-cor','dc-can',
   'c-ali','c-beb','c-mer','c-gen',
   'mo-sue','mo-ext','mo-ims','mo-agu','mo-vac',
@@ -3079,6 +3247,14 @@ async function guardarSemana(){
     const el=document.getElementById(f);
     data[f]=el?parseFloat(el.value)||0:0;
   });
+  // Save custom indirect expense rows
+  const giExtras=[];
+  giExtraIds.forEach(id=>{
+    const nameEl=document.getElementById('gi-ex-name-'+id);
+    const valEl=document.getElementById('gi-ex-'+id);
+    giExtras.push({name:nameEl?nameEl.value:'',value:valEl?parseFloat(valEl.value)||0:0});
+  });
+  data._giExtras=giExtras;
   const btn=document.getElementById('save-btn');
   btn.textContent='Guardando...';btn.disabled=true;
   try{
@@ -3103,9 +3279,23 @@ async function guardarSemana(){
 async function loadSemana(){
   if(!CU)return;
   const wn=parseInt(document.getElementById('week-sel').value);
+  // Clear existing custom GI rows before loading
+  giExtraIds.forEach(id=>{const e=document.getElementById('gi-ex-row-'+id);if(e)e.remove();});
+  giExtraIds=[];giExCnt=0;
   const{data,error}=await sb.from('pnl_weeks').select('data').eq('user_id',CU.id).eq('year',new Date().getFullYear()).eq('week_num',wn).maybeSingle();
   if(data?.data){
     WFIELDS.forEach(f=>{const e=document.getElementById(f);if(e)e.value=data.data[f]||0;});
+    // Restore custom indirect expense rows
+    if(data.data._giExtras&&data.data._giExtras.length){
+      data.data._giExtras.forEach(gi=>{
+        addGiRow();
+        const id=giExtraIds[giExtraIds.length-1];
+        const nameEl=document.getElementById('gi-ex-name-'+id);
+        const valEl=document.getElementById('gi-ex-'+id);
+        if(nameEl) nameEl.value=gi.name||'';
+        if(valEl) valEl.value=gi.value||0;
+      });
+    }
   }else{
     WFIELDS.forEach(f=>{const e=document.getElementById(f);if(e)e.value=0;});
   }
