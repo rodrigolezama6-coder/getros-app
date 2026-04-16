@@ -553,11 +553,31 @@ input.dinput::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <div class="row"><div class="rl s">Marketing digital (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gi-mkt" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-gimkt">—</div><div></div></div>
           <div class="row"><div class="rl s">Mantenimiento (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gi-man" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-giman">—</div><div></div></div>
           <div class="row"><div class="rl s">Limpieza e higiene</div><input class="ri" type="text" inputmode="decimal" id="gi-lim" value="0" oninput="calc()"><div class="rpct" id="pp-gilim">—</div><div></div></div>
-          <div class="row"><div class="rl s">Comisiones bancarias</div><input class="ri" type="text" inputmode="decimal" id="gi-ban" value="0" oninput="calc()"><div class="rpct" id="pp-iban">—</div><div></div></div>
+          <!-- Comisiones bancarias moved to Gastos Financieros section -->
           <div class="row"><div class="rl s">Contabilidad / honorarios (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gi-con" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-gicon">—</div><div></div></div>
           <div id="extra-gi-rows"></div>
           <button class="add-btn" onclick="addGiRow()">+ Agregar concepto</button>
           <div class="row stot"><div class="rl">Total Gastos Indirectos</div><div class="rc" id="tot-gi">$0</div><div class="rpct" id="pp-gi">—</div><div class="rsem" id="ss-gi"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--green)"></span>Gastos Fijos</div><div class="card-hint">Ideal: &lt; 15% ventas netas · Celdas verdes = provisiones</div></div>
+          <div class="thdr"><div class="th">Concepto</div><div class="th r">Real / Provisión ($)</div><div class="th c">% V. Netas</div><div class="th c">Tipo</div></div>
+          <div class="row"><div class="rl s">Renta (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gf-ren" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-gfren">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
+          <div class="row"><div class="rl s">Luz (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gf-luz" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-gfluz">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
+          <div class="row"><div class="rl s">Agua (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gf-agu" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-gfagu">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
+          <div id="extra-gf-rows"></div>
+          <button class="add-btn" onclick="addGfRow()">+ Agregar concepto</button>
+          <div class="row stot"><div class="rl">Total Gastos Fijos</div><div class="rc" id="tot-gf">$0</div><div class="rpct" id="pp-gf">—</div><div class="rsem" id="ss-gf"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Gastos Financieros</div><div class="card-hint">Ideal: &lt; 6% ventas netas</div></div>
+          <div class="thdr"><div class="th">Concepto</div><div class="th r">Real / Provisión ($)</div><div class="th c">% V. Netas</div><div class="th c">Tipo</div></div>
+          <div class="row"><div class="rl s">Intereses y Créditos</div><input class="ri" type="text" inputmode="decimal" id="gfn-int" value="0" oninput="calc()"><div class="rpct" id="pp-gfnint">—</div><div class="rsem"><span class="badge breal">real</span></div></div>
+          <div class="row"><div class="rl s">Comisiones Bancarias</div><input class="ri" type="text" inputmode="decimal" id="gfn-ban" value="0" oninput="calc()"><div class="rpct" id="pp-gfnban">—</div><div class="rsem"><span class="badge breal">real</span></div></div>
+          <div class="row"><div class="rl s">Seguros (÷4)</div><input class="ri prov" type="text" inputmode="decimal" id="gfn-seg" value="0" oninput="calc()" placeholder="mensual÷4"><div class="rpct" id="pp-gfnseg">—</div><div class="rsem"><span class="badge bprov">provisión</span></div></div>
+          <div id="extra-gfn-rows"></div>
+          <button class="add-btn" onclick="addGfnRow()">+ Agregar concepto</button>
+          <div class="row stot"><div class="rl">Total Gastos Financieros</div><div class="rc" id="tot-gfn">$0</div><div class="rpct" id="pp-gfn">—</div><div class="rsem" id="ss-gfn"></div></div>
         </div>
         <div class="card">
           <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--red)"></span>Gastos Financieros y Fiscales</div><div class="card-hint">Ideal: &lt; 6% ventas</div></div>
@@ -3136,17 +3156,31 @@ function calc(){
   set('tot-mo',fmt(mo));
   if(vn){['sue','ext','ims','agu','vac'].forEach(k=>set('pp-'+k,pct(v('mo-'+k),base)));set('pp-mo',pct(mo,base));setH('ss-mo',sem(mo/base,.22,.28,false));}
 
-  const giF=['ren','luz','gas','agu','mkt','man','lim','ban','con'];
+  const giF=['ren','luz','gas','agu','mkt','man','lim','con'];
   let gi=giF.reduce((s,k)=>s+v('gi-'+k),0);
   giExtraIds.forEach(id=>{gi+=v('gi-ex-'+id)||0;});
   set('tot-gi',fmt(gi));
   if(vn){giF.forEach(k=>set('pp-gi'+k,pct(v('gi-'+k),base)));set('pp-gi',pct(gi,base));setH('ss-gi',sem(gi/base,.35,.42,false));setH('ss-giren',sem(v('gi-ren')/base,.10,.12,false));}
 
+  // Gastos Fijos
+  const gfF=['ren','luz','agu'];
+  let gf=gfF.reduce((s,k)=>s+v('gf-'+k),0);
+  gfExtraIds.forEach(id=>{gf+=v('gf-ex-'+id)||0;});
+  set('tot-gf',fmt(gf));
+  if(vn){gfF.forEach(k=>set('pp-gf'+k,pct(v('gf-'+k),base)));set('pp-gf',pct(gf,base));setH('ss-gf',sem(gf/base,.15,.20,false));}
+
+  // Gastos Financieros
+  const gfnF=['int','ban','seg'];
+  let gfn=gfnF.reduce((s,k)=>s+v('gfn-'+k),0);
+  gfnExtraIds.forEach(id=>{gfn+=v('gfn-ex-'+id)||0;});
+  set('tot-gfn',fmt(gfn));
+  if(vn){gfnF.forEach(k=>set('pp-gfn'+k,pct(v('gfn-'+k),base)));set('pp-gfn',pct(gfn,base));setH('ss-gfn',sem(gfn/base,.06,.10,false));}
+
   const fin=v('fin-isr')+v('fin-int')+v('fin-dep');
   set('tot-fin',fmt(fin));
   if(vn){set('pp-isr',pct(v('fin-isr'),base));set('pp-int',pct(v('fin-int'),base));set('pp-dep',pct(v('fin-dep'),base));set('pp-fin',pct(fin,base));}
 
-  const gop=mo+gi+fin;
+  const gop=mo+gi+gf+gfn+fin;
   set('tot-gop',fmt(gop));
   if(vn){set('pp-gop',pct(gop,base));setH('ss-gop',sem(gop/base,.55,.65,false));}
 
@@ -3168,14 +3202,18 @@ function buildResumen(){
   const ded=v('dc-dto')+v('dc-cor')+v('dc-can'),vn=vb-ded,base=vn||1;
   const cogs=v('c-ali')+v('c-beb')+v('c-mer')+v('c-gen'),ub=vn-cogs;
   const mo=v('mo-sue')+v('mo-ext')+v('mo-ims')+v('mo-agu')+v('mo-vac');
-  let gi=['ren','luz','gas','agu','mkt','man','lim','ban','con'].reduce((s,k)=>s+v('gi-'+k),0);
+  let gi=['ren','luz','gas','agu','mkt','man','lim','con'].reduce((s,k)=>s+v('gi-'+k),0);
   giExtraIds.forEach(id=>{gi+=v('gi-ex-'+id)||0;});
-  const fin=v('fin-isr')+v('fin-int')+v('fin-dep'),gop=mo+gi+fin,ebitda=ub-gop,ext=v('ex-bon')+v('ex-ext'),neta=ebitda-ext;
+  let gf=['ren','luz','agu'].reduce((s,k)=>s+v('gf-'+k),0);
+  gfExtraIds.forEach(id=>{gf+=v('gf-ex-'+id)||0;});
+  let gfn=['int','ban','seg'].reduce((s,k)=>s+v('gfn-'+k),0);
+  gfnExtraIds.forEach(id=>{gfn+=v('gfn-ex-'+id)||0;});
+  const fin=v('fin-isr')+v('fin-int')+v('fin-dep'),gop=mo+gi+gf+gfn+fin,ebitda=ub-gop,ext=v('ex-bon')+v('ex-ext'),neta=ebitda-ext;
   const rows=[
     {l:'Ventas brutas',v:vb},{l:'(-) Deducciones',v:-ded,s:true},
     {l:'= Ventas Netas',v:vn,tot:true},
     {l:'(-) COGS',v:-cogs,s:true},{l:'= Utilidad Bruta',v:ub,tot:true,pct_:ub/base,sem_:sem(ub/base,.60,.50,true)},
-    {l:'(-) Mano de obra',v:-mo,s:true},{l:'(-) Gastos indirectos',v:-gi,s:true},{l:'(-) Financiero/fiscal',v:-fin,s:true},
+    {l:'(-) Mano de obra',v:-mo,s:true},{l:'(-) Gastos indirectos',v:-gi,s:true},{l:'(-) Gastos fijos',v:-gf,s:true},{l:'(-) Gastos financieros',v:-gfn,s:true},{l:'(-) Financiero/fiscal',v:-fin,s:true},
     {l:'= EBITDA',v:ebitda,tot:true,pct_:ebitda/base,sem_:sem(ebitda/base,.15,.08,true)},
     {l:'(-) Bonos y extras',v:-ext,s:true},
     {l:'🏆 UTILIDAD NETA',v:neta,grand:true,pct_:neta/base,sem_:sem(neta/base,.20,.10,true)},
@@ -3217,6 +3255,32 @@ function addGiRow(){
 }
 function removeGiRow(id){const i=giExtraIds.indexOf(id);if(i>-1)giExtraIds.splice(i,1);const e=document.getElementById('gi-ex-row-'+id);if(e)e.remove();calc();}
 
+// ── EXTRA GASTOS FIJOS ROWS ──────────────────────────────────────────────
+let gfExtraIds=[],gfExCnt=0;
+function addGfRow(){
+  gfExCnt++;const id=gfExCnt;gfExtraIds.push(id);
+  const c=document.getElementById('extra-gf-rows'),d=document.createElement('div');
+  d.className='row';d.id='gf-ex-row-'+id;
+  d.innerHTML=`<div style="display:flex;align-items:center;gap:7px;padding-left:12px"><input type="text" class="ri" style="width:160px;font-size:11px" placeholder="Concepto..." id="gf-ex-name-${id}"><button onclick="removeGfRow(${id})" style="background:none;border:1px solid var(--border2);border-radius:4px;color:var(--muted);cursor:pointer;padding:2px 6px;font-size:10px">×</button></div>
+  <input class="ri prov" type="text" inputmode="decimal" id="gf-ex-${id}" value="0" oninput="calc()" placeholder="0">
+  <div class="rpct" id="pp-gfex-${id}">—</div><div></div>`;
+  c.appendChild(d);
+}
+function removeGfRow(id){const i=gfExtraIds.indexOf(id);if(i>-1)gfExtraIds.splice(i,1);const e=document.getElementById('gf-ex-row-'+id);if(e)e.remove();calc();}
+
+// ── EXTRA GASTOS FINANCIEROS ROWS ────────────────────────────────────────
+let gfnExtraIds=[],gfnExCnt=0;
+function addGfnRow(){
+  gfnExCnt++;const id=gfnExCnt;gfnExtraIds.push(id);
+  const c=document.getElementById('extra-gfn-rows'),d=document.createElement('div');
+  d.className='row';d.id='gfn-ex-row-'+id;
+  d.innerHTML=`<div style="display:flex;align-items:center;gap:7px;padding-left:12px"><input type="text" class="ri" style="width:160px;font-size:11px" placeholder="Concepto..." id="gfn-ex-name-${id}"><button onclick="removeGfnRow(${id})" style="background:none;border:1px solid var(--border2);border-radius:4px;color:var(--muted);cursor:pointer;padding:2px 6px;font-size:10px">×</button></div>
+  <input class="ri" type="text" inputmode="decimal" id="gfn-ex-${id}" value="0" oninput="calc()" placeholder="0">
+  <div class="rpct" id="pp-gfnex-${id}">—</div><div></div>`;
+  c.appendChild(d);
+}
+function removeGfnRow(id){const i=gfnExtraIds.indexOf(id);if(i>-1)gfnExtraIds.splice(i,1);const e=document.getElementById('gfn-ex-row-'+id);if(e)e.remove();calc();}
+
 // ── SAVE / LOAD ───────────────────────────────────────────────────────────
 // Todos los IDs exactos de los inputs del formulario
 const WFIELDS=[
@@ -3225,7 +3289,9 @@ const WFIELDS=[
   'pax-a','dc-dto','dc-cor','dc-can',
   'c-ali','c-beb','c-mer','c-gen',
   'mo-sue','mo-ext','mo-ims','mo-agu','mo-vac',
-  'gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-ban','gi-con',
+  'gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-con',
+  'gf-ren','gf-luz','gf-agu',
+  'gfn-int','gfn-ban','gfn-seg',
   'fin-isr','fin-int','fin-dep','ex-bon','ex-ext'
 ];
 
@@ -3246,6 +3312,22 @@ async function guardarSemana(){
     giExtras.push({name:nameEl?nameEl.value:'',value:valEl?parseFloat(valEl.value)||0:0});
   });
   data._giExtras=giExtras;
+  // Save custom Gastos Fijos rows
+  const gfExtras=[];
+  gfExtraIds.forEach(id=>{
+    const nameEl=document.getElementById('gf-ex-name-'+id);
+    const valEl=document.getElementById('gf-ex-'+id);
+    gfExtras.push({name:nameEl?nameEl.value:'',value:valEl?parseFloat(valEl.value)||0:0});
+  });
+  data._gfExtras=gfExtras;
+  // Save custom Gastos Financieros rows
+  const gfnExtras=[];
+  gfnExtraIds.forEach(id=>{
+    const nameEl=document.getElementById('gfn-ex-name-'+id);
+    const valEl=document.getElementById('gfn-ex-'+id);
+    gfnExtras.push({name:nameEl?nameEl.value:'',value:valEl?parseFloat(valEl.value)||0:0});
+  });
+  data._gfnExtras=gfnExtras;
   const btn=document.getElementById('save-btn');
   btn.textContent='Guardando...';btn.disabled=true;
   try{
@@ -3270,9 +3352,13 @@ async function guardarSemana(){
 async function loadSemana(){
   if(!CU)return;
   const wn=parseInt(document.getElementById('week-sel').value);
-  // Clear existing custom GI rows before loading
+  // Clear existing custom rows before loading
   giExtraIds.forEach(id=>{const e=document.getElementById('gi-ex-row-'+id);if(e)e.remove();});
   giExtraIds=[];giExCnt=0;
+  gfExtraIds.forEach(id=>{const e=document.getElementById('gf-ex-row-'+id);if(e)e.remove();});
+  gfExtraIds=[];gfExCnt=0;
+  gfnExtraIds.forEach(id=>{const e=document.getElementById('gfn-ex-row-'+id);if(e)e.remove();});
+  gfnExtraIds=[];gfnExCnt=0;
   const{data,error}=await sb.from('pnl_weeks').select('data').eq('user_id',CU.id).eq('year',new Date().getFullYear()).eq('week_num',wn).maybeSingle();
   if(data?.data){
     WFIELDS.forEach(f=>{const e=document.getElementById(f);if(e)e.value=data.data[f]||0;});
@@ -3285,6 +3371,28 @@ async function loadSemana(){
         const valEl=document.getElementById('gi-ex-'+id);
         if(nameEl) nameEl.value=gi.name||'';
         if(valEl) valEl.value=gi.value||0;
+      });
+    }
+    // Restore custom Gastos Fijos rows
+    if(data.data._gfExtras&&data.data._gfExtras.length){
+      data.data._gfExtras.forEach(r=>{
+        addGfRow();
+        const id=gfExtraIds[gfExtraIds.length-1];
+        const nameEl=document.getElementById('gf-ex-name-'+id);
+        const valEl=document.getElementById('gf-ex-'+id);
+        if(nameEl) nameEl.value=r.name||'';
+        if(valEl) valEl.value=r.value||0;
+      });
+    }
+    // Restore custom Gastos Financieros rows
+    if(data.data._gfnExtras&&data.data._gfnExtras.length){
+      data.data._gfnExtras.forEach(r=>{
+        addGfnRow();
+        const id=gfnExtraIds[gfnExtraIds.length-1];
+        const nameEl=document.getElementById('gfn-ex-name-'+id);
+        const valEl=document.getElementById('gfn-ex-'+id);
+        if(nameEl) nameEl.value=r.name||'';
+        if(valEl) valEl.value=r.value||0;
       });
     }
   }else{
@@ -3328,15 +3436,20 @@ function getWeekTotals(wn){
   const vn=vb-ded;
   const cogs=(parseFloat(d['c-ali'])||0)+(parseFloat(d['c-beb'])||0)+(parseFloat(d['c-mer'])||0)+(parseFloat(d['c-gen'])||0);
   const mo=(parseFloat(d['mo-sue'])||0)+(parseFloat(d['mo-ext'])||0)+(parseFloat(d['mo-ims'])||0)+(parseFloat(d['mo-agu'])||0)+(parseFloat(d['mo-vac'])||0);
-  const gi=['gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-ban','gi-con'].reduce((s,k)=>s+(parseFloat(d[k])||0),0);
+  let gi=['gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-con'].reduce((s,k)=>s+(parseFloat(d[k])||0),0);
+  if(d._giExtras)d._giExtras.forEach(r=>{gi+=(r.value||0);});
+  let gf=['gf-ren','gf-luz','gf-agu'].reduce((s,k)=>s+(parseFloat(d[k])||0),0);
+  if(d._gfExtras)d._gfExtras.forEach(r=>{gf+=(r.value||0);});
+  let gfn=['gfn-int','gfn-ban','gfn-seg'].reduce((s,k)=>s+(parseFloat(d[k])||0),0);
+  if(d._gfnExtras)d._gfnExtras.forEach(r=>{gfn+=(r.value||0);});
   const fin=(parseFloat(d['fin-isr'])||0)+(parseFloat(d['fin-int'])||0)+(parseFloat(d['fin-dep'])||0);
-  const gop=mo+gi+fin,ub=vn-cogs,ebitda=ub-gop,ext=(parseFloat(d['ex-bon'])||0)+(parseFloat(d['ex-ext'])||0),neta=ebitda-ext;
+  const gop=mo+gi+gf+gfn+fin,ub=vn-cogs,ebitda=ub-gop,ext=(parseFloat(d['ex-bon'])||0)+(parseFloat(d['ex-ext'])||0),neta=ebitda-ext;
   const pax=parseFloat(d['pax-a'])||0;
-  return{vb,ded,vn,cogs,ub,mo,gi,fin,gop,ebitda,ext,neta,pax};
+  return{vb,ded,vn,cogs,ub,mo,gi,gf,gfn,fin,gop,ebitda,ext,neta,pax};
 }
 
 function sumPeriod(weeks){
-  const t={vb:0,ded:0,vn:0,cogs:0,ub:0,mo:0,gi:0,fin:0,gop:0,ebitda:0,ext:0,neta:0,pax:0};
+  const t={vb:0,ded:0,vn:0,cogs:0,ub:0,mo:0,gi:0,gf:0,gfn:0,fin:0,gop:0,ebitda:0,ext:0,neta:0,pax:0};
   weeks.forEach(w=>{const d=getWeekTotals(w);Object.keys(t).forEach(k=>t[k]+=d[k]);});
   return t;
 }
@@ -3344,7 +3457,7 @@ function sumPeriod(weeks){
 function buildCascade(tableId,cols,colLabels,dataFn){
   const tbl=document.getElementById(tableId);
   const data=cols.map(c=>dataFn(c));
-  const tot={vb:0,vn:0,cogs:0,ub:0,gop:0,ebitda:0,neta:0};
+  const tot={vb:0,vn:0,cogs:0,ub:0,gop:0,ebitda:0,neta:0,gi:0,gf:0,gfn:0,fin:0,mo:0,ext:0,ded:0};
   data.forEach(d=>Object.keys(tot).forEach(k=>tot[k]+=(d[k]||0)));
   const rows=[
     {sec:'INGRESOS'},{key:'vb',l:'Total ventas',tot:false},
@@ -3352,7 +3465,7 @@ function buildCascade(tableId,cols,colLabels,dataFn){
     {gap:true},{sec:'COSTOS'},{key:'cogs',l:'COGS',tot:false,neg:true},
     {key:'ub',l:'= Utilidad Bruta',tot:true,pctK:'ub'},{gap:true},
     {sec:'GASTOS'},{key:'mo',l:'Mano de obra',tot:false,neg:true},
-    {key:'gi',l:'Gastos indirectos',tot:false,neg:true},{key:'fin',l:'Financiero/fiscal',tot:false,neg:true},
+    {key:'gi',l:'Gastos indirectos',tot:false,neg:true},{key:'gf',l:'Gastos fijos',tot:false,neg:true},{key:'gfn',l:'Gastos financieros',tot:false,neg:true},{key:'fin',l:'Financiero/fiscal',tot:false,neg:true},
     {key:'gop',l:'Total gastos op.',tot:true,neg:true},{gap:true},
     {key:'ebitda',l:'EBITDA',tot:true,pctK:'ebitda'},{key:'ext',l:'(-) Extras',tot:false,neg:true},{gap:true},
     {key:'neta',l:'UTILIDAD NETA',grand:true,pctK:'neta'},
@@ -3988,10 +4101,16 @@ function renderAnalisis(){
   const totalVentas = ventasDia.reduce((a,b)=>a+b,0);
   const cogs = v('c-ali')+v('c-beb')+v('c-mer')+v('c-gen');
   const mo = v('mo-sue')+v('mo-ext')+v('mo-ims')+v('mo-agu')+v('mo-vac');
-  const giFields=['gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-ban','gi-con'];
+  const giFields=['gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-con'];
   const gi = giFields.reduce((s,k)=>s+v(k),0);
+  const gfFields=['gf-ren','gf-luz','gf-agu'];
+  let gfVal = gfFields.reduce((s,k)=>s+v(k),0);
+  gfExtraIds.forEach(id=>{gfVal+=v('gf-ex-'+id)||0;});
+  const gfnFields=['gfn-int','gfn-ban','gfn-seg'];
+  let gfnVal = gfnFields.reduce((s,k)=>s+v(k),0);
+  gfnExtraIds.forEach(id=>{gfnVal+=v('gfn-ex-'+id)||0;});
   const fin = v('fin-isr')+v('fin-int')+v('fin-dep');
-  const gop = mo+gi+fin;
+  const gop = mo+gi+gfVal+gfnVal+fin;
   const neta = totalVentas-cogs-gop;
   const fc = totalVentas>0?(cogs/totalVentas*100).toFixed(1):0;
 
@@ -4055,10 +4174,10 @@ function renderAnalisis(){
     chartInstances['gastos'] = new Chart(ctx3, {
       type:'doughnut',
       data:{
-        labels:['COGS','Mano de obra','Gastos ind.','Financiero'],
+        labels:['COGS','Mano de obra','Gastos ind.','Gastos fijos','Gastos financ.','Financiero/fiscal'],
         datasets:[{
-          data:[cogs,mo,gi,fin],
-          backgroundColor:['rgba(251,191,36,0.7)','rgba(96,165,250,0.7)','rgba(167,139,250,0.7)','rgba(248,113,113,0.7)'],
+          data:[cogs,mo,gi,gfVal,gfnVal,fin],
+          backgroundColor:['rgba(251,191,36,0.7)','rgba(96,165,250,0.7)','rgba(167,139,250,0.7)','rgba(74,222,128,0.7)','rgba(251,191,36,0.5)','rgba(248,113,113,0.7)'],
           borderColor:'rgba(13,16,24,1)',borderWidth:2
         }]
       },
@@ -4080,10 +4199,15 @@ function renderAnalisis(){
       const vn=vb-ded;
       const c=(parseFloat(d['c-ali'])||0)+(parseFloat(d['c-beb'])||0)+(parseFloat(d['c-mer'])||0)+(parseFloat(d['c-gen'])||0);
       const m=(parseFloat(d['mo-sue'])||0)+(parseFloat(d['mo-ext'])||0)+(parseFloat(d['mo-ims'])||0)+(parseFloat(d['mo-agu'])||0)+(parseFloat(d['mo-vac'])||0);
-      const g=['gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-ban','gi-con'].reduce((s,k)=>s+(parseFloat(d[k])||0),0);
+      let g=['gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-con'].reduce((s,k)=>s+(parseFloat(d[k])||0),0);
+      if(d._giExtras)d._giExtras.forEach(r=>{g+=(r.value||0);});
+      let gfW=['gf-ren','gf-luz','gf-agu'].reduce((s,k)=>s+(parseFloat(d[k])||0),0);
+      if(d._gfExtras)d._gfExtras.forEach(r=>{gfW+=(r.value||0);});
+      let gfnW=['gfn-int','gfn-ban','gfn-seg'].reduce((s,k)=>s+(parseFloat(d[k])||0),0);
+      if(d._gfnExtras)d._gfnExtras.forEach(r=>{gfnW+=(r.value||0);});
       const f=(parseFloat(d['fin-isr'])||0)+(parseFloat(d['fin-int'])||0)+(parseFloat(d['fin-dep'])||0);
       semanas.push('S'+i);
-      utilidades.push(Math.round(vn-c-m-g-f));
+      utilidades.push(Math.round(vn-c-m-g-gfW-gfnW-f));
     }
     chartInstances['neta'] = new Chart(ctx4, {
       type:'line',
@@ -4156,9 +4280,14 @@ async function analizarConAI(){
   const vn = totalVentas-ded;
   const cogs = v('c-ali')+v('c-beb')+v('c-mer')+v('c-gen');
   const mo = v('mo-sue')+v('mo-ext')+v('mo-ims')+v('mo-agu')+v('mo-vac');
-  const gi = ['gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-ban','gi-con'].reduce((s,k)=>s+v(k),0);
+  let gi = ['gi-ren','gi-luz','gi-gas','gi-agu','gi-mkt','gi-man','gi-lim','gi-con'].reduce((s,k)=>s+v(k),0);
+  giExtraIds.forEach(id=>{gi+=v('gi-ex-'+id)||0;});
+  let gfAI = ['gf-ren','gf-luz','gf-agu'].reduce((s,k)=>s+v(k),0);
+  gfExtraIds.forEach(id=>{gfAI+=v('gf-ex-'+id)||0;});
+  let gfnAI = ['gfn-int','gfn-ban','gfn-seg'].reduce((s,k)=>s+v(k),0);
+  gfnExtraIds.forEach(id=>{gfnAI+=v('gfn-ex-'+id)||0;});
   const fin = v('fin-isr')+v('fin-int')+v('fin-dep');
-  const gop = mo+gi+fin;
+  const gop = mo+gi+gfAI+gfnAI+fin;
   const ub = vn-cogs;
   const ebitda = ub-gop;
   const neta = ebitda-(v('ex-bon')+v('ex-ext'));
@@ -4181,6 +4310,8 @@ DATOS DE LA SEMANA:
 - Utilidad bruta: $${Math.round(ub).toLocaleString('es-MX')} (${vn>0?(ub/vn*100).toFixed(1):0}%)
 - Mano de obra: $${Math.round(mo).toLocaleString('es-MX')} (${vn>0?(mo/vn*100).toFixed(1):0}%)
 - Gastos indirectos: $${Math.round(gi).toLocaleString('es-MX')} (${vn>0?(gi/vn*100).toFixed(1):0}%)
+- Gastos fijos: $${Math.round(gfAI).toLocaleString('es-MX')} (${vn>0?(gfAI/vn*100).toFixed(1):0}%)
+- Gastos financieros: $${Math.round(gfnAI).toLocaleString('es-MX')} (${vn>0?(gfnAI/vn*100).toFixed(1):0}%)
 - EBITDA: $${Math.round(ebitda).toLocaleString('es-MX')} (${vn>0?(ebitda/vn*100).toFixed(1):0}%)
 - Utilidad neta: $${Math.round(neta).toLocaleString('es-MX')} (${vn>0?(neta/vn*100).toFixed(1):0}%)
 - PAX (clientes): ${Math.round(paxA)}
@@ -4193,6 +4324,8 @@ ${ventasDia.map(d=>'- '+d.dia+': $'+Math.round(d.venta).toLocaleString('es-MX'))
 Rangos ideales para restaurantes:
 - Food cost: 28-35%
 - Mano de obra: 18-22%
+- Gastos fijos: < 15%
+- Gastos financieros: < 6%
 - Utilidad neta: 15-20%
 
 Responde en máximo 5 puntos concisos. Usa emojis. Sé directo y práctico. Identifica lo que está bien, lo que hay que mejorar y 1-2 acciones concretas. No uses markdown con asteriscos, solo texto limpio con saltos de línea.`;
